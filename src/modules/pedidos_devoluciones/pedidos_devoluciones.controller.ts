@@ -8,9 +8,12 @@ import {
   Delete,
 } from '@nestjs/common';
 import { PedidosDevolucionesService } from './pedidos_devoluciones.service';
-import { CreatePedidosDevolucionesDto } from './dto/create-pedidos_devolucione.dto';
-import { UpdatePedidosDevolucionesDto } from './dto/update-pedidos_devolucione.dto';
+import { CreatePedidosDevolucionDto } from './dto/create-devolucion.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { CreatePedidosFarmaciaDto } from './dto/create-pedidos_farmacia.dto';
+import { CreatePedidosCentralDto } from './dto/create-pedidos_central.dto';
+import { CreatePedidosMensualDto } from './dto/create-pedidos_mensual.dto';
+import { CreatePedidosViveresDto } from './dto/create-pedidos_viveres.dto';
 
 @ApiTags('Pedidos Devoluciones')
 @Controller('pedidos')
@@ -18,10 +21,22 @@ export class PedidosController {
   constructor(private readonly pedidosService: PedidosDevolucionesService) {}
 
   // VIVERES
-  @Post('viveres')
-  createViveres(@Body() dto: CreatePedidosDevolucionesDto) {
-    return this.pedidosService.createViveres(dto);
-  }
+
+@Post('devolucion')
+async createDevolucion(@Body() body: CreatePedidosDevolucionDto) {
+
+  return this.pedidosService.createDevolucion(body);
+}
+
+@Get('devolucion')
+findAllDevoluciones() {
+  return this.pedidosService.findAllDevoluciones();
+}
+
+@Post('viveres')
+async createViveres(@Body() body: CreatePedidosViveresDto) {
+  return this.pedidosService.createViveres(body);
+}
 
   @Get('viveres')
   findAllViveres() {
@@ -36,7 +51,7 @@ export class PedidosController {
   @Patch('viveres/:id')
   updateViveres(
     @Param('id') id: string,
-    @Body() dto: UpdatePedidosDevolucionesDto,
+    @Body() dto: CreatePedidosViveresDto,
   ) {
     return this.pedidosService.updateViveres(id, dto);
   }
@@ -47,9 +62,9 @@ export class PedidosController {
   }
 
   // FARMACIA
-  @Post('farmacia')
-  createFarmacia(@Body() dto: CreatePedidosDevolucionesDto) {
-    return this.pedidosService.createFarmacia(dto);
+ @Post('farmacia')
+  async createFarmacia(@Body() body: CreatePedidosFarmaciaDto) {
+    return this.pedidosService.createFarmacia(body);
   }
 
   @Get('farmacia')
@@ -65,7 +80,7 @@ export class PedidosController {
   @Patch('farmacia/:id')
   updateFarmacia(
     @Param('id') id: string,
-    @Body() dto: UpdatePedidosDevolucionesDto,
+    @Body() dto: CreatePedidosFarmaciaDto,
   ) {
     return this.pedidosService.updateFarmacia(id, dto);
   }
@@ -76,10 +91,11 @@ export class PedidosController {
   }
 
   // CENTRAL
-  @Post('central')
-  createCentral(@Body() dto: CreatePedidosDevolucionesDto) {
-    return this.pedidosService.createCentral(dto);
-  }
+@Post('central')
+async createCentral(@Body() body: CreatePedidosCentralDto) {
+  return this.pedidosService.createCentral(body);
+}
+
 
   @Get('central')
   findAllCentral() {
@@ -94,7 +110,7 @@ export class PedidosController {
   @Patch('central/:id')
   updateCentral(
     @Param('id') id: string,
-    @Body() dto: UpdatePedidosDevolucionesDto,
+    @Body() dto: CreatePedidosCentralDto,
   ) {
     return this.pedidosService.updateCentral(id, dto);
   }
@@ -105,31 +121,33 @@ export class PedidosController {
   }
 
   // MISCELANEA
-  @Post('miscelanea')
-  createMiscelanea(@Body() dto: CreatePedidosDevolucionesDto) {
-    return this.pedidosService.createMiscelanea(dto);
-  }
+@Post('mensual')
+async createMensual(@Body() body: CreatePedidosMensualDto) {
+  return this.pedidosService.createMensual(body);
+}
 
   @Get('miscelanea')
   findAllMiscelanea() {
-    return this.pedidosService.findAllMiscelanea();
+    return this.pedidosService.findAllMensual();
   }
 
   @Get('miscelanea/:id')
   findOneMiscelanea(@Param('id') id: string) {
-    return this.pedidosService.findOneMiscelanea(id);
+    return this.pedidosService.findAllMensual();
   }
 
   @Patch('miscelanea/:id')
   updateMiscelanea(
     @Param('id') id: string,
-    @Body() dto: UpdatePedidosDevolucionesDto,
+    @Body() dto: CreatePedidosMensualDto,
   ) {
-    return this.pedidosService.updateMiscelanea(id, dto);
+    return this.pedidosService.updateMensual(id, dto);
   }
 
   @Delete('miscelanea/:id')
   removeMiscelanea(@Param('id') id: string) {
-    return this.pedidosService.removeMiscelanea(id);
+    return this.pedidosService.removeMensual(id);
   }
+
+
 }
