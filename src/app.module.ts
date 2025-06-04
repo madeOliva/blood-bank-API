@@ -43,10 +43,14 @@ import { EstanciaExtranjeroModule } from './modules/estancia_extranjero/estancia
 import { HistoriaClinicaModule } from './modules/historia_clinica/historia_clinica.module';
 
 
+
 @Module({
+
   //MongooseModule.forRoot('mongodb://localhost/banco_sangre'),
   //MongooseModule.forRoot('mongodb+srv://carlosmonterrey:Karlos8200@bloodbank.au9pv.mongodb.net/?retryWrites=true&w=majority&appName=Bloodbank', {
   imports: [
+
+
     ConfigModule.forRoot(),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],

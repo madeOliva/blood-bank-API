@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ConflictException, Get, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Plan_Trabajo } from './schema/plan_trabajo.schema';
@@ -34,7 +34,6 @@ export class PlanTrabajoService {
     }
   }
   
-
 
 
 
