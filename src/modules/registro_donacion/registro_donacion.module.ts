@@ -6,6 +6,7 @@ import { Persona, PersonaSchema } from '../persona/schema/persona.schema';
 import { Historia_Clinica, Historia_ClinicaSchema } from '../historia_clinica/schema/historia_clinica.schema';
 import { Donacion, DonacionSchema } from '../donacion/schemas/donacion.schemas'; // <-- IMPORTANTE
 import { Componentes, ComponentesSchema } from '../componentes_donacion/schemas/componentes.schemas';
+import { RegistroDonacionController } from './registro_donacion.controller';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { Componentes, ComponentesSchema } from '../componentes_donacion/schemas/
       { name: Componentes.name, schema: ComponentesSchema },
     ]),
   ],
+  controllers: [RegistroDonacionController],
   providers: [RegistroDonacionService],
   exports: [RegistroDonacionService],
 })
