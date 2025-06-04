@@ -15,6 +15,34 @@ export class CreateHistoriaClinicaDto {
 
   @IsString()
   @IsNotEmpty()
+  nombre: string;
+
+  @IsString()
+  @IsNotEmpty()
+  primer_apellido: string;
+
+  @IsString()
+  @IsNotEmpty()
+  segundo_apellido: string;
+
+  @IsString()
+  @IsNotEmpty()
+  sexo: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  edad: number;
+
+  @IsString()
+  @IsNotEmpty()
+  estado_civil: string;
+
+  @IsString()
+  @IsNotEmpty()
+  municipio: string;
+
+  @IsString()
+  @IsNotEmpty()
   color_piel: string;
 
   @IsString()
@@ -44,6 +72,10 @@ export class CreateHistoriaClinicaDto {
   @IsString()
   @IsNotEmpty()
   telefono: string;
+
+  @IsString()
+  @IsNotEmpty()
+  telefonoLaboral: string;
 
   @IsString()
   @IsNotEmpty()

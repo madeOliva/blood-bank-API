@@ -12,17 +12,14 @@ import {
 import { RegistroDonacionService } from './registro_donacion.service';
 import { CreateRegistroDonacionesDto } from './dto/create-registro_donacion.dto';
 import { UpdateRegistroDonacionDto } from './dto/update-registro_donacion.dto';
-import { RegistroDonacion } from './schemas/registro_donacion.schema';
 import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 
 @ApiTags('Registro de Donación')
 @Controller('registro-donacion')
 export class RegistroDonacionController {
-  constructor(
-    private readonly service: RegistroDonacionService,
-  ) {}
+  constructor(private readonly service: RegistroDonacionService) {}
 
-   @Get()
+  @Get()
   @ApiOperation({ summary: 'Obtiene todos los registros por cédula' })
   @ApiParam({ name: 'ci', type: String })
   async getAll(@Query('ci') ci: string) {
@@ -40,15 +37,22 @@ export class RegistroDonacionController {
   @ApiOperation({ summary: 'Crea un nuevo registro' })
   async create(
     @Param('ci') ci: string,
-    @Body() createDto: CreateRegistroDonacionesDto
+    @Body() createDto: CreateRegistroDonacionesDto,
   ) {
     return this.service.create(ci, createDto);
   }
 
   @ApiOperation({ summary: 'Actualizar un registro de donación' })
-  @ApiResponse({ status: 200, description: 'Registro actualizado exitosamente' })
+  @ApiResponse({
+    status: 200,
+    description: 'Registro actualizado exitosamente',
+  })
   @ApiResponse({ status: 404, description: 'Registro no encontrado' })
-  @ApiParam({ name: 'id', required: true, description: 'ID del registro a actualizar' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID del registro a actualizar',
+  })
   @Put(':id')
   update(
     @Body() updateRegistroDonacionDto: UpdateRegistroDonacionDto,
@@ -60,22 +64,27 @@ export class RegistroDonacionController {
   @ApiOperation({ summary: 'Eliminar un registro de donación' })
   @ApiResponse({ status: 200, description: 'Registro eliminado exitosamente' })
   @ApiResponse({ status: 404, description: 'Registro no encontrado' })
-  @ApiParam({ name: 'id', required: true, description: 'ID del registro a eliminar' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID del registro a eliminar',
+  })
   @Delete(':id')
   delete(@Param('id') id: string) {
     return this.service.delete(id);
   }
 
   @Get(':id/datos-completos')
-@ApiOperation({ summary: 'Obtiene datos combinados de persona y registro de donación' })
-@ApiResponse({ 
-  status: 200, 
-  description: 'Datos combinados obtenidos exitosamente',
-
-})
-async getDatosCompletos(@Param('id') id: string) {
-  return this.service.getDatosCompletosDonacion(id);
-}
+  @ApiOperation({
+    summary: 'Obtiene datos combinados de persona y registro de donación',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Datos combinados obtenidos exitosamente',
+  })
+  async getDatosCompletos(@Param('id') id: string) {
+    return this.service.getDatosCompletosDonacion(id);
+  }
 
   /*@Get('datos-completos/:ci')
   @ApiOperation({ summary: 'Obtiene todos los datos relacionados con una donación' })

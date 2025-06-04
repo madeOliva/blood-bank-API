@@ -9,6 +9,27 @@ export class Historia_Clinica {
     @Prop({ required: true, unique: true, index: true })
     ci: string;
 
+    @Prop({required:true})
+    nombre: string;
+
+    @Prop({required:true})
+    primer_apellido: string;
+
+    @Prop({required:true})
+    segundo_apellido: string;
+
+    @Prop({required:true})
+    sexo: string;
+
+    @Prop({required:true})
+    edad: number;
+
+    @Prop({required:true})
+    estado_civil: string;
+
+    @Prop({required:true})
+    municipio: string;
+
     @Prop({ required: true })
     color_piel: string;
 
@@ -32,6 +53,9 @@ export class Historia_Clinica {
 
     @Prop({ required: true })
     telefono: string;
+    
+    @Prop({ required: true })
+    telefonoLaboral: string;
 
     @Prop({ required: true })
     centro_laboral: string;

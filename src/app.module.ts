@@ -37,7 +37,7 @@ import { ReaccionesModule } from './modules/reacciones/reacciones.module';
 import { RegistroDonacionModule } from './modules/registro_donacion/registro_donacion.module';
 import { EstadosModule } from './modules/estados/estados.module';
 import { Donacion } from './modules/donacion/schemas/donacion.schemas';
-import { ComponentesModule } from './modules/componentes/componentes.module';
+import { ComponentesModule } from './modules/componentes_donacion/componentes.module';
 import { HabitosToxicosModule } from './modules/habitos_toxicos/habitos_toxicos.module';
 import { EstanciaExtranjeroModule } from './modules/estancia_extranjero/estancia_extranjero.module';
 import { HistoriaClinicaModule } from './modules/historia_clinica/historia_clinica.module';

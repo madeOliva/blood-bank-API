@@ -8,17 +8,17 @@ import {
     Max,
     Min,
   } from 'class-validator';
+import { ObjectId } from 'mongoose';
   
   export class CreateRegistroDonacionesDto {
-    // @IsString()
-    // no_registro: string;
+   
   
     @IsString()
     @Length(11,11)
     ci: string;
   
     @IsString()
-    componente: string; //Nomenclador
+    componente: ObjectId; //Nomenclador
   
     @IsString()
     porParte_de: string;

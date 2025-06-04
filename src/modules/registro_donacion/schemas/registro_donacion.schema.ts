@@ -1,8 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
-import { Componentes } from 'src/modules/componentes/schemas/componentes.schemas';
+import { Componentes } from 'src/modules/componentes_donacion/schemas/componentes.schemas';
 import { Historia_Clinica } from 'src/modules/historia_clinica/schema/historia_clinica.schema';
 import { Persona } from 'src/modules/persona/schema/persona.schema';
+
+
+
 
 @Schema()
 export class RegistroDonacion {
@@ -13,7 +16,7 @@ export class RegistroDonacion {
     type: Types.ObjectId,
     ref: 'Persona',
     required: true,
-    index: true
+    index: true,
   })
   persona: Persona;
 
@@ -21,12 +24,13 @@ export class RegistroDonacion {
     type: Types.ObjectId,
     ref: 'Historia_Clinica',
     required: true,
-    index: true
+    index: true,
   })
   historiaClinica: Historia_Clinica;
 
   @Prop({ type: Types.ObjectId, ref: Componentes.name })
-  componente: Componentes; //Nomenclador 
+  componente: Componentes; //Nomenclador
+
 
   @Prop()
   nombre_tecnico: string;
@@ -71,18 +75,18 @@ export class RegistroDonacion {
   apto_examenFisico?: boolean;
 
   @Prop()
-  respuestas_interrogatorio?: [{
-    respuesta?: boolean,
-    respuesta_escrita?: string
-  }];
+  respuestas_interrogatorio?: [
+    {
+      respuesta?: boolean;
+      respuesta_escrita?: string;
+    },
+  ];
 
   @Prop()
   apto_interrogatorio?: boolean;
 
   @Prop()
   observacion_interrogatorio?: string;
-
-
 }
 
 export const RegistroDonacionSchema =
