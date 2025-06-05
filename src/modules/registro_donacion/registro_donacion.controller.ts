@@ -44,6 +44,17 @@ export class RegistroDonacionController {
     return this.service.getDatosCompletos();
   }
 
+  @Get('observacion')
+  @ApiOperation({ summary: 'Lista donantes no aptos y su observación' })
+  async getDonantesNoAptos() {
+    return this.service.getDonantesNoAptos();
+  }
+
+  @Get('donaciones-diarias')
+  async getDonacionesDiarias() {
+    return this.service.getDonacionesDiarias();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Obtiene un registro por ID' })
   async getOne(@Param('id') id: string) {
@@ -92,15 +103,4 @@ export class RegistroDonacionController {
   }
 
 
-
-  /*@Get('datos-completos/:ci')
-  @ApiOperation({ summary: 'Obtiene todos los datos relacionados con una donación' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Datos completos obtenidos exitosamente',
-    type: Object // Puedes crear un DTO específico para esto
-  })
-  async getDatosCompletos(@Param('ci') ci: string) {
-    return this.service.getDatosCompletosDonacion(ci);
-  }*/
 }

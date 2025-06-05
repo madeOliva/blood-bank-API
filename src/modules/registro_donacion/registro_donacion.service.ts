@@ -164,7 +164,7 @@ export class RegistroDonacionService {
     }));
   }
 
-  async getDatosCompletos(){
+  async getDatosCompletos() {
     const registros = await this.registroDonacionModel
       .find()
       .populate('persona', 'nombre primer_apellido segundo_apellido')
@@ -186,4 +186,40 @@ export class RegistroDonacionService {
           : "",
     }));
   }
+
+  async getDonantesNoAptos() {
+    // Busca todos los registros donde apto_interrogatorio es false
+    const registros = await this.registroDonacionModel
+      .find({ apto_interrogatorio: false })
+      .populate('persona', 'ci nombre primer_apellido segundo_apellido')
+      .exec();
+
+    // Devuelve CI y observación (ajusta el campo de observación según tu modelo)
+    return registros.map((reg: any) => ({
+      ci: reg.persona?.ci || reg.ci,
+      nombre: reg.persona?.nombre,
+      primer_apellido: reg.persona?.primer_apellido,
+      segundo_apellido: reg.persona?.segundo_apellido, 
+      observacion_interrogatorio: reg.observacion_interrogatorio || "No Observación", 
+    }));
+  }
+
+  async getDonacionesDiarias() {
+  const registros = await this.registroDonacionModel
+    .find()
+    .populate('persona', 'sexo edad')
+    .populate('historiaClinica', 'no_hc')
+    .exec();
+
+  return registros.map((reg: any) => ({
+    id: reg._id,
+    no_hc: reg.historiaClinica.no_hc, 
+    sexo: reg.persona?.sexo,
+    edad: reg.persona?.edad,
+    examenP_grupo: reg.examenP_grupo,
+    examenP_factor: reg.examenP_factor,
+    entidad: "Banco de Sangre", // Valor por defecto
+    
+  }));
+}
 }
