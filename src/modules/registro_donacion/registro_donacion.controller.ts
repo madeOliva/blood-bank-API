@@ -19,12 +19,10 @@ import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 export class RegistroDonacionController {
   constructor(private readonly service: RegistroDonacionService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Obtiene todos los registros por cédula' })
-  @ApiParam({ name: 'ci', type: String })
-  async getAll(@Query('ci') ci: string) {
-    if (!ci) throw new BadRequestException('El parámetro ci es requerido');
-    return this.service.getAll(ci);
+  @Get('obtener-todos')
+  @ApiOperation({ summary: 'Obtiene todos los registros de donacion' })
+  async findAll() {
+    return this.service.findAllDonation();
   }
 
   @Get(':id')
@@ -86,14 +84,5 @@ export class RegistroDonacionController {
     return this.service.getDatosCompletosDonacion(id);
   }
 
-  /*@Get('datos-completos/:ci')
-  @ApiOperation({ summary: 'Obtiene todos los datos relacionados con una donación' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Datos completos obtenidos exitosamente',
-    type: Object // Puedes crear un DTO específico para esto
-  })
-  async getDatosCompletos(@Param('ci') ci: string) {
-    return this.service.getDatosCompletosDonacion(ci);
-  }*/
+  
 }

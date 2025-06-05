@@ -12,18 +12,17 @@ export class RegistroDonacion {
   @Prop({ unique: true })
   no_registro: string;
 
-  @Prop({
-    type: Types.ObjectId,
-    ref: 'Persona',
-    required: true,
-    index: true,
-  })
-  persona: Persona;
+  // @Prop({
+  //   type: Types.ObjectId,
+  //   ref: 'Persona',
+  //   required: true,
+  //   index: true,
+  // })
+  // persona: Persona;
 
   @Prop({
     type: Types.ObjectId,
     ref: 'Historia_Clinica',
-    required: true,
     index: true,
   })
   historiaClinica: Historia_Clinica;
@@ -41,9 +40,7 @@ export class RegistroDonacion {
   @Prop()
   nombre_unidad: string;
 
-  @Prop({ required: true })
-  porParte_de: string;
-
+  
   @Prop()
   examenP_grupo?: string;
 
