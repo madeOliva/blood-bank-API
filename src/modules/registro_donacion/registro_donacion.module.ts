@@ -21,6 +21,5 @@ import { RegistroDonacionController } from './registro_donacion.controller';
   controllers: [RegistroDonacionController],
   providers: [RegistroDonacionService],
   exports: [RegistroDonacionService],
-  controllers: [RegistroDonacionController],
 })
 export class RegistroDonacionModule {}

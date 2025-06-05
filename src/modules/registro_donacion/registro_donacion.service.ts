@@ -8,7 +8,6 @@ import { CreateRegistroDonacionesDto } from './dto/create-registro_donacion.dto'
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Historia_Clinica } from '../historia_clinica/schema/historia_clinica.schema';
-import { Persona } from '../persona/schema/persona.schema';
 import { RegistroDonacion } from './schemas/registro_donacion.schema';
 import { Donacion } from '../donacion/schemas/donacion.schemas';
 import { Componentes } from '../componentes_donacion/schemas/componentes.schemas';
@@ -18,8 +17,6 @@ export class RegistroDonacionService {
   constructor(
     @InjectModel(RegistroDonacion.name)
     private registroDonacionModel: Model<RegistroDonacion>,
-    @InjectModel(Persona.name)
-    private personaModel: Model<Persona>,
     @InjectModel(Historia_Clinica.name)
     private historiaclinicaModel: Model<Historia_Clinica>,
     @InjectModel(Donacion.name)
@@ -145,13 +142,11 @@ export class RegistroDonacionService {
   async findAll() {
     const registros = await this.registroDonacionModel
       .find()
-      .populate('persona', 'ci nombre primer_apellido segundo_apellido edad sexo')
-      .populate('historiaClinica', 'grupo_sanguine factor donante_de')
+      .populate('historiaClinica', 'ci nombre primer_apellido segundo_apellido edad sexo grupo_sanguine factor donante_de')
       .exec();
 
     return registros.map((reg: any) => ({
       _id: reg._id,
-      persona: reg.persona,
       historiaClinica: reg.historiaClinica,
     }));
   }
@@ -159,15 +154,15 @@ export class RegistroDonacionService {
   async getDatosCompletos() {
     const registros = await this.registroDonacionModel
       .find()
-      .populate('persona', 'nombre primer_apellido segundo_apellido')
+      .populate('historiaClinica', 'nombre primer_apellido segundo_apellido')
       .exec();
 
     if (!registros) throw new NotFoundException('Registro no encontrado');
 
     return registros.map((reg: any) => ({
-      nombre: reg.persona?.nombre,
-      primer_apellido: reg.persona?.primer_apellido,
-      segundo_apellido: reg.persona?.segundo_apellido,
+      nombre: reg.historiaClinica?.nombre,
+      primer_apellido: reg.historiaClinica?.primer_apellido,
+      segundo_apellido: reg.historiaClinica?.segundo_apellido,
       examenP_grupo: reg.examenP_grupo,
       examenP_factor: reg.examenP_factor,
       examenP_hemoglobina: reg.examenP_hemoglobina,
@@ -188,10 +183,10 @@ export class RegistroDonacionService {
 
     // Devuelve CI y observación (ajusta el campo de observación según tu modelo)
     return registros.map((reg: any) => ({
-      ci: reg.persona?.ci || reg.ci,
-      nombre: reg.persona?.nombre,
-      primer_apellido: reg.persona?.primer_apellido,
-      segundo_apellido: reg.persona?.segundo_apellido,
+      ci: reg.historiaClinica?.ci || reg.ci,
+      nombre: reg.historiaClinica?.nombre,
+      primer_apellido: reg.historiaClinica?.primer_apellido,
+      segundo_apellido: reg.historiaClinica?.segundo_apellido,
       observacion_interrogatorio: reg.observacion_interrogatorio || "No Observación",
     }));
   }
@@ -199,17 +194,18 @@ export class RegistroDonacionService {
   async getDonacionesDiarias() {
     const registros = await this.registroDonacionModel
       .find()
-      .populate('persona', 'sexo edad')
-      .populate('historiaClinica', 'no_hc')
+      .populate('historiaClinica', 'sexo edad no_hc')
       .exec();
 
     return registros.map((reg: any) => ({
       id: reg._id,
       no_hc: reg.historiaClinica.no_hc,
-      sexo: reg.persona?.sexo,
-      edad: reg.persona?.edad,
+      sexo: reg.historiaClinica?.sexo,
+      edad: reg.historiaClinica?.edad,
       examenP_grupo: reg.examenP_grupo,
       examenP_factor: reg.examenP_factor,
+      volumen: reg.volumen,
+      estado: reg.estado,
       entidad: "Banco de Sangre", // Valor por defecto
     }));
   }
