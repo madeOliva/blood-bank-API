@@ -17,7 +17,7 @@ import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 @ApiTags('Registro de Donación')
 @Controller('registro-donacion')
 export class RegistroDonacionController {
-  constructor(private readonly service: RegistroDonacionService) {}
+  constructor(private readonly service: RegistroDonacionService) { }
 
   @Get()
   @ApiOperation({ summary: 'Obtiene todos los registros por cédula' })
@@ -25,6 +25,23 @@ export class RegistroDonacionController {
   async getAll(@Query('ci') ci: string) {
     if (!ci) throw new BadRequestException('El parámetro ci es requerido');
     return this.service.getAll(ci);
+  }
+
+  @Get('find')
+  async findAll() {
+    return this.service.findAll();
+  }
+
+  @Get('datos')
+  @ApiOperation({
+    summary: 'Obtiene datos combinados de persona y registro de donación',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Datos combinados obtenidos exitosamente',
+  })
+  async getDatosCompletos() {
+    return this.service.getDatosCompletos();
   }
 
   @Get(':id')
@@ -74,17 +91,7 @@ export class RegistroDonacionController {
     return this.service.delete(id);
   }
 
-  @Get(':id/datos-completos')
-  @ApiOperation({
-    summary: 'Obtiene datos combinados de persona y registro de donación',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Datos combinados obtenidos exitosamente',
-  })
-  async getDatosCompletos(@Param('id') id: string) {
-    return this.service.getDatosCompletosDonacion(id);
-  }
+
 
   /*@Get('datos-completos/:ci')
   @ApiOperation({ summary: 'Obtiene todos los datos relacionados con una donación' })

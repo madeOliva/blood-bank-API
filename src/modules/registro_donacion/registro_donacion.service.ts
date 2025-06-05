@@ -26,7 +26,7 @@ export class RegistroDonacionService {
     private donacionModel: Model<Donacion>,
     @InjectModel(Componentes.name)
     private componentesModel: Model<Componentes>,
-  ) {}
+  ) { }
 
   async getOne(id: string) {
     const registro = await this.registroDonacionModel.findById(id).exec();
@@ -122,6 +122,8 @@ export class RegistroDonacionService {
       .populate('persona')
       .populate('historiaClinica')
       .exec();
+
+
   }
 
   async update(
@@ -148,40 +150,40 @@ export class RegistroDonacionService {
     return deletedRegistro;
   }
 
-  async getDatosCompletosDonacion(id: string) {
-    // 1. Obtener el registro de donación
-    const registro = await this.registroDonacionModel
-      .findById(id)
-      .populate('persona', ' ci nombre primer_apellido segundo_apellido')
-      .lean()
+  async findAll() {
+    const registros = await this.registroDonacionModel
+      .find()
+      .populate('persona', 'ci nombre primer_apellido segundo_apellido edad sexo')
+      .populate('historiaClinica', 'grupo_sanguine factor donante_de')
       .exec();
 
-    if (!registro) {
-      throw new NotFoundException(
-        `Registro de donación con ID ${id} no encontrado`,
-      );
-    }
+    return registros.map((reg: any) => ({
+      _id: reg._id,
+      persona: reg.persona,
+      historiaClinica: reg.historiaClinica,
+    }));
+  }
 
-    // 2. Extraer los datos necesarios
-    const datosPersona = {
-      ci: registro.persona.ci,
-      nombre: registro.persona.nombre,
-      primer_apellido: registro.persona.primer_apellido,
-      segundo_apellido: registro.persona.segundo_apellido,
-    };
+  async getDatosCompletos(){
+    const registros = await this.registroDonacionModel
+      .find()
+      .populate('persona', 'nombre primer_apellido segundo_apellido')
+      .exec();
 
-    const datosRegistro = {
-      _id: registro._id,
-      examenP_grupo: registro.examenP_grupo,
-      examenP_factor: registro.examenP_factor,
-      examenP_hemoglobina: registro.examenP_hemoglobina,
-      apto_prechequeo: registro.apto_prechequeo,
-    };
+    if (!registros) throw new NotFoundException('Registro no encontrado');
 
-    // 3. Retornar la estructura combinada
-    return {
-      datosPersona,
-      datosRegistro,
-    };
+    return registros.map((reg: any) => ({
+      nombre: reg.persona?.nombre,
+      primer_apellido: reg.persona?.primer_apellido,
+      segundo_apellido: reg.persona?.segundo_apellido,
+      examenP_grupo: reg.examenP_grupo,
+      examenP_factor: reg.examenP_factor,
+      examenP_hemoglobina: reg.examenP_hemoglobina,
+      apto_prechequeo: reg.apto_prechequeo === true
+        ? "Apto"
+        : reg.apto_prechequeo === false
+          ? "No Apto"
+          : "",
+    }));
   }
 }
