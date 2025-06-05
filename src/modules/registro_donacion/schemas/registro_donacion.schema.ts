@@ -1,11 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 import { Componentes } from 'src/modules/componentes_donacion/schemas/componentes.schemas';
+import { Estados } from 'src/modules/estados/schemas/estados.schemas';
 import { Historia_Clinica } from 'src/modules/historia_clinica/schema/historia_clinica.schema';
 import { Persona } from 'src/modules/persona/schema/persona.schema';
-
-
-
+import { Reacciones } from 'src/modules/reacciones/schemas/reacciones.schemas';
 
 @Schema()
 export class RegistroDonacion {
@@ -26,21 +25,120 @@ export class RegistroDonacion {
     index: true,
   })
   historiaClinica: Historia_Clinica;
+  
+  @Prop()
+  ci_donante: string;
 
   @Prop({ type: Types.ObjectId, ref: Componentes.name })
   componente: Componentes; //Nomenclador
 
-
   @Prop()
   nombre_tecnico: string;
 
-  @Prop()
+  
+   @Prop()
   fecha_inscripcion: Date;
 
   @Prop()
   nombre_unidad: string;
 
+
+
+  //DONACION
+  @Prop({ required: true, unique: true })
+  no_tubuladura: string;
+
+  @Prop({ required: true })
+  no_lote: string;
+
+  @Prop({ type: Types.ObjectId, ref: Estados.name, required: true })
+  estado: Types.ObjectId; //Nomenclador
+
+  @Prop({ type: Types.ObjectId, ref: Reacciones.name, required: true })
+  reaccion: Types.ObjectId; //Nomenclador
   
+  
+  @Prop({ default: Date.now })
+  fechaD: Date;
+
+  @Prop({ default: false })
+  es_desecho: boolean;
+
+  @Prop()
+  numero_consecutivo: number;
+
+  //Donacion de Sangre
+  @Prop({ required: true })
+  tipo_bolsa: string;
+
+  @Prop({ required: true })
+  volumen: number;
+
+  //Donacion de Plasma
+  @Prop({ required: true })
+  TCM: number;
+
+  @Prop({ required: true })
+  TP: number;
+
+  @Prop({ required: true })
+  tiempo: number; //en segundos
+
+  @Prop({ required: true })
+  ciclos: number;
+
+  @Prop({ required: true })
+  ACD: string;
+
+  @Prop({ required: true })
+  no_lote_kitACD: string;
+
+  @Prop({ required: true })
+  no_lote_kitBach: string;
+
+  //Laboratorio
+
+  @Prop()
+  resultado_VIH: boolean[];
+
+  @Prop()
+  resultado_hepatitisB: boolean[];
+
+  @Prop()
+  resultado_hepatitisC: boolean[];
+
+  @Prop()
+  confirmatoria_hepatitisB: boolean[];
+
+  @Prop()
+  resultado_tipage: string[];
+
+  @Prop()
+  resultado_contratipaje: string[];
+
+  @Prop()
+  resultado_DU: boolean[];
+
+  @Prop()
+  resultado_serologia: boolean[];
+
+  @Prop()
+  resultado_eritro: number[];
+
+  @Prop()
+  resultado_hematocrito: number[];
+
+  @Prop()
+  resultado_proteinas_totales: number[];
+
+  @Prop()
+  resultado_TGP: number[];
+
+  @Prop()
+  resultado_hemoglobina: number[];
+
+
+ //SELECCION Y PRECHEQUEO
   @Prop()
   examenP_grupo?: string;
 
