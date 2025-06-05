@@ -26,8 +26,6 @@ import { MunicipioModule } from './modules/municipio/municipio.module';
 import { PlanTrabajoModule } from './modules/plan_trabajo/plan_trabajo.module';
 import { PedidosDevolucionesModule } from './modules/pedidos_devoluciones/pedidos_devoluciones.module';
 import { HctransfusionesModule } from './modules/hctransfusiones/hctransfusiones.module';
-import { PruebaspostransfusionalesModule } from './modules/pruebaspostransfusionales/pruebaspostransfusionales.module';
-import { PruebaspretransfusionalesModule } from './modules/pruebaspretransfusionales/pruebaspretransfusionales.module';
 import { StockbancohasModule } from './modules/stockbancohas/stockbancohas.module';
 import { TipocomponenteModule } from './modules/tipocomponente/tipocomponente.module';
 import { TipocomponenteespecialModule } from './modules/tipocomponenteespecial/tipocomponenteespecial.module';
@@ -81,8 +79,6 @@ import { HistoriaClinicaModule } from './modules/historia_clinica/historia_clini
     PlanTrabajoModule,
     PreguntaModule,
     ProvinciaModule,
-    PruebaspostransfusionalesModule,
-    PruebaspretransfusionalesModule,
     ReaccionesModule,
     RegistroDonacionModule,
     SalaModule,
