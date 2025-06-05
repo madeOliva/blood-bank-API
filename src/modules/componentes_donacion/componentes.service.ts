@@ -27,7 +27,7 @@ export class ComponentesService {
   async create(createComponenteDto: CreateComponenteDto) {
   // Busca si ya existe un componente con ese nombre
   const existComponentes = await this.componentesModel.findOne({
-    nombre_componente: createComponenteDto.nombre_componente,
+    nombre_componente: createComponenteDto.nombreComponente,
   });
 
   if (existComponentes) {
@@ -36,7 +36,7 @@ export class ComponentesService {
 
   // Crea el nuevo componente
   const newComponentes = new this.componentesModel({
-    nombre_componente: createComponenteDto.nombre_componente,
+    nombre_componente: createComponenteDto.nombreComponente,
     // agrega aquí otros campos si es necesario
   });
 

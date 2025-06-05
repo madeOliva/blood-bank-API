@@ -3,7 +3,7 @@ import { IsNumber, IsString } from "class-validator";
 
 export class CreateComponenteDto{
     @IsString()
-    nombre_componente:string;
+    nombreComponente:string;
 
     @IsNumber()
     diasEsperaMasculino : number;

@@ -7,6 +7,7 @@ import {
   IsNotEmpty,
   Min,
   Length,
+  IsOptional,
 } from 'class-validator';
 export class CreateHistoriaClinicaDto {
   @IsString()
@@ -82,7 +83,7 @@ export class CreateHistoriaClinicaDto {
   centro_laboral: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   otra_localizacion: string;
 
   @IsString()
