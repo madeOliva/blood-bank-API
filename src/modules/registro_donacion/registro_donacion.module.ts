@@ -18,6 +18,7 @@ import { RegistroDonacionController } from './registro_donacion.controller';
       { name: Componentes.name, schema: ComponentesSchema },
     ]),
   ],
+  controllers: [RegistroDonacionController],
   providers: [RegistroDonacionService],
   exports: [RegistroDonacionService],
   controllers: [RegistroDonacionController],
