@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
+import { Componentes } from 'src/modules/componentes_donacion/schemas/componentes.schemas';
 import { Estados } from 'src/modules/estados/schemas/estados.schemas';
 import { Reacciones } from 'src/modules/reacciones/schemas/reacciones.schemas';
 
@@ -14,6 +15,9 @@ export class Donacion {
 
   @Prop()
   ci_donante: string;
+
+  @Prop({ type: Types.ObjectId, ref: Componentes.name })
+  componente: Componentes; //Nomenclador
 
   @Prop({ type: Types.ObjectId, ref: Estados.name, required: true })
   estado: Types.ObjectId; //Nomenclador

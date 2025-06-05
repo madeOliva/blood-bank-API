@@ -1,21 +1,28 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { UpdateRegistroDonacionDto } from "./dto/update-registro_donacion.dto";
-import { CreateRegistroDonacionesDto } from "./dto/create-registro_donacion.dto";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { Historia_Clinica } from "../historia_clinica/schema/historia_clinica.schema";
-import { Persona } from "../persona/schema/persona.schema";
-import { RegistroDonacion } from "./schemas/registro_donacion.schema";
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { UpdateRegistroDonacionDto } from './dto/update-registro_donacion.dto';
+import { CreateRegistroDonacionesDto } from './dto/create-registro_donacion.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Historia_Clinica } from '../historia_clinica/schema/historia_clinica.schema';
+import { RegistroDonacion } from './schemas/registro_donacion.schema';
+import { Donacion } from '../donacion/schemas/donacion.schemas';
+import { Componentes } from '../componentes_donacion/schemas/componentes.schemas';
 
 @Injectable()
 export class RegistroDonacionService {
   constructor(
     @InjectModel(RegistroDonacion.name)
     private registroDonacionModel: Model<RegistroDonacion>,
-    @InjectModel(Persona.name)
-    private personaModel: Model<Persona>,
     @InjectModel(Historia_Clinica.name)
     private historiaclinicaModel: Model<Historia_Clinica>,
+    @InjectModel(Donacion.name)
+    private donacionModel: Model<Donacion>,
+    @InjectModel(Componentes.name)
+    private componentesModel: Model<Componentes>,
   ) { }
 
   async getOne(id: string) {
@@ -27,33 +34,91 @@ export class RegistroDonacionService {
   }
 
   async create(ci: string, createDto: CreateRegistroDonacionesDto) {
-    // Buscar persona y historia clínica
-    const persona = await this.personaModel.findOne({ ci });
-    if (!persona) throw new NotFoundException(`Persona con ci ${ci} no encontrada`);
+    try {
+      const historia = await this.historiaclinicaModel.findOne({ ci });
+      const fechaActual = new Date();
+      const componente = await this.componentesModel.findById(
+        createDto.componente,
+      );
+      if (!componente) {
+        throw new NotFoundException('Componente no encontrado');
+      }
+      const siglasComponente = componente.siglas;
+      const numeroHC = ci;
+      const anio = new Date().getFullYear();
+      const numeroConsecutivo =
+        (await this.registroDonacionModel.countDocuments({
+          fecha_registro: {
+            $gte: new Date(`${anio}-01-01T00:00:00.000Z`),
+            $lte: new Date(`${anio}-12-31T23:59:59.999Z`),
+          },
+        })) + 1;
+      const no_registro = `${siglasComponente}-${numeroHC}.${anio}.${numeroConsecutivo}`;
 
-    const historia = await this.historiaclinicaModel.findOne({ ci });
-    if (!historia) throw new NotFoundException(`Historia clínica para ci ${ci} no encontrada`);
+      if (!historia) {
+        const newRegistro = new this.registroDonacionModel({
+          ...createDto,
+          fecha_registro: fechaActual,
+          no_registro,
+        });
+        return newRegistro.save();
+      } else {
+        const sexo = historia.sexo;
+        const ultimaDonacion = await this.donacionModel
+          .findOne({
+            historia: historia._id,
+          })
+          .sort({ fecha: -1 });
 
-    const newRegistro = new this.registroDonacionModel({
-      ...createDto,
-      persona: persona._id,
-      historiaClinica: historia._id
-    });
+        if (ultimaDonacion) {
+          const ultimaFecha = new Date(ultimaDonacion.fecha);
+          const diasDiferencia =
+            (fechaActual.getTime() - ultimaFecha.getTime()) /
+            (1000 * 60 * 60 * 24);
 
-    return newRegistro.save();
+          const diasEsperaMasculino =
+            ultimaDonacion.componente.diasEsperaMasculino;
+          const diasEsperaFemenino = ultimaDonacion.componente.diasEsperaFemenino;
+          const nombreComponente = ultimaDonacion.componente.nombreComponente;
+
+          if (sexo === 'M' && diasEsperaMasculino < diasDiferencia) {
+            throw new ConflictException(
+              `Debe esperar al menos ${diasEsperaMasculino}  días entre donaciones de ${nombreComponente} para el sexo masculino. Última donación: ${ultimaFecha.toLocaleDateString()}`,
+            );
+          }
+          if (sexo === 'F' && diasEsperaFemenino < diasDiferencia) {
+            throw new ConflictException(
+              `Debe esperar al menos ${diasEsperaFemenino}  días entre donaciones de ${nombreComponente} para el sexo femenino. Última donación: ${ultimaFecha.toLocaleDateString()}`,
+            );
+          }
+        }
+        const newRegistro = new this.registroDonacionModel({
+          ...createDto,
+          historiaClinica: historia._id,
+          fecha_registro: fechaActual,
+          no_registro,
+        });
+        return newRegistro.save();
+      }
+    } catch (error) {
+      console.error("Error al crear registro de donacion", error)
+      throw error;
+    }
   }
 
-  async getAll(ci: string) {
-    const persona = await this.personaModel.findOne({ ci });
-    if (!persona) throw new NotFoundException(`Persona con ci ${ci} no encontrada`);
-
-    return this.registroDonacionModel.find({ persona: persona._id })
-      .populate('persona')
-      .populate('historiaClinica')
-      .exec();
+  async findAllDonation(): Promise<RegistroDonacion[] | { message: string }> {
+    try {
+      return this.registroDonacionModel.find();
+    } catch (error) {
+      console.error('Error al obtener registros de donación:', error);
+      throw error;
+    }
   }
 
-  async update(id: string, updateRegistroDonacionDto: UpdateRegistroDonacionDto) {
+  async update(
+    id: string,
+    updateRegistroDonacionDto: UpdateRegistroDonacionDto,
+  ) {
     const updatedRegistro = await this.registroDonacionModel
       .findByIdAndUpdate(id, updateRegistroDonacionDto, { new: true })
       .exec();
@@ -65,49 +130,83 @@ export class RegistroDonacionService {
   }
 
   async delete(id: string) {
-    const deletedRegistro = await this.registroDonacionModel.findByIdAndDelete(id).exec();
+    const deletedRegistro = await this.registroDonacionModel
+      .findByIdAndDelete(id)
+      .exec();
     if (!deletedRegistro) {
       throw new NotFoundException(`Registro con ID ${id} no encontrado`);
     }
     return deletedRegistro;
   }
 
-  async getDatosCompletosDonacion(id: string) {
-    // 1. Obtener el registro de donación
-    const registro = await this.registroDonacionModel
-      .findById(id)
-      .populate('persona', ' ci nombre primer_apellido segundo_apellido')
-      .lean()
+  async findAll() {
+    const registros = await this.registroDonacionModel
+      .find()
+      .populate('historiaClinica', 'ci nombre primer_apellido segundo_apellido edad sexo grupo_sanguine factor donante_de')
       .exec();
 
-    if (!registro) {
-      throw new NotFoundException(`Registro de donación con ID ${id} no encontrado`);
-    }
-
-    // 2. Extraer los datos necesarios
-    const datosPersona = {
-      ci: registro.persona.ci,
-      nombre: registro.persona.nombre,
-      primer_apellido: registro.persona.primer_apellido,
-      segundo_apellido: registro.persona.segundo_apellido
-    };
-
-    const datosRegistro = {
-      _id: registro._id,
-      examenP_grupo: registro.examenP_grupo,
-      examenP_factor: registro.examenP_factor,
-      examenP_hemoglobina: registro.examenP_hemoglobina,
-      apto_prechequeo: registro.apto_prechequeo
-    };
-
-    // 3. Retornar la estructura combinada
-    return {
-      datosPersona,
-      datosRegistro
-    };
+    return registros.map((reg: any) => ({
+      _id: reg._id,
+      historiaClinica: reg.historiaClinica,
+    }));
   }
 
+  async getDatosCompletos() {
+    const registros = await this.registroDonacionModel
+      .find()
+      .populate('historiaClinica', 'nombre primer_apellido segundo_apellido')
+      .exec();
+
+    if (!registros) throw new NotFoundException('Registro no encontrado');
+
+    return registros.map((reg: any) => ({
+      nombre: reg.historiaClinica?.nombre,
+      primer_apellido: reg.historiaClinica?.primer_apellido,
+      segundo_apellido: reg.historiaClinica?.segundo_apellido,
+      examenP_grupo: reg.examenP_grupo,
+      examenP_factor: reg.examenP_factor,
+      examenP_hemoglobina: reg.examenP_hemoglobina,
+      apto_prechequeo: reg.apto_prechequeo === true
+        ? "Apto"
+        : reg.apto_prechequeo === false
+          ? "No Apto"
+          : "",
+    }));
+  }
+
+  async getDonantesNoAptos() {
+    // Busca todos los registros donde apto_interrogatorio es false
+    const registros = await this.registroDonacionModel
+      .find({ apto_interrogatorio: false })
+      .populate('persona', 'ci nombre primer_apellido segundo_apellido')
+      .exec();
+
+    // Devuelve CI y observación (ajusta el campo de observación según tu modelo)
+    return registros.map((reg: any) => ({
+      ci: reg.historiaClinica?.ci || reg.ci,
+      nombre: reg.historiaClinica?.nombre,
+      primer_apellido: reg.historiaClinica?.primer_apellido,
+      segundo_apellido: reg.historiaClinica?.segundo_apellido,
+      observacion_interrogatorio: reg.observacion_interrogatorio || "No Observación",
+    }));
+  }
+
+  async getDonacionesDiarias() {
+    const registros = await this.registroDonacionModel
+      .find()
+      .populate('historiaClinica', 'sexo edad no_hc')
+      .exec();
+
+    return registros.map((reg: any) => ({
+      id: reg._id,
+      no_hc: reg.historiaClinica.no_hc,
+      sexo: reg.historiaClinica?.sexo,
+      edad: reg.historiaClinica?.edad,
+      examenP_grupo: reg.examenP_grupo,
+      examenP_factor: reg.examenP_factor,
+      volumen: reg.volumen,
+      estado: reg.estado,
+      entidad: "Banco de Sangre", // Valor por defecto
+    }));
+  }
 }
-
-
-
