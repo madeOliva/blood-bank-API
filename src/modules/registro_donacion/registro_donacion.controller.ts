@@ -53,6 +53,11 @@ export class RegistroDonacionController {
     return this.service.getDonacionesDiarias();
   }
 
+  @Get('prechequeo/:id')
+getPrechequeoById(@Param('id') id: string) {
+  return this.service.getPrechequeoById(id);
+}
+
   @Get(':id')
   @ApiOperation({ summary: 'Obtiene un registro por ID' })
   async getOne(@Param('id') id: string) {

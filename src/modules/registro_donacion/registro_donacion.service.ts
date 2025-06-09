@@ -160,33 +160,45 @@ export class RegistroDonacionService {
     if (!registros) throw new NotFoundException('Registro no encontrado');
 
     return registros.map((reg: any) => ({
-      nombre: reg.historiaClinica?.nombre,
-      primer_apellido: reg.historiaClinica?.primer_apellido,
-      segundo_apellido: reg.historiaClinica?.segundo_apellido,
+      _id: reg._id,
+      nombre: reg.historiaClinica?.nombre || "",
+      primer_apellido: reg.historiaClinica?.primer_apellido || "",
+      segundo_apellido: reg.historiaClinica?.segundo_apellido || "",
       examenP_grupo: reg.examenP_grupo,
       examenP_factor: reg.examenP_factor,
       examenP_hemoglobina: reg.examenP_hemoglobina,
-      apto_prechequeo: reg.apto_prechequeo === true
-        ? "Apto"
-        : reg.apto_prechequeo === false
-          ? "No Apto"
-          : "",
+      apto_prechequeo:
+        reg.apto_prechequeo === true
+          ? "Apto"
+          : reg.apto_prechequeo === false
+            ? "No Apto"
+            : "",
     }));
   }
+
+  async getPrechequeoById(id: string) {
+  const reg = await this.registroDonacionModel.findById(id).exec();
+  if (!reg) throw new NotFoundException('Registro no encontrado');
+  return {
+    examenP_grupo: reg.examenP_grupo,
+    examenP_factor: reg.examenP_factor,
+    examenP_hemoglobina: reg.examenP_hemoglobina,
+  };
+}
 
   async getDonantesNoAptos() {
     // Busca todos los registros donde apto_interrogatorio es false
     const registros = await this.registroDonacionModel
       .find({ apto_interrogatorio: false })
-      .populate('persona', 'ci nombre primer_apellido segundo_apellido')
+      .populate('historiaClinica', 'ci nombre primer_apellido segundo_apellido')
       .exec();
 
     // Devuelve CI y observación (ajusta el campo de observación según tu modelo)
     return registros.map((reg: any) => ({
       ci: reg.historiaClinica?.ci || reg.ci,
-      nombre: reg.historiaClinica?.nombre,
-      primer_apellido: reg.historiaClinica?.primer_apellido,
-      segundo_apellido: reg.historiaClinica?.segundo_apellido,
+     nombre: reg.historiaClinica?.nombre || "",
+      primer_apellido: reg.historiaClinica?.primer_apellido || "",
+      segundo_apellido: reg.historiaClinica?.segundo_apellido || "",
       observacion_interrogatorio: reg.observacion_interrogatorio || "No Observación",
     }));
   }
