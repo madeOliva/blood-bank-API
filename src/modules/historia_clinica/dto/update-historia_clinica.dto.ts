@@ -1,12 +1,40 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateHistoriaClinicaDto } from './create-historia_clinica.dto';
-import { IsBoolean, IsString, IsNotEmpty } from 'class-validator';
+import { IsBoolean, IsString, IsNotEmpty, IsNumber } from 'class-validator';
 export class UpdateHistoriaClinicaDto extends PartialType(
   CreateHistoriaClinicaDto,
 ) {
   @IsString()
   @IsNotEmpty()
   ci: string;
+
+  @IsString()
+  @IsNotEmpty()
+  nombre: string;
+
+  @IsString()
+  @IsNotEmpty()
+  primer_apellido: string;
+
+  @IsString()
+  @IsNotEmpty()
+  segundo_apellido: string;
+
+  @IsString()
+  @IsNotEmpty()
+  sexo: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  edad: number;
+
+  @IsString()
+  @IsNotEmpty()
+  estado_civil: string;
+
+  @IsString()
+  @IsNotEmpty()
+  municipio: string;
 
   @IsString()
   @IsNotEmpty()

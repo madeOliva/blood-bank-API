@@ -12,23 +12,51 @@ import {
 import { RegistroDonacionService } from './registro_donacion.service';
 import { CreateRegistroDonacionesDto } from './dto/create-registro_donacion.dto';
 import { UpdateRegistroDonacionDto } from './dto/update-registro_donacion.dto';
-import { RegistroDonacion } from './schemas/registro_donacion.schema';
 import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 
 @ApiTags('Registro de Donación')
 @Controller('registro-donacion')
 export class RegistroDonacionController {
-  constructor(
-    private readonly service: RegistroDonacionService,
-  ) {}
+  constructor(private readonly service: RegistroDonacionService) { }
 
-   @Get()
-  @ApiOperation({ summary: 'Obtiene todos los registros por cédula' })
-  @ApiParam({ name: 'ci', type: String })
-  async getAll(@Query('ci') ci: string) {
-    if (!ci) throw new BadRequestException('El parámetro ci es requerido');
-    return this.service.getAll(ci);
+  @Get('obtener-todos')
+  @ApiOperation({ summary: 'Obtiene todos los registros de donacion' })
+  async findAllDonation() {
+    return this.service.findAllDonation();
   }
+
+  @Get('find')
+  async findAll() {
+    return this.service.findAll();
+  }
+
+  @Get('datos')
+  @ApiOperation({
+    summary: 'Obtiene datos combinados de persona y registro de donación',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Datos combinados obtenidos exitosamente',
+  })
+  async getDatosCompletos() {
+    return this.service.getDatosCompletos();
+  }
+
+  @Get('observacion')
+  @ApiOperation({ summary: 'Lista donantes no aptos y su observación' })
+  async getDonantesNoAptos() {
+    return this.service.getDonantesNoAptos();
+  }
+
+  @Get('donaciones-diarias')
+  async getDonacionesDiarias() {
+    return this.service.getDonacionesDiarias();
+  }
+
+  @Get('prechequeo/:id')
+getPrechequeoById(@Param('id') id: string) {
+  return this.service.getPrechequeoById(id);
+}
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtiene un registro por ID' })
@@ -40,15 +68,22 @@ export class RegistroDonacionController {
   @ApiOperation({ summary: 'Crea un nuevo registro' })
   async create(
     @Param('ci') ci: string,
-    @Body() createDto: CreateRegistroDonacionesDto
+    @Body() createDto: CreateRegistroDonacionesDto,
   ) {
     return this.service.create(ci, createDto);
   }
 
   @ApiOperation({ summary: 'Actualizar un registro de donación' })
-  @ApiResponse({ status: 200, description: 'Registro actualizado exitosamente' })
+  @ApiResponse({
+    status: 200,
+    description: 'Registro actualizado exitosamente',
+  })
   @ApiResponse({ status: 404, description: 'Registro no encontrado' })
-  @ApiParam({ name: 'id', required: true, description: 'ID del registro a actualizar' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID del registro a actualizar',
+  })
   @Put(':id')
   update(
     @Body() updateRegistroDonacionDto: UpdateRegistroDonacionDto,
@@ -60,31 +95,33 @@ export class RegistroDonacionController {
   @ApiOperation({ summary: 'Eliminar un registro de donación' })
   @ApiResponse({ status: 200, description: 'Registro eliminado exitosamente' })
   @ApiResponse({ status: 404, description: 'Registro no encontrado' })
-  @ApiParam({ name: 'id', required: true, description: 'ID del registro a eliminar' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID del registro a eliminar',
+  })
   @Delete(':id')
   delete(@Param('id') id: string) {
     return this.service.delete(id);
   }
 
-  @Get(':id/datos-completos')
-@ApiOperation({ summary: 'Obtiene datos combinados de persona y registro de donación' })
-@ApiResponse({ 
-  status: 200, 
-  description: 'Datos combinados obtenidos exitosamente',
-
-})
-async getDatosCompletos(@Param('id') id: string) {
-  return this.service.getDatosCompletosDonacion(id);
-}
-
-  /*@Get('datos-completos/:ci')
-  @ApiOperation({ summary: 'Obtiene todos los datos relacionados con una donación' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Datos completos obtenidos exitosamente',
-    type: Object // Puedes crear un DTO específico para esto
+  @ApiOperation({ summary: 'Actualizar un registro de donación (updatee)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Registro actualizado exitosamente (updatee)',
   })
-  async getDatosCompletos(@Param('ci') ci: string) {
-    return this.service.getDatosCompletosDonacion(ci);
-  }*/
+  @ApiResponse({ status: 404, description: 'Registro no encontrado' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID del registro a actualizar',
+  })
+  @Put('updatee/:id')
+  updatee(
+    @Body() updateRegistroDonacionDto: UpdateRegistroDonacionDto,
+    @Param('id') id: string,
+  ) {
+    return this.service.updatee(id, updateRegistroDonacionDto);
+  }
+
 }

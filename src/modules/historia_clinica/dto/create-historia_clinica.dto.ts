@@ -7,11 +7,40 @@ import {
   IsNotEmpty,
   Min,
   Length,
+  IsOptional,
 } from 'class-validator';
 export class CreateHistoriaClinicaDto {
   @IsString()
   @IsNotEmpty()
   ci: string;
+
+  @IsString()
+  @IsNotEmpty()
+  nombre: string;
+
+  @IsString()
+  @IsNotEmpty()
+  primer_apellido: string;
+
+  @IsString()
+  @IsNotEmpty()
+  segundo_apellido: string;
+
+  @IsString()
+  @IsNotEmpty()
+  sexo: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  edad: number;
+
+  @IsString()
+  @IsNotEmpty()
+  estado_civil: string;
+
+  @IsString()
+  @IsNotEmpty()
+  municipio: string;
 
   @IsString()
   @IsNotEmpty()
@@ -47,10 +76,14 @@ export class CreateHistoriaClinicaDto {
 
   @IsString()
   @IsNotEmpty()
-  centro_laboral: string;
+  telefonoLaboral: string;
 
   @IsString()
   @IsNotEmpty()
+  centro_laboral: string;
+
+  @IsString()
+  @IsOptional()
   otra_localizacion: string;
 
   @IsString()

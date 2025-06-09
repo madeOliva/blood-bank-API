@@ -26,21 +26,23 @@ import { MunicipioModule } from './modules/municipio/municipio.module';
 import { PlanTrabajoModule } from './modules/plan_trabajo/plan_trabajo.module';
 import { PedidosDevolucionesModule } from './modules/pedidos_devoluciones/pedidos_devoluciones.module';
 import { HctransfusionesModule } from './modules/hctransfusiones/hctransfusiones.module';
-import { PruebaspostransfusionalesModule } from './modules/pruebaspostransfusionales/pruebaspostransfusionales.module';
-import { PruebaspretransfusionalesModule } from './modules/pruebaspretransfusionales/pruebaspretransfusionales.module';
 import { StockbancohasModule } from './modules/stockbancohas/stockbancohas.module';
 import { TipocomponenteModule } from './modules/tipocomponente/tipocomponente.module';
 import { TipocomponenteespecialModule } from './modules/tipocomponenteespecial/tipocomponenteespecial.module';
 import { TipocomponentehabitualModule } from './modules/tipocomponentehabitual/tipocomponentehabitual.module';
 import { TipopacienteModule } from './modules/tipopaciente/tipopaciente.module';
 import { ReaccionesModule } from './modules/reacciones/reacciones.module';
-import { RegistroDonacionModule } from './modules/registro_donacion/registro_donacion.module';
 import { EstadosModule } from './modules/estados/estados.module';
-import { Donacion } from './modules/donacion/schemas/donacion.schemas';
-import { ComponentesModule } from './modules/componentes/componentes.module';
+import { ComponentesModule } from './modules/componentes_donacion/componentes.module';
 import { HabitosToxicosModule } from './modules/habitos_toxicos/habitos_toxicos.module';
 import { EstanciaExtranjeroModule } from './modules/estancia_extranjero/estancia_extranjero.module';
 import { HistoriaClinicaModule } from './modules/historia_clinica/historia_clinica.module';
+import { DonacionModule } from './modules/donacion/donacion.module';
+import { RegistroDonacionModule } from './modules/registro_donacion/registro_donacion.module';
+
+
+
+
 
 
 
@@ -70,7 +72,7 @@ import { HistoriaClinicaModule } from './modules/historia_clinica/historia_clini
     ComponentesModule,
     ComponentesObtenidosModule,
     ConsejoPopularModule,
-    Donacion,
+    DonacionModule,
     EstadoCivilModule,
     EstadosModule,
     EstanciaExtranjeroModule,
@@ -85,8 +87,6 @@ import { HistoriaClinicaModule } from './modules/historia_clinica/historia_clini
     PlanTrabajoModule,
     PreguntaModule,
     ProvinciaModule,
-    PruebaspostransfusionalesModule,
-    PruebaspretransfusionalesModule,
     ReaccionesModule,
     RegistroDonacionModule,
     SalaModule,

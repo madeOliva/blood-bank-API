@@ -5,11 +5,13 @@ import { tipocomponenteespecial } from "src/modules/tipocomponenteespecial/schem
 import { tipocomponentehabitual } from "src/modules/tipocomponentehabitual/schemas/tipocomponentehabitual.schemas";
 import { tipopaciente } from "src/modules/tipopaciente/schemas/tipopaciente.schemas";
 
-
 export type stockdelbancohasDocument = HydratedDocument<stockdelbancohas>;
 
 @Schema()
 export class stockdelbancohas {
+    @Prop({required: true,unique: true})
+    id: number;
+
     @Prop({ required: true, unique: true })
     codigo_bolsa: string;
 
@@ -42,9 +44,6 @@ export class stockdelbancohas {
 
     @Prop({ required: true })
     volumen_final: number;
-
-    @Prop({ required: true })
-    estado: string;
 }
 
 export const stockdelbancohasSchema = SchemaFactory.createForClass(stockdelbancohas);
