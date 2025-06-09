@@ -104,4 +104,24 @@ getPrechequeoById(@Param('id') id: string) {
   delete(@Param('id') id: string) {
     return this.service.delete(id);
   }
+
+  @ApiOperation({ summary: 'Actualizar un registro de donación (updatee)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Registro actualizado exitosamente (updatee)',
+  })
+  @ApiResponse({ status: 404, description: 'Registro no encontrado' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID del registro a actualizar',
+  })
+  @Put('updatee/:id')
+  updatee(
+    @Body() updateRegistroDonacionDto: UpdateRegistroDonacionDto,
+    @Param('id') id: string,
+  ) {
+    return this.service.updatee(id, updateRegistroDonacionDto);
+  }
+
 }
