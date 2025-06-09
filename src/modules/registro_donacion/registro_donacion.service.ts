@@ -191,22 +191,44 @@ export class RegistroDonacionService {
     }));
   }
 
-  async getDonacionesDiarias() {
-    const registros = await this.registroDonacionModel
-      .find()
-      .populate('historiaClinica', 'sexo edad no_hc')
-      .exec();
+async getDonacionesDiarias() {
+  const registros = await this.registroDonacionModel
+    .find()
+    .populate('historiaClinica', 'ci sexo edad grupo_sanguineo factor')
+    .exec();
 
-    return registros.map((reg: any) => ({
-      id: reg._id,
-      no_hc: reg.historiaClinica.no_hc,
-      sexo: reg.historiaClinica?.sexo,
-      edad: reg.historiaClinica?.edad,
-      examenP_grupo: reg.examenP_grupo,
-      examenP_factor: reg.examenP_factor,
-      volumen: reg.volumen,
-      estado: reg.estado,
-      entidad: "Banco de Sangre", // Valor por defecto
-    }));
+  console.log(JSON.stringify(registros, null, 2)); // <-- Agrega esto
+
+return registros.map((reg: any) => ({
+  id: reg._id,
+  no: reg.no_registro,
+  hc: reg.historiaClinica?.ci,
+  desecho: "Bolsa",
+  motivo_desecho: reg.motivo_desecho, 
+  sexo: reg.historiaClinica?.sexo,
+  edad: reg.historiaClinica?.edad,
+  grupo: reg.examenP_grupo,      // <-- agrega esto
+  factor: reg.examenP_factor,    // <-- agrega esto
+  volumen: reg.volumen,
+  estado: reg.estado,
+  entidad: "Banco de Sangre",
+}));
+}
+
+async updatee(
+  id: string,
+  updateRegistroDonacionDto: UpdateRegistroDonacionDto,
+) {
+  const updatedRegistro = await this.registroDonacionModel
+    .findByIdAndUpdate(id, updateRegistroDonacionDto, { new: true })
+    .exec();
+
+  if (!updatedRegistro) {
+    throw new NotFoundException(`Registro con ID ${id} no encontrado`);
   }
+  return updatedRegistro;
+}
+
+
+
 }

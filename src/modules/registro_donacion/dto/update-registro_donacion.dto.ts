@@ -188,4 +188,6 @@ export class UpdateRegistroDonacionDto {
   resultado_TGP: number[];
 
   resultado_hemoglobina: number[];
+
+   motivo_desecho?: string;
 }
