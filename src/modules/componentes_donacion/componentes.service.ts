@@ -25,23 +25,26 @@ export class ComponentesService {
   }
 
   async create(createComponenteDto: CreateComponenteDto) {
-  // Busca si ya existe un componente con ese nombre
-  const existComponentes = await this.componentesModel.findOne({
-    nombre_componente: createComponenteDto.nombreComponente,
-  });
+    // Busca si ya existe un componente con ese nombre
+    const existComponentes = await this.componentesModel.findOne({
+      nombreComponente: createComponenteDto.nombreComponente,
+    });
 
-  if (existComponentes) {
-    throw new ConflictException('Ya existe el componente');
+    if (existComponentes) {
+      throw new ConflictException('Ya existe el componente');
+    }
+
+    // Crea el nuevo componente
+    const newComponentes = new this.componentesModel({
+      nombreComponente: createComponenteDto.nombreComponente,
+      siglas: createComponenteDto.siglas,
+      diasEsperaMasculino: createComponenteDto.diasEsperaMasculino,
+      diasEsperaFemenino: createComponenteDto.diasEsperaFemenino,
+      // agrega aquí otros campos si es necesario
+    });
+
+    return newComponentes.save();
   }
-
-  // Crea el nuevo componente
-  const newComponentes = new this.componentesModel({
-    nombre_componente: createComponenteDto.nombreComponente,
-    // agrega aquí otros campos si es necesario
-  });
-
-  return newComponentes.save();
-}
 
   async update(updateComponenteDto: UpdateComponenteDto, id: string) {
     const updateComponente = this.componentesModel.findByIdAndUpdate(

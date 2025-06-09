@@ -17,13 +17,36 @@ import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 @ApiTags('Registro de Donación')
 @Controller('registro-donacion')
 export class RegistroDonacionController {
-  constructor(private readonly service: RegistroDonacionService) { }
+  constructor(private readonly service: RegistroDonacionService) {}
 
   @Get('obtener-todos')
   @ApiOperation({ summary: 'Obtiene todos los registros de donacion' })
   async findAllDonation() {
     return this.service.findAllDonation();
   }
+
+  
+
+  @Get('rango-fechas')
+async findByRangoFechas(
+  @Query('inicio') inicio: string,
+  @Query('fin') fin: string,
+) {
+  if (!inicio || !fin) {
+    throw new BadRequestException('Debe proporcionar las fechas de inicio y fin');
+  }
+  const fechaInicio = new Date(inicio);
+  const fechaFin = new Date(fin);
+
+  if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
+    throw new BadRequestException('Formato de fecha inválido');
+  }
+
+  return this.service.findByRangoFechas(fechaInicio, fechaFin);
+}
+  
+
+  
 
   @Get('find')
   async findAll() {
