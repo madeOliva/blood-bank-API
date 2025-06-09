@@ -15,5 +15,6 @@ import { Centrifugacion, CentrifugacionSchema } from './schema/centrifugacion.sc
   ],
   controllers: [CentrifugacionController],
   providers: [CentrifugacionService],
+  exports: [CentrifugacionService]
 })
 export class CentrifugacionModule {}

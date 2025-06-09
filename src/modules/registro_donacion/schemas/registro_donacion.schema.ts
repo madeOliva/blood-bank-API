@@ -182,7 +182,12 @@ export class RegistroDonacion {
 
   @Prop()
   observacion_interrogatorio?: string;
+
+
+@Prop()
+motivo_desecho?: string;
 }
+
 
 export const RegistroDonacionSchema =
   SchemaFactory.createForClass(RegistroDonacion);

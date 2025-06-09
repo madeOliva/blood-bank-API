@@ -4,6 +4,10 @@ import { tipocomponenteespecial } from "src/modules/tipocomponenteespecial/schem
 import { tipocomponentehabitual } from "src/modules/tipocomponentehabitual/schemas/tipocomponentehabitual.schemas";
 import { tipopaciente } from "src/modules/tipopaciente/schemas/tipopaciente.schemas";
 export class CreateStockbancohaDto {
+    @IsNumber()
+    @IsNotEmpty()
+    id: number;
+
     @IsString()
     @IsNotEmpty()
     codigo_bolsa: string;
@@ -47,8 +51,4 @@ export class CreateStockbancohaDto {
     @IsNumber()
     @IsNotEmpty()
     volumen_final: number;
-
-    @IsString()
-    @IsNotEmpty()
-    estado: string;
 }

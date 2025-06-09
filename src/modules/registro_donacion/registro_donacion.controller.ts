@@ -76,6 +76,11 @@ async findByRangoFechas(
     return this.service.getDonacionesDiarias();
   }
 
+  @Get('prechequeo/:id')
+getPrechequeoById(@Param('id') id: string) {
+  return this.service.getPrechequeoById(id);
+}
+
   @Get(':id')
   @ApiOperation({ summary: 'Obtiene un registro por ID' })
   async getOne(@Param('id') id: string) {
@@ -122,4 +127,28 @@ async findByRangoFechas(
   delete(@Param('id') id: string) {
     return this.service.delete(id);
   }
+<<<<<<< HEAD
 }
+=======
+
+  @ApiOperation({ summary: 'Actualizar un registro de donación (updatee)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Registro actualizado exitosamente (updatee)',
+  })
+  @ApiResponse({ status: 404, description: 'Registro no encontrado' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID del registro a actualizar',
+  })
+  @Put('updatee/:id')
+  updatee(
+    @Body() updateRegistroDonacionDto: UpdateRegistroDonacionDto,
+    @Param('id') id: string,
+  ) {
+    return this.service.updatee(id, updateRegistroDonacionDto);
+  }
+
+}
+>>>>>>> ed3c29fbb838a17a76e3b765938ea4f332c60d35
