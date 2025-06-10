@@ -20,9 +20,7 @@ class UpdateComponentesDto {
 }
 
 export class UpdateComponentesObtenidosDto {
-  @IsString()
-  @IsOptional()
-  no_tubuladura?: string;
+
 
   @IsString()
   @IsOptional()
