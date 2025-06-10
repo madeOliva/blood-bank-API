@@ -12,6 +12,7 @@ import { RegistroDonacion } from './schemas/registro_donacion.schema';
 import { Donacion } from '../donacion/schemas/donacion.schemas';
 import { Componentes } from '../componentes_donacion/schemas/componentes.schemas';
 
+
 @Injectable()
 export class RegistroDonacionService {
   constructor(
@@ -26,14 +27,18 @@ export class RegistroDonacionService {
   ) { }
 
   async getOne(id: string) {
-    const registro = await this.registroDonacionModel.findById(id).exec();
+    const registro = await this.registroDonacionModel.findById(id).populate('componente').lean();
     if (!registro) {
       throw new NotFoundException(`Registro con ID ${id} no encontrado`);
     }
     return registro;
   }
 
+
+
   async create(ci: string, createDto: CreateRegistroDonacionesDto) {
+    
+
     try {
       const historia = await this.historiaclinicaModel.findOne({ ci });
       const fechaActual = new Date();
@@ -48,7 +53,7 @@ export class RegistroDonacionService {
       const anio = new Date().getFullYear();
       const numeroConsecutivo =
         (await this.registroDonacionModel.countDocuments({
-          fecha_registro: {
+          fechaR: {
             $gte: new Date(`${anio}-01-01T00:00:00.000Z`),
             $lte: new Date(`${anio}-12-31T23:59:59.999Z`),
           },
@@ -58,8 +63,9 @@ export class RegistroDonacionService {
       if (!historia) {
         const newRegistro = new this.registroDonacionModel({
           ...createDto,
-          fecha_registro: fechaActual,
+          fechaR: fechaActual,
           no_registro,
+          ci_donante: ci, // Asegúrate de que este campo exista en tu esquema
         });
         return newRegistro.save();
       } else {
@@ -95,8 +101,9 @@ export class RegistroDonacionService {
         const newRegistro = new this.registroDonacionModel({
           ...createDto,
           historiaClinica: historia._id,
-          fecha_registro: fechaActual,
+          fechaR: fechaActual,
           no_registro,
+          ci: ci, // Asegúrate de que este campo exista en tu esquema
         });
         return newRegistro.save();
       }
@@ -105,6 +112,41 @@ export class RegistroDonacionService {
       throw error;
     }
   }
+
+
+  async findByRangoFechas(fechaInicio: Date, fechaFin: Date) {
+  try {
+    const registros = await this.registroDonacionModel
+      .find({
+        fechaR: { $gte: fechaInicio, $lte: fechaFin }
+      })
+      .populate('historiaClinica')
+      .populate('componente') // Puedes dejarlo si tienes referencias válidas
+      .exec();
+
+    // Mapea solo los campos que existen en tus documentos
+    return registros.map((reg: any) => ({
+      id: reg._id,
+      NoRegistro: reg.no_registro,
+      fechaR: reg.fechaR,
+      ci_donante: reg.ci_donante || '', // Si es ObjectId, solo mostrará el id
+      
+      // Si quieres mostrar campos de historiaClinica, valida que exista:
+      nombre: reg.historiaClinica ? `${reg.historiaClinica.nombre || ''} ${reg.historiaClinica.primer_apellido || ''} ${reg.historiaClinica.segundo_apellido || ''}`.trim() : '',
+      edad: reg.historiaClinica?.edad || '',
+      sexo: reg.historiaClinica?.sexo || '',
+      grupo: reg.historiaClinica?.grupo_sanguine || '',
+      rh: reg.historiaClinica?.factor || '',
+      donante: reg.componente?.nombreComponente || '',
+      // ...agrega aquí más campos directos si los necesitas...
+    }));
+  } catch (error) {
+    console.error('Error al obtener registros de donación:', error);
+    throw error;
+  }
+}
+  
+  
 
   async findAllDonation(): Promise<RegistroDonacion[] | { message: string }> {
     try {
@@ -160,33 +202,45 @@ export class RegistroDonacionService {
     if (!registros) throw new NotFoundException('Registro no encontrado');
 
     return registros.map((reg: any) => ({
-      nombre: reg.historiaClinica?.nombre,
-      primer_apellido: reg.historiaClinica?.primer_apellido,
-      segundo_apellido: reg.historiaClinica?.segundo_apellido,
+      _id: reg._id,
+      nombre: reg.historiaClinica?.nombre || "",
+      primer_apellido: reg.historiaClinica?.primer_apellido || "",
+      segundo_apellido: reg.historiaClinica?.segundo_apellido || "",
       examenP_grupo: reg.examenP_grupo,
       examenP_factor: reg.examenP_factor,
       examenP_hemoglobina: reg.examenP_hemoglobina,
-      apto_prechequeo: reg.apto_prechequeo === true
-        ? "Apto"
-        : reg.apto_prechequeo === false
-          ? "No Apto"
-          : "",
+      apto_prechequeo:
+        reg.apto_prechequeo === true
+          ? "Apto"
+          : reg.apto_prechequeo === false
+            ? "No Apto"
+            : "",
     }));
   }
+
+  async getPrechequeoById(id: string) {
+  const reg = await this.registroDonacionModel.findById(id).exec();
+  if (!reg) throw new NotFoundException('Registro no encontrado');
+  return {
+    examenP_grupo: reg.examenP_grupo,
+    examenP_factor: reg.examenP_factor,
+    examenP_hemoglobina: reg.examenP_hemoglobina,
+  };
+}
 
   async getDonantesNoAptos() {
     // Busca todos los registros donde apto_interrogatorio es false
     const registros = await this.registroDonacionModel
       .find({ apto_interrogatorio: false })
-      .populate('persona', 'ci nombre primer_apellido segundo_apellido')
+      .populate('historiaClinica', 'ci nombre primer_apellido segundo_apellido')
       .exec();
 
     // Devuelve CI y observación (ajusta el campo de observación según tu modelo)
     return registros.map((reg: any) => ({
       ci: reg.historiaClinica?.ci || reg.ci,
-      nombre: reg.historiaClinica?.nombre,
-      primer_apellido: reg.historiaClinica?.primer_apellido,
-      segundo_apellido: reg.historiaClinica?.segundo_apellido,
+     nombre: reg.historiaClinica?.nombre || "",
+      primer_apellido: reg.historiaClinica?.primer_apellido || "",
+      segundo_apellido: reg.historiaClinica?.segundo_apellido || "",
       observacion_interrogatorio: reg.observacion_interrogatorio || "No Observación",
     }));
   }

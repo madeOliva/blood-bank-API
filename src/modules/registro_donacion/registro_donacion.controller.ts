@@ -17,12 +17,30 @@ import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 @ApiTags('Registro de Donación')
 @Controller('registro-donacion')
 export class RegistroDonacionController {
-  constructor(private readonly service: RegistroDonacionService) { }
+  constructor(private readonly service: RegistroDonacionService) {}
 
   @Get('obtener-todos')
   @ApiOperation({ summary: 'Obtiene todos los registros de donacion' })
   async findAllDonation() {
     return this.service.findAllDonation();
+  }
+
+  @Get('rango-fechas')
+  async findByRangoFechas(
+    @Query('inicio') inicio: string,
+    @Query('fin') fin: string,
+  ) {
+    if (!inicio || !fin) {
+      throw new BadRequestException('Debe proporcionar las fechas de inicio y fin');
+    }
+    const fechaInicio = new Date(inicio);
+    const fechaFin = new Date(fin);
+
+    if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
+      throw new BadRequestException('Formato de fecha inválido');
+    }
+
+    return this.service.findByRangoFechas(fechaInicio, fechaFin);
   }
 
   @Get('find')
@@ -51,6 +69,11 @@ export class RegistroDonacionController {
   @Get('donaciones-diarias')
   async getDonacionesDiarias() {
     return this.service.getDonacionesDiariass();
+  }
+
+  @Get('prechequeo/:id')
+  getPrechequeoById(@Param('id') id: string) {
+    return this.service.getPrechequeoById(id);
   }
 
   @Get(':id')
@@ -87,19 +110,6 @@ export class RegistroDonacionController {
     return this.service.update(id, updateRegistroDonacionDto);
   }
 
-  @ApiOperation({ summary: 'Eliminar un registro de donación' })
-  @ApiResponse({ status: 200, description: 'Registro eliminado exitosamente' })
-  @ApiResponse({ status: 404, description: 'Registro no encontrado' })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    description: 'ID del registro a eliminar',
-  })
-  @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.service.delete(id);
-  }
-
   @ApiOperation({ summary: 'Actualizar un registro de donación (updatee)' })
   @ApiResponse({
     status: 200,
@@ -119,4 +129,16 @@ export class RegistroDonacionController {
     return this.service.updatee(id, updateRegistroDonacionDto);
   }
 
+  @ApiOperation({ summary: 'Eliminar un registro de donación' })
+  @ApiResponse({ status: 200, description: 'Registro eliminado exitosamente' })
+  @ApiResponse({ status: 404, description: 'Registro no encontrado' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID del registro a eliminar',
+  })
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.service.delete(id);
+  }
 }

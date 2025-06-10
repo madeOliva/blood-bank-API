@@ -12,7 +12,7 @@ export class CentrifugacionService {
 
  //Metodo crear.
    async create(createCentrifugacionDto: CreateCentrifugacionDto): Promise<Centrifugacion| {message: string}> {
-     const existCentrifugacion= await this.centrifugacionModel.findOne({ centrifugacion: createCentrifugacionDto.no_tubuladura});
+     const existCentrifugacion= await this.centrifugacionModel.findOne({ centrifugacion: createCentrifugacionDto.no_hc});
      
      if (existCentrifugacion){
       return { message:"Ya existe la centrifugación de la bolsa" }
