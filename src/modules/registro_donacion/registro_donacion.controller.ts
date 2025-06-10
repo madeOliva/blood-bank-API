@@ -25,28 +25,23 @@ export class RegistroDonacionController {
     return this.service.findAllDonation();
   }
 
-  
-
   @Get('rango-fechas')
-async findByRangoFechas(
-  @Query('inicio') inicio: string,
-  @Query('fin') fin: string,
-) {
-  if (!inicio || !fin) {
-    throw new BadRequestException('Debe proporcionar las fechas de inicio y fin');
+  async findByRangoFechas(
+    @Query('inicio') inicio: string,
+    @Query('fin') fin: string,
+  ) {
+    if (!inicio || !fin) {
+      throw new BadRequestException('Debe proporcionar las fechas de inicio y fin');
+    }
+    const fechaInicio = new Date(inicio);
+    const fechaFin = new Date(fin);
+
+    if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
+      throw new BadRequestException('Formato de fecha inválido');
+    }
+
+    return this.service.findByRangoFechas(fechaInicio, fechaFin);
   }
-  const fechaInicio = new Date(inicio);
-  const fechaFin = new Date(fin);
-
-  if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
-    throw new BadRequestException('Formato de fecha inválido');
-  }
-
-  return this.service.findByRangoFechas(fechaInicio, fechaFin);
-}
-  
-
-  
 
   @Get('find')
   async findAll() {
@@ -77,9 +72,9 @@ async findByRangoFechas(
   }
 
   @Get('prechequeo/:id')
-getPrechequeoById(@Param('id') id: string) {
-  return this.service.getPrechequeoById(id);
-}
+  getPrechequeoById(@Param('id') id: string) {
+    return this.service.getPrechequeoById(id);
+  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtiene un registro por ID' })
@@ -115,22 +110,6 @@ getPrechequeoById(@Param('id') id: string) {
     return this.service.update(id, updateRegistroDonacionDto);
   }
 
-  @ApiOperation({ summary: 'Eliminar un registro de donación' })
-  @ApiResponse({ status: 200, description: 'Registro eliminado exitosamente' })
-  @ApiResponse({ status: 404, description: 'Registro no encontrado' })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    description: 'ID del registro a eliminar',
-  })
-  @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.service.delete(id);
-  }
-<<<<<<< HEAD
-}
-=======
-
   @ApiOperation({ summary: 'Actualizar un registro de donación (updatee)' })
   @ApiResponse({
     status: 200,
@@ -150,5 +129,16 @@ getPrechequeoById(@Param('id') id: string) {
     return this.service.updatee(id, updateRegistroDonacionDto);
   }
 
+  @ApiOperation({ summary: 'Eliminar un registro de donación' })
+  @ApiResponse({ status: 200, description: 'Registro eliminado exitosamente' })
+  @ApiResponse({ status: 404, description: 'Registro no encontrado' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID del registro a eliminar',
+  })
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.service.delete(id);
+  }
 }
->>>>>>> ed3c29fbb838a17a76e3b765938ea4f332c60d35
