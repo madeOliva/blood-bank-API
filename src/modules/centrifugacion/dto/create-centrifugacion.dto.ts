@@ -1,8 +1,9 @@
-import { IsString, IsNumber, IsIn, IsDate } from 'class-validator';
+import { IsString, IsNumber, IsIn, IsDate, IsNotEmpty } from 'class-validator';
 
 export class CreateCentrifugacionDto {
+  @IsNotEmpty()
   @IsString()
-  no_hc: string;
+  no_hc: string; 
 
   @IsString()
   no_consecutivo: string;
