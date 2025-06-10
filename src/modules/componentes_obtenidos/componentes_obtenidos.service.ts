@@ -7,8 +7,9 @@ import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class ComponentesObtenidosService {
-   constructor(@InjectModel(ComponentesObtenidos.name)private componentes_obtenidosModel: Model<ComponentesObtenidos>){
-    }
+   constructor(
+  @InjectModel(ComponentesObtenidos.name) private componentes_obtenidosModel: Model<ComponentesObtenidos>
+) {}
     //Metodo crear.
         async create(CreateComponentesObtenidosDto: CreateComponentesObtenidosDto): Promise<ComponentesObtenidos | {message: string}> {
     const existComponentes_Obtenidos = await this.componentes_obtenidosModel.findOne({ no_tubuladura: CreateComponentesObtenidosDto.no_tubuladura});
@@ -29,13 +30,15 @@ export class ComponentesObtenidosService {
   }
     
    // Retornar todos los componentes con estado 'obtenido'
-async findAllObtenidos(): Promise<ComponentesObtenidos[]> {
+async findAllObtenidos() {
   return this.componentes_obtenidosModel.find({ estado_obtencion: 'obtenido' });
 }
 
 // Retornar todos los componentes con estado 'baja'
 async findAllBaja(): Promise<ComponentesObtenidos[]> {
-  return this.componentes_obtenidosModel.find({ estado_obtencion: 'baja' });
+  const result = await this.componentes_obtenidosModel.find({ estado_obtencion: 'baja' });
+  console.log("BAJAS ENCONTRADAS:", result);
+  return result;
 }
 
     

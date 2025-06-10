@@ -7,9 +7,9 @@ import { ComponentesObtenidos, ComponentesObtenidosSchema } from './schema/compo
 
 @Module({
    imports:[
-      MongooseModule.forFeature([
-      {name:ComponentesObtenidos.name, schema: ComponentesObtenidosSchema},  
-    ])
+   MongooseModule.forFeature([
+  { name: ComponentesObtenidos.name, schema: ComponentesObtenidosSchema }
+])
     ],
   
   controllers: [ComponentesObtenidosController],
