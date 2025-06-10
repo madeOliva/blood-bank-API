@@ -191,28 +191,35 @@ export class RegistroDonacionService {
     }));
   }
 
-async getDonacionesDiarias() {
+
+
+async getDonacionesDiariass() {
   const registros = await this.registroDonacionModel
     .find()
     .populate('historiaClinica', 'ci sexo edad grupo_sanguineo factor')
     .exec();
 
-  console.log(JSON.stringify(registros, null, 2)); // <-- Agrega esto
-
-return registros.map((reg: any) => ({
-  id: reg._id,
-  no: reg.no_registro,
-  hc: reg.historiaClinica?.ci,
-  desecho: "Bolsa",
-  motivo_desecho: reg.motivo_desecho, 
-  sexo: reg.historiaClinica?.sexo,
-  edad: reg.historiaClinica?.edad,
-  grupo: reg.examenP_grupo,      // <-- agrega esto
-  factor: reg.examenP_factor,    // <-- agrega esto
-  volumen: reg.volumen,
-  estado: reg.estado,
-  entidad: "Banco de Sangre",
-}));
+  return registros.map((reg: any) => ({
+    id: reg._id,
+    no: reg.no_registro,
+    hc: reg.historiaClinica?.ci,
+    desecho: "Donacion", // Cambiado a "Muestra" para pruebas a reanalizar
+    motivo_desecho: reg.motivo_desecho,
+    sexo: reg.historiaClinica?.sexo,
+    edad: reg.historiaClinica?.edad,
+    grupo: reg.examenP_grupo,
+    factor: reg.examenP_factor,
+    volumen: reg.volumen,
+    hiv:  reg.resultado_VIH,
+    hbsag: reg.resultado_hepatitisB,
+    hcv: reg.resultado_hepatitisC,
+    bdrl: reg.resultado_serologia,
+    contratipaje: reg.resultado_contratipaje,
+    du: reg.resultado_DU,
+    estado: reg.estado,
+    fechaD: reg.fechaD,
+    entidad: "Banco de Sangre",
+  }));
 }
 
 async updatee(
