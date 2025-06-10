@@ -18,11 +18,6 @@ export class RegistroDonacionService {
   constructor(
     @InjectModel(RegistroDonacion.name)
     private registroDonacionModel: Model<RegistroDonacion>,
-<<<<<<< HEAD
-    // @InjectModel(Persona.name)
-    // private personaModel: Model<Persona>,
-=======
->>>>>>> ed3c29fbb838a17a76e3b765938ea4f332c60d35
     @InjectModel(Historia_Clinica.name)
     private historiaclinicaModel: Model<Historia_Clinica>,
     @InjectModel(Donacion.name)
