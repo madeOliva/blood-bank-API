@@ -68,7 +68,7 @@ export class RegistroDonacionController {
 
   @Get('donaciones-diarias')
   async getDonacionesDiarias() {
-    return this.service.getDonacionesDiarias();
+    return this.service.getDonacionesDiariass();
   }
 
   @Get('prechequeo/:id')
