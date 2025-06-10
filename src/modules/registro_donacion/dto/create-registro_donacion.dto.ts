@@ -112,73 +112,99 @@ export class CreateRegistroDonacionesDto {
   observacion_interrogatorio: string;
 
   @IsString()
+  @IsOptional()
   no_tubuladura: string;
 
   @IsString()
+  @IsOptional()
   no_lote: string;
 
-  @IsString()
+ 
+  @IsOptional()
   estado: Types.ObjectId; //Nomenclador
 
-  @IsString()
+  @IsOptional()
   reaccion: Types.ObjectId; //Nomenclador
 
   @IsBoolean()
+  @IsOptional()
   es_desecho: boolean;
 
   //Donacion de Sangre
   @IsString()
+  @IsOptional()
   tipo_bolsa: string; //Se puede poner como un nomenclador tambien
 
   @IsNumber()
+  @IsOptional()
   volumen: number;
 
   //Donacion de Plasma
   @IsNumber()
+  @IsOptional()
   TCM: number;
 
   @IsNumber()
+  @IsOptional()
   TP: number;
 
   @IsNumber()
+  @IsOptional()
   tiempo: number; //en segundos
 
   @IsNumber()
+  @IsOptional()
   ciclos: number;
 
   @IsString()
+  @IsOptional()
   ACD: string;
 
   @IsString()
+  @IsOptional()
   no_lote_kitACD: string;
 
   @IsString()
+  @IsOptional()
   no_lote_kitBach: string;
 
   //Laboratorio
+  @IsOptional()
   resultado_VIH: boolean[];
 
+  @IsOptional()
   resultado_hepatitisB: boolean[];
 
+  @IsOptional()
   resultado_hepatitisC: boolean[];
 
+  @IsOptional()
   confirmatoria_hepatitisB: boolean[];
 
+  @IsOptional()
   resultado_tipage: string[];
 
+  @IsOptional()
   resultado_contratipaje: string[];
 
+  @IsOptional()
   resultado_DU: boolean[];
 
+  @IsOptional()
   resultado_serologia: boolean[];
 
+  @IsOptional()
   resultado_eritro: number[];
 
+  @IsOptional()
   resultado_hematocrito: number[];
 
+  @IsOptional()
   resultado_proteinas_totales: number[];
 
+  @IsOptional()
   resultado_TGP: number[];
 
+  @IsOptional()
   resultado_hemoglobina: number[];
 }

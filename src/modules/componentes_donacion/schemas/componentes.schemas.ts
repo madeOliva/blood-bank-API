@@ -9,6 +9,8 @@ export class Componentes extends Document {
   nombreComponente: string;
   diasEsperaMasculino : number
   diasEsperaFemenino : number
+
+  @Prop({ required: true })
   siglas: string;
 
 }
