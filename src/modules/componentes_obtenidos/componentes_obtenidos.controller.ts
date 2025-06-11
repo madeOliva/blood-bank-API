@@ -26,6 +26,9 @@ export class ComponentesObtenidosController {
     return this.componentesObtenidosService.findAllObtenidos();
   }
 
+
+  
+
   @ApiOperation({ summary: 'Obtener todos los componentes con estado baja' })
   @ApiResponse({ status: 200, description: 'Componentes con estado baja retornados exitosamente' })
   @Get('bajas')

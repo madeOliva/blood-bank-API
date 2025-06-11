@@ -293,8 +293,8 @@ export class RegistroDonacionService {
       motivo_desecho: reg.motivo_desecho,
       sexo: reg.historiaClinica?.sexo,
       edad: reg.historiaClinica?.edad,
-      grupo: reg.examenP_grupo, // <-- agrega esto
-      factor: reg.examenP_factor, // <-- agrega esto
+      grupo: reg.examenP_grupo,
+      factor: reg.examenP_factor,
       volumen: reg.volumen,
       estado: reg.estado,
       entidad: 'Banco de Sangre',
