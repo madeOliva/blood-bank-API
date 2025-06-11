@@ -17,7 +17,7 @@ import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 @ApiTags('Registro de Donación')
 @Controller('registro-donacion')
 export class RegistroDonacionController {
-  constructor(private readonly service: RegistroDonacionService) {}
+  constructor(private readonly service: RegistroDonacionService) { }
 
   @Get('obtener-todos')
   @ApiOperation({ summary: 'Obtiene todos los registros de donacion' })
@@ -25,28 +25,33 @@ export class RegistroDonacionController {
     return this.service.findAllDonation();
   }
 
-  
+  @Get('consecutivo-historia-aceptada')
+  async getConsecutivoAndHistoriaClinicaAceptada() {
+    return this.service.getConsecutivoAndHistoriaClinicaAceptada();
+  }
 
   @Get('rango-fechas')
-async findByRangoFechas(
-  @Query('inicio') inicio: string,
-  @Query('fin') fin: string,
-) {
-  if (!inicio || !fin) {
-    throw new BadRequestException('Debe proporcionar las fechas de inicio y fin');
+  async findByRangoFechas(
+    @Query('inicio') inicio: string,
+    @Query('fin') fin: string,
+  ) {
+    if (!inicio || !fin) {
+      throw new BadRequestException('Debe proporcionar las fechas de inicio y fin');
+    }
+    const fechaInicio = new Date(inicio);
+    const fechaFin = new Date(fin);
+
+    if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
+      throw new BadRequestException('Formato de fecha inválido');
+    }
+
+    return this.service.findByRangoFechas(fechaInicio, fechaFin);
   }
-  const fechaInicio = new Date(inicio);
-  const fechaFin = new Date(fin);
 
-  if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
-    throw new BadRequestException('Formato de fecha inválido');
+  @Get('pueden-donar')
+  async getDonantesQuePuedenDonar() {
+    return this.service.getDonantesQuePuedenDonar();
   }
-
-  return this.service.findByRangoFechas(fechaInicio, fechaFin);
-}
-  
-
-  
 
   @Get('find')
   async findAll() {
@@ -77,10 +82,11 @@ async findByRangoFechas(
   }
 
   @Get('prechequeo/:id')
-getPrechequeoById(@Param('id') id: string) {
-  return this.service.getPrechequeoById(id);
-}
+  getPrechequeoById(@Param('id') id: string) {
+    return this.service.getPrechequeoById(id);
+  }
 
+  // --- RUTA DINÁMICA SIEMPRE AL FINAL ---
   @Get(':id')
   @ApiOperation({ summary: 'Obtiene un registro por ID' })
   async getOne(@Param('id') id: string) {
@@ -127,9 +133,6 @@ getPrechequeoById(@Param('id') id: string) {
   delete(@Param('id') id: string) {
     return this.service.delete(id);
   }
-<<<<<<< HEAD
-}
-=======
 
   @ApiOperation({ summary: 'Actualizar un registro de donación (updatee)' })
   @ApiResponse({
@@ -149,6 +152,4 @@ getPrechequeoById(@Param('id') id: string) {
   ) {
     return this.service.updatee(id, updateRegistroDonacionDto);
   }
-
 }
->>>>>>> ed3c29fbb838a17a76e3b765938ea4f332c60d35

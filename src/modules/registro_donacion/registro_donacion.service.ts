@@ -11,6 +11,7 @@ import { Historia_Clinica } from '../historia_clinica/schema/historia_clinica.sc
 import { RegistroDonacion } from './schemas/registro_donacion.schema';
 import { Donacion } from '../donacion/schemas/donacion.schemas';
 import { Componentes } from '../componentes_donacion/schemas/componentes.schemas';
+import { Estados } from '../estados/schemas/estados.schemas';
 
 
 @Injectable()
@@ -18,17 +19,14 @@ export class RegistroDonacionService {
   constructor(
     @InjectModel(RegistroDonacion.name)
     private registroDonacionModel: Model<RegistroDonacion>,
-<<<<<<< HEAD
-    // @InjectModel(Persona.name)
-    // private personaModel: Model<Persona>,
-=======
->>>>>>> ed3c29fbb838a17a76e3b765938ea4f332c60d35
     @InjectModel(Historia_Clinica.name)
     private historiaclinicaModel: Model<Historia_Clinica>,
     @InjectModel(Donacion.name)
     private donacionModel: Model<Donacion>,
     @InjectModel(Componentes.name)
     private componentesModel: Model<Componentes>,
+    @InjectModel(Estados.name) // <--- INYECTA EL MODELO DE ESTADO AQUÍ
+    private estadosModel: Model<Estados>,
   ) { }
 
   async getOne(id: string) {
@@ -187,16 +185,25 @@ export class RegistroDonacionService {
   }
 
   async findAll() {
-    const registros = await this.registroDonacionModel
-      .find()
-      .populate('historiaClinica', 'ci nombre primer_apellido segundo_apellido edad sexo grupo_sanguine factor donante_de')
-      .exec();
+  const registros = await this.registroDonacionModel
+    .find()
+    .populate('historiaClinica', 'ci nombre primer_apellido segundo_apellido edad sexo grupo_sanguine factor')
+    .populate('componente', 'nombreComponente') // Asegúrate de poblar el componente
+    .exec();
 
-    return registros.map((reg: any) => ({
-      _id: reg._id,
-      historiaClinica: reg.historiaClinica,
-    }));
-  }
+  // Filtra los que NO son plasma
+  const filtrados = registros.filter(
+    (reg: any) => reg.componente?.nombreComponente?.toLowerCase() !== "plasma"
+  );
+
+  return filtrados.map((reg: any) => ({
+    _id: reg._id,
+    historiaClinica: reg.historiaClinica,
+    componente: {
+      nombreComponente: reg.componente?.nombreComponente || ""
+    }
+  }));
+}
 
   async getDatosCompletos() {
     const registros = await this.registroDonacionModel
@@ -288,6 +295,77 @@ async updatee(
   return updatedRegistro;
 }
 
+async getDonantesQuePuedenDonar() {
+  const hoy = new Date();
 
+  // Busca todos los registros con la info necesaria
+  const registros = await this.registroDonacionModel
+    .find()
+    .populate('historiaClinica', 'ci nombre primer_apellido segundo_apellido sexo')
+    .populate('componente', 'nombreComponente diasEsperaMasculino diasEsperaFemenino')
+    .exec();
 
+  // Filtra los que ya pueden donar según la fecha y el sexo
+  const donantes = registros.filter((reg: any) => {
+    if (!reg.fechaR || !reg.componente) return false;
+    const fechaUltima = new Date(reg.fechaR);
+    const sexo = reg.historiaClinica?.sexo;
+    let diasEspera = 0;
+
+    if (sexo === 'M') {
+      diasEspera = reg.componente.diasEsperaMasculino || 0;
+    } else if (sexo === 'F') {
+      diasEspera = reg.componente.diasEsperaFemenino || 0;
+    } else {
+      return false;
+    }
+
+    const fechaPermitida = new Date(fechaUltima);
+    fechaPermitida.setDate(fechaUltima.getDate() + diasEspera);
+
+    return hoy >= fechaPermitida;
+  });
+
+  // Devuelve los datos que necesites
+  return donantes.map((reg: any) => ({
+    id: reg._id,
+    ci: reg.historiaClinica?.ci,
+    nombre: reg.historiaClinica?.nombre,
+    primer_apellido: reg.historiaClinica?.primer_apellido,
+    segundo_apellido: reg.historiaClinica?.segundo_apellido,
+    sexo: reg.historiaClinica?.sexo,
+    componente: reg.componente?.nombreComponente,
+    fechaUltimaDonacion: reg.fechaR,
+    fechaPermitida: (() => {
+      const fechaUltima = new Date(reg.fechaR);
+      const sexo = reg.historiaClinica?.sexo;
+      let diasEspera = 0;
+      if (sexo === 'M') diasEspera = reg.componente.diasEsperaMasculino || 0;
+      if (sexo === 'F') diasEspera = reg.componente.diasEsperaFemenino || 0;
+      fechaUltima.setDate(fechaUltima.getDate() + diasEspera);
+      return fechaUltima;
+    })(),
+  }));
+}
+
+async getConsecutivoAndHistoriaClinicaAceptada() {
+    const registros = await this.registroDonacionModel
+      .find()
+      .populate('historiaClinica', 'no_hc')
+      .populate('estado', 'nombre_estado') // Asegúrate de poblar el componente
+      .exec();
+  
+    // Filtra los que NO son plasma
+    const filtrados = registros.filter(
+      (reg: any) => reg.estado?.nombre_estado?.toLowerCase() === "aceptada"
+    );
+  
+    return filtrados.map((reg: any) => ({
+      _id: reg._id,
+      historiaClinica: reg.historiaClinica,
+      estado: {
+        nombre_estado: reg.estado?.nombre_estado || ""
+      }
+    }));
+  }
 }

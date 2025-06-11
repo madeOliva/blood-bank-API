@@ -24,7 +24,7 @@ export class EstadosService {
   }
 
   async create(createEstadoDto: CreateEstadoDto) {
-    const existEstado = await this.estadosModel.findById({
+    const existEstado = await this.estadosModel.findOne({
       nombre: createEstadoDto.nombre_estado,
     });
     if (existEstado) {

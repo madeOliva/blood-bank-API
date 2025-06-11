@@ -7,6 +7,7 @@ import { Historia_Clinica, Historia_ClinicaSchema } from '../historia_clinica/sc
 import { Donacion, DonacionSchema } from '../donacion/schemas/donacion.schemas'; // <-- IMPORTANTE
 import { Componentes, ComponentesSchema } from '../componentes_donacion/schemas/componentes.schemas';
 import { RegistroDonacionController } from './registro_donacion.controller';
+import { Estados, EstadosSchema } from '../estados/schemas/estados.schemas';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { RegistroDonacionController } from './registro_donacion.controller';
       { name: Historia_Clinica.name, schema: Historia_ClinicaSchema },
       { name: Donacion.name, schema: DonacionSchema }, // <-- AGREGA ESTA LÍNEA
       { name: Componentes.name, schema: ComponentesSchema },
+      { name: Estados.name, schema: EstadosSchema },
     ]),
   ],
   controllers: [RegistroDonacionController],
