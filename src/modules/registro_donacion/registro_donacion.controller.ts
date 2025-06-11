@@ -19,81 +19,37 @@ import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 export class RegistroDonacionController {
   constructor(private readonly service: RegistroDonacionService) {}
 
-  @Get('obtener-todos')
+  @Get()
   @ApiOperation({ summary: 'Obtiene todos los registros de donacion' })
-  async findAllDonation() {
-    return this.service.findAllDonation();
+  async findAllDonation(
+    @Query('inicio') inicio: string,
+    @Query('fin') fin: string,
+  ) {
+    if (!inicio || !fin) {
+      throw new BadRequestException(
+        'Debe proporcionar las fechas de inicio y fin',
+      );
+    }
+    const fechaInicio = new Date(inicio);
+    const fechaFin = new Date(fin);
+
+    if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
+      throw new BadRequestException('Formato de fecha inválido');
+    }
+
+    return this.service.findByRangoFechas(fechaInicio, fechaFin);
   }
 
-  
-
-  @Get('rango-fechas')
-async findByRangoFechas(
-  @Query('inicio') inicio: string,
-  @Query('fin') fin: string,
-) {
-  if (!inicio || !fin) {
-    throw new BadRequestException('Debe proporcionar las fechas de inicio y fin');
+  @Post()
+  @ApiOperation({ summary: 'Crea un nuevo registro' })
+  async create(@Body() createDto: CreateRegistroDonacionesDto) {
+    return this.service.create(createDto);
   }
-  const fechaInicio = new Date(inicio);
-  const fechaFin = new Date(fin);
-
-  if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
-    throw new BadRequestException('Formato de fecha inválido');
-  }
-
-  return this.service.findByRangoFechas(fechaInicio, fechaFin);
-}
-  
-
-  
-
-  @Get('find')
-  async findAll() {
-    return this.service.findAll();
-  }
-
-  @Get('datos')
-  @ApiOperation({
-    summary: 'Obtiene datos combinados de persona y registro de donación',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Datos combinados obtenidos exitosamente',
-  })
-  async getDatosCompletos() {
-    return this.service.getDatosCompletos();
-  }
-
-  @Get('observacion')
-  @ApiOperation({ summary: 'Lista donantes no aptos y su observación' })
-  async getDonantesNoAptos() {
-    return this.service.getDonantesNoAptos();
-  }
-
-  @Get('donaciones-diarias')
-  async getDonacionesDiarias() {
-    return this.service.getDonacionesDiarias();
-  }
-
-  @Get('prechequeo/:id')
-getPrechequeoById(@Param('id') id: string) {
-  return this.service.getPrechequeoById(id);
-}
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtiene un registro por ID' })
   async getOne(@Param('id') id: string) {
     return this.service.getOne(id);
-  }
-
-  @Post(':ci')
-  @ApiOperation({ summary: 'Crea un nuevo registro' })
-  async create(
-    @Param('ci') ci: string,
-    @Body() createDto: CreateRegistroDonacionesDto,
-  ) {
-    return this.service.create(ci, createDto);
   }
 
   @ApiOperation({ summary: 'Actualizar un registro de donación' })
@@ -127,9 +83,39 @@ getPrechequeoById(@Param('id') id: string) {
   delete(@Param('id') id: string) {
     return this.service.delete(id);
   }
-<<<<<<< HEAD
-}
-=======
+
+  @Get('find')
+  async findAll() {
+    return this.service.findAll();
+  }
+
+  @Get('datos')
+  @ApiOperation({
+    summary: 'Obtiene datos combinados de persona y registro de donación',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Datos combinados obtenidos exitosamente',
+  })
+  async getDatosCompletos() {
+    return this.service.getDatosCompletos();
+  }
+
+  @Get('observacion')
+  @ApiOperation({ summary: 'Lista donantes no aptos y su observación' })
+  async getDonantesNoAptos() {
+    return this.service.getDonantesNoAptos();
+  }
+
+  @Get('donaciones-diarias')
+  async getDonacionesDiarias() {
+    return this.service.getDonacionesDiarias();
+  }
+
+  @Get('prechequeo/:id')
+  getPrechequeoById(@Param('id') id: string) {
+    return this.service.getPrechequeoById(id);
+  }
 
   @ApiOperation({ summary: 'Actualizar un registro de donación (updatee)' })
   @ApiResponse({
@@ -149,6 +135,4 @@ getPrechequeoById(@Param('id') id: string) {
   ) {
     return this.service.updatee(id, updateRegistroDonacionDto);
   }
-
 }
->>>>>>> ed3c29fbb838a17a76e3b765938ea4f332c60d35

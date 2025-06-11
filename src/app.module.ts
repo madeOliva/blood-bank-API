@@ -39,6 +39,9 @@ import { EstanciaExtranjeroModule } from './modules/estancia_extranjero/estancia
 import { HistoriaClinicaModule } from './modules/historia_clinica/historia_clinica.module';
 import { DonacionModule } from './modules/donacion/donacion.module';
 import { RegistroDonacionModule } from './modules/registro_donacion/registro_donacion.module';
+import { GruposSanguineosModule } from './modules/grupos_sanguineos/grupos_sanguineos.module';
+import { FactoresModule } from './modules/factores/factores.module';
+
 
 
 
@@ -97,6 +100,8 @@ import { RegistroDonacionModule } from './modules/registro_donacion/registro_don
     TipocomponentehabitualModule,
     TipopacienteModule,
     TransfusionesModule,
+    GruposSanguineosModule,
+    FactoresModule,
   ],
   controllers: [AppController],
   providers: [AppService],

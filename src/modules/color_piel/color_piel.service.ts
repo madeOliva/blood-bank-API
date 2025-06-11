@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateColorPielDto } from './dto/create-color_piel.dto';
 import { UpdateColorPielDto } from './dto/update-color_piel.dto';
 import { Model} from 'mongoose';
@@ -12,7 +12,7 @@ export class ColorPielService {
     
   }
   async create(createColorPielDto: CreateColorPielDto): Promise<ColorPiel | {message: string}> {
-    const existColorPiel = await this.color_pielModel.findOne({id: createColorPielDto.id});
+    const existColorPiel = await this.color_pielModel.findOne(createColorPielDto);
     if(existColorPiel){
      return {message: "Ya existe el color de piel"}
     }

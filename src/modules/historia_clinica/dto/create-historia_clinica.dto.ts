@@ -3,13 +3,15 @@ import {
   IsBoolean,
   IsNumber,
   IsDate,
-  IsEmpty,
   IsNotEmpty,
-  Min,
-  Length,
   IsOptional,
 } from 'class-validator';
+import { ObjectId } from 'mongoose';
 export class CreateHistoriaClinicaDto {
+  @IsString()
+  @IsNotEmpty()
+  no_hc: string;
+
   @IsString()
   @IsNotEmpty()
   ci: string;
@@ -28,7 +30,7 @@ export class CreateHistoriaClinicaDto {
 
   @IsString()
   @IsNotEmpty()
-  sexo: string;
+  sexo: ObjectId; //Nomenclador
 
   @IsNumber()
   @IsNotEmpty()
@@ -36,27 +38,23 @@ export class CreateHistoriaClinicaDto {
 
   @IsString()
   @IsNotEmpty()
-  estado_civil: string;
-
-  @IsString()
-  @IsNotEmpty()
   municipio: string;
 
   @IsString()
   @IsNotEmpty()
-  color_piel: string;
+  provincia: ObjectId; //Nomenclador
 
   @IsString()
   @IsNotEmpty()
-  no_hc: string;
+  color_piel: ObjectId; //Nomenclador
 
   @IsString()
   @IsNotEmpty()
-  grupo_sanguine: string;
+  grupo_sanguine: ObjectId; //Nomenclador
 
   @IsString()
   @IsNotEmpty()
-  factor: string;
+  factor: ObjectId;
 
   @IsString()
   @IsNotEmpty()
@@ -82,39 +80,45 @@ export class CreateHistoriaClinicaDto {
   @IsNotEmpty()
   centro_laboral: string;
 
+  //Atributos opcionales
+
   @IsString()
   @IsOptional()
   otra_localizacion: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
+  estado_civil: string;
+
+  @IsString()
+  @IsOptional()
   cat_ocupacional: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   estilo_vida: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   alimentacion: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   genero_vida: string;
 
   @IsBoolean()
-  @IsNotEmpty()
+  @IsOptional()
   es_donanteControlado: boolean;
 
   @IsBoolean()
-  @IsNotEmpty()
+  @IsOptional()
   es_posibleDonante: boolean;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   alergias: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   antecedentesPersonales: string[];
 }
