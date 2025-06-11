@@ -22,7 +22,7 @@ export class HistoriaClinicaDto {
   @IsString()
   @IsNotEmpty()
   @Length(11, 11)
-  ci_donante: string;
+  ci: string;
 
   @IsString()
   @IsNotEmpty()

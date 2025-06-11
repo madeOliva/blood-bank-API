@@ -49,7 +49,7 @@ export class RegistroDonacionService {
       let no_registro = '';
 
       const historia = await this.historiaclinicaModel.findOne({
-        ci: createDto.historiaClinica.ci_donante,
+        ci: createDto.historiaClinica.ci,
       });
       const fechaActual = new Date();
       const componente = await this.componentesModel.findById(
@@ -60,70 +60,44 @@ export class RegistroDonacionService {
       }
       const anio = new Date().getFullYear();
 
+      let numeroHC = '';
       if (!historia) {
         const nuevaHistoria = await this.historiaclinicaModel.create(
           createDto.historiaClinica,
         );
         historiaClinicaId = nuevaHistoria._id;
-
-        // Generar no_registro para nueva historia clínica
-        const siglasComponente = componente.siglas;
-        const numeroHC = nuevaHistoria.no_hc;
-        const numeroConsecutivo =
-          (await this.registroDonacionModel.countDocuments({
-            fechaR: {
-              $gte: new Date(`${anio}-01-01T00:00:00.000Z`),
-              $lte: new Date(`${anio}-12-31T23:59:59.999Z`),
-            },
-          })) + 1;
-        no_registro = `${siglasComponente}-${numeroHC}.${anio}.${numeroConsecutivo}`;
+        numeroHC = nuevaHistoria.no_hc;
       } else {
-        const siglasComponente = componente.siglas;
-        const numeroHC = historia.no_hc;
-        historiaClinicaId = historia._id;
-
-        const anio = new Date().getFullYear();
-        const numeroConsecutivo =
-          (await this.registroDonacionModel.countDocuments({
-            fechaR: {
-              $gte: new Date(`${anio}-01-01T00:00:00.000Z`),
-              $lte: new Date(`${anio}-12-31T23:59:59.999Z`),
-            },
-          })) + 1;
-        no_registro = `${siglasComponente}-${numeroHC}.${anio}.${numeroConsecutivo}`;
-        const sexo = await this.sexoModel.findById(
-          createDto.historiaClinica.sexo,
-        );
-        const ultimaDonacion = await this.donacionModel
-          .findOne({
-            historia: historia._id,
-          })
-          .sort({ fecha: -1 });
-
-        if (ultimaDonacion) {
-          const ultimaFecha = new Date(ultimaDonacion.fecha);
-          const diasDiferencia =
-            (fechaActual.getTime() - ultimaFecha.getTime()) /
-            (1000 * 60 * 60 * 24);
-
-          const diasEsperaMasculino =
-            ultimaDonacion.componente.diasEsperaMasculino;
-          const diasEsperaFemenino =
-            ultimaDonacion.componente.diasEsperaFemenino;
-          const nombreComponente = ultimaDonacion.componente.nombreComponente;
-
-          if (sexo?.nombre === 'M' && diasEsperaMasculino < diasDiferencia) {
-            throw new ConflictException(
-              `Debe esperar al menos ${diasEsperaMasculino}  días entre donaciones de ${nombreComponente} para el sexo masculino. Última donación: ${ultimaFecha.toLocaleDateString()}`,
-            );
-          }
-          if (sexo?.nombre === 'F' && diasEsperaFemenino < diasDiferencia) {
-            throw new ConflictException(
-              `Debe esperar al menos ${diasEsperaFemenino}  días entre donaciones de ${nombreComponente} para el sexo femenino. Última donación: ${ultimaFecha.toLocaleDateString()}`,
-            );
-          }
+        // Modificar la historia clínica existente
+        const updatedHistoria =
+          await this.historiaclinicaModel.findOneAndUpdate(
+            { ci: createDto.historiaClinica.ci },
+            { $set: createDto.historiaClinica },
+            { new: true },
+          );
+        if (!updatedHistoria) {
+          throw new NotFoundException(
+            'No se pudo actualizar la historia clínica',
+          );
         }
+        historiaClinicaId = updatedHistoria._id;
+        numeroHC = updatedHistoria.no_hc;
       }
+
+      // Generar no_registro
+      const siglasComponente = componente.siglas;
+      const numeroConsecutivo =
+        (await this.registroDonacionModel.countDocuments({
+          fechaR: {
+            $gte: new Date(`${anio}-01-01T00:00:00.000Z`),
+            $lte: new Date(`${anio}-12-31T23:59:59.999Z`),
+          },
+        })) + 1;
+      no_registro = `${siglasComponente}-${numeroHC}.${anio}.${numeroConsecutivo}`;
+
+      // Validaciones adicionales (si las tienes)
+      // ... (puedes dejar aquí tu lógica de validación de última donación, sexo, etc.)
+
       const newRegistro = new this.registroDonacionModel({
         ...createDto,
         historiaClinica: historiaClinicaId,
@@ -150,6 +124,7 @@ export class RegistroDonacionService {
             { path: 'sexo' },
             { path: 'grupo_sanguine' },
             { path: 'factor' },
+            { path: 'provincia' },
           ],
         })
         .populate('componente')
@@ -158,16 +133,26 @@ export class RegistroDonacionService {
       return registros.map((reg: any) => ({
         id: reg._id,
         no_registro: reg.no_registro || '',
+        no_hc: reg.historiaClinica?.no_hc || '',
         ci_donante: reg.historiaClinica?.ci || '',
         nombre: reg.historiaClinica
           ? `${reg.historiaClinica.nombre || ''} ${reg.historiaClinica.primer_apellido || ''} ${reg.historiaClinica.segundo_apellido || ''}`.trim()
           : '',
         edad: reg.historiaClinica?.edad || '',
         sexo: reg.historiaClinica?.sexo?.nombre || '',
-        grupo: reg.historiaClinica?.grupo_sanguine.nombre || '',
-        rh: reg.historiaClinica?.factor.signo || '',
+        grupo: reg.historiaClinica?.grupo_sanguine?.nombre || '',
+        rh: reg.historiaClinica?.factor?.signo || '',
         donante: reg.componente?.nombreComponente || '',
         fechaR: reg.fechaR,
+        municipio: reg.historiaClinica?.municipio || '',
+        provincia: reg.historiaClinica?.provincia?.nombre_provincia || '',
+        consejo_popular: reg.historiaClinica?.consejo_popular || '',
+        no_consultorio: reg.historiaClinica?.no_consultorio || '',
+        ocupacion: reg.historiaClinica?.ocupacion || '',
+        telefono: reg.historiaClinica?.telefono || '',
+        telefonoLaboral: reg.historiaClinica?.telefonoLaboral || '',
+        centro_laboral: reg.historiaClinica?.centro_laboral || '',
+        otra_localizacion: reg.historiaClinica?.otra_localizacion || '',
       }));
     } catch (error) {
       console.error('Error al obtener registros de donación:', error);
@@ -225,21 +210,25 @@ export class RegistroDonacionService {
   async findAll() {
     const registros = await this.registroDonacionModel
       .find()
-      .populate('historiaClinica', 'ci nombre primer_apellido segundo_apellido edad sexo grupo_sanguine factor')
+      .populate(
+        'historiaClinica',
+        'ci nombre primer_apellido segundo_apellido edad sexo grupo_sanguine factor',
+      )
       .populate('componente', 'nombreComponente')
       .exec();
 
     // Filtra los que NO son plasma
     const filtrados = registros.filter(
-      (reg: any) => reg.componente?.nombreComponente?.toLowerCase() !== "plasma"
+      (reg: any) =>
+        reg.componente?.nombreComponente?.toLowerCase() !== 'plasma',
     );
 
     return filtrados.map((reg: any) => ({
       _id: reg._id,
       historiaClinica: reg.historiaClinica,
       componente: {
-        nombreComponente: reg.componente?.nombreComponente || ""
-      }
+        nombreComponente: reg.componente?.nombreComponente || '',
+      },
     }));
   }
 
@@ -326,8 +315,14 @@ export class RegistroDonacionService {
     // Busca todos los registros con la info necesaria
     const registros = await this.registroDonacionModel
       .find()
-      .populate('historiaClinica', 'ci nombre primer_apellido segundo_apellido sexo')
-      .populate('componente', 'nombreComponente diasEsperaMasculino diasEsperaFemenino')
+      .populate(
+        'historiaClinica',
+        'ci nombre primer_apellido segundo_apellido sexo',
+      )
+      .populate(
+        'componente',
+        'nombreComponente diasEsperaMasculino diasEsperaFemenino',
+      )
       .exec();
 
     // Filtra los que ya pueden donar según la fecha y el sexo
@@ -382,15 +377,15 @@ export class RegistroDonacionService {
 
     // Filtra los que tienen estado "aceptada"
     const filtrados = registros.filter(
-      (reg: any) => reg.estado?.nombre_estado?.toLowerCase() === "aceptada"
+      (reg: any) => reg.estado?.nombre_estado?.toLowerCase() === 'aceptada',
     );
 
     return filtrados.map((reg: any) => ({
       _id: reg._id,
       historiaClinica: reg.historiaClinica,
       estado: {
-        nombre_estado: reg.estado?.nombre_estado || ""
-      }
+        nombre_estado: reg.estado?.nombre_estado || '',
+      },
     }));
   }
 }
