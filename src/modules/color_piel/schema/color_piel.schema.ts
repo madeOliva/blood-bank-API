@@ -6,10 +6,9 @@ export type ColorPielDocument= HydratedDocument<ColorPiel>;
 
 @Schema()
 export class ColorPiel {
-    @Prop({required:true, unique:true})
-    id: string;
+    
 
-    @Prop({required:true})
+    @Prop({required:true,unique:true})
     nombre: string;
 
 }

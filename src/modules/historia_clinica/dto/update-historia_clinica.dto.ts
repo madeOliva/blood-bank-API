@@ -1,6 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateHistoriaClinicaDto } from './create-historia_clinica.dto';
 import { IsBoolean, IsString, IsNotEmpty, IsNumber } from 'class-validator';
+import { ObjectId } from 'mongoose';
 export class UpdateHistoriaClinicaDto extends PartialType(
   CreateHistoriaClinicaDto,
 ) {
@@ -22,7 +23,7 @@ export class UpdateHistoriaClinicaDto extends PartialType(
 
   @IsString()
   @IsNotEmpty()
-  sexo: string;
+  sexo: ObjectId;
 
   @IsNumber()
   @IsNotEmpty()
@@ -38,7 +39,11 @@ export class UpdateHistoriaClinicaDto extends PartialType(
 
   @IsString()
   @IsNotEmpty()
-  color_piel: string;
+  provincia: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  color_piel: ObjectId;
 
   @IsString()
   @IsNotEmpty()
@@ -46,11 +51,11 @@ export class UpdateHistoriaClinicaDto extends PartialType(
 
   @IsString()
   @IsNotEmpty()
-  grupo_sanguine: string;
+  grupo_sanguine: ObjectId; //Nomenclador
 
   @IsString()
   @IsNotEmpty()
-  factor: string;
+  factor: ObjectId;
 
   @IsString()
   @IsNotEmpty()

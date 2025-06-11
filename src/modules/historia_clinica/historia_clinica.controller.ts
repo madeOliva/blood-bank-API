@@ -19,11 +19,14 @@ export class HistoriaClinicaController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
+    console.log('aaaaaaaaaa',id );
     return this.historiaClinicaService.getOne(id);
   }
 
   @Put(':id')
+
   update(@Param('id') id: string, @Body() updateHistoriaClinicaDto: UpdateHistoriaClinicaDto) {
+
     return this.historiaClinicaService.update(id, updateHistoriaClinicaDto);
   }
 

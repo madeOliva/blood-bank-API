@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsBoolean, IsOptional, IsIn, ValidateNested, IsArray } from 'class-validator';
+import { IsString, IsNumber, IsBoolean, IsOptional, IsIn, ValidateNested, IsArray, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class ComponentesDto {
@@ -18,8 +18,10 @@ class ComponentesDto {
 }
 
 export class CreateComponentesObtenidosDto {
+
+  @IsNotEmpty()
   @IsString()
-  no_tubuladura: string;
+  no_hc: string; 
 
   @IsString()
   numero_consecutivo: string;
