@@ -8,25 +8,25 @@ export class Historia_Clinica {
     @Prop({ required: true, unique: true, index: true })
     ci: string;
 
-    @Prop({required:true})
+    @Prop({ required: true })
     nombre: string;
 
-    @Prop({required:true})
+    @Prop({ required: true })
     primer_apellido: string;
 
-    @Prop({required:true})
+    @Prop({ required: true })
     segundo_apellido: string;
 
-    @Prop({required:true})
+    @Prop({ required: true })
     sexo: string;
 
-    @Prop({required:true})
+    @Prop({ required: true })
     edad: number;
 
-    @Prop({required:true})
+    @Prop({ required: true })
     estado_civil: string;
 
-    @Prop({required:true})
+    @Prop({ required: true })
     municipio: string;
 
     @Prop({ required: true })
@@ -52,7 +52,7 @@ export class Historia_Clinica {
 
     @Prop({ required: true })
     telefono: string;
-    
+
     @Prop({ required: true })
     telefonoLaboral: string;
 
@@ -80,8 +80,8 @@ export class Historia_Clinica {
     @Prop({ required: true })
     es_posibleDonante: boolean;
 
-    @Prop({ required: true })
-    alergias: string;
+    @Prop()
+    alergias:  string [];
 
     @Prop({ required: true })
     antecedentesPersonales: string[];

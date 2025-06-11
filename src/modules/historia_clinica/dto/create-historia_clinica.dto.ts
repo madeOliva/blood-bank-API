@@ -112,7 +112,7 @@ export class CreateHistoriaClinicaDto {
 
   @IsString()
   @IsNotEmpty()
-  alergias: string;
+  alergias: string[];
 
   @IsString()
   @IsNotEmpty()

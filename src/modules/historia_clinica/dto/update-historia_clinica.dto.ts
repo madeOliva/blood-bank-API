@@ -102,7 +102,7 @@ export class UpdateHistoriaClinicaDto extends PartialType(
 
   @IsString()
   @IsNotEmpty()
-  alergias: string;
+  alergias: string[];
 
   @IsString()
   @IsNotEmpty()
