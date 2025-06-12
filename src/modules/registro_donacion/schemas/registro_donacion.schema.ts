@@ -51,8 +51,8 @@ export class RegistroDonacion {
   @Prop()
   no_lote?: string;
 
-  @Prop({ type: Types.ObjectId, ref: Estados.name})
-  estado?: Types.ObjectId; //Nomenclador
+   @Prop()
+  estado: string;
 
   @Prop({ type: Types.ObjectId, ref: Reacciones.name})
   reaccion?: Types.ObjectId; //Nomenclador
