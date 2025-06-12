@@ -26,8 +26,7 @@ export class RegistroDonacion {
   })
   historiaClinica: Historia_Clinica;
   
-  @Prop()
-  ci_donante: string;
+  
 
   @Prop({ type: Types.ObjectId, ref: Componentes.name })
   componente: Componentes; //Nomenclador

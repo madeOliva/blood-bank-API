@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { HabitosToxicosService } from './habitos_toxicos.service';
 import { CreateHabitosToxicoDto } from './dto/create-habitos_toxico.dto';
 import { UpdateHabitosToxicoDto } from './dto/update-habitos_toxico.dto';
@@ -22,7 +22,7 @@ export class HabitosToxicosController {
     return this.habitosToxicosService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateHabitosToxicoDto: UpdateHabitosToxicoDto) {
     return this.habitosToxicosService.update(+id, updateHabitosToxicoDto);
   }

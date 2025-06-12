@@ -17,12 +17,32 @@ import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 @ApiTags('Registro de Donación')
 @Controller('registro-donacion')
 export class RegistroDonacionController {
-  constructor(private readonly service: RegistroDonacionService) {}
+  constructor(private readonly service: RegistroDonacionService) { }
 
-  @Get('obtener-todos')
+  @Get()
   @ApiOperation({ summary: 'Obtiene todos los registros de donacion' })
-  async findAllDonation() {
-    return this.service.findAllDonation();
+  async findAllDonation(
+    @Query('inicio') inicio: string,
+    @Query('fin') fin: string,
+  ) {
+    if (!inicio || !fin) {
+      throw new BadRequestException(
+        'Debe proporcionar las fechas de inicio y fin',
+      );
+    }
+    const fechaInicio = new Date(inicio);
+    const fechaFin = new Date(fin);
+
+    if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
+      throw new BadRequestException('Formato de fecha inválido');
+    }
+
+    return this.service.findByRangoFechas(fechaInicio, fechaFin);
+  }
+
+  @Get('consecutivo-historia-aceptada')
+  async getConsecutivoAndHistoriaClinicaAceptada() {
+    return this.service.getConsecutivoAndHistoriaClinicaAceptada();
   }
 
   @Get('rango-fechas')
@@ -41,6 +61,11 @@ export class RegistroDonacionController {
     }
 
     return this.service.findByRangoFechas(fechaInicio, fechaFin);
+  }
+
+  @Get('pueden-donar')
+  async getDonantesQuePuedenDonar() {
+    return this.service.getDonantesQuePuedenDonar();
   }
 
   @Get('find')
@@ -68,7 +93,7 @@ export class RegistroDonacionController {
 
   @Get('donaciones-diarias')
   async getDonacionesDiarias() {
-    return this.service.getDonacionesDiariass();
+    return this.service.getDonacionesDiarias();
   }
 
   @Get('prechequeo/:id')
@@ -76,19 +101,17 @@ export class RegistroDonacionController {
     return this.service.getPrechequeoById(id);
   }
 
+  @Post()
+  @ApiOperation({ summary: 'Crea un nuevo registro' })
+  async create(@Body() createDto: CreateRegistroDonacionesDto) {
+    return this.service.create(createDto);
+  }
+
+  // --- RUTA DINÁMICA SIEMPRE AL FINAL ---
   @Get(':id')
   @ApiOperation({ summary: 'Obtiene un registro por ID' })
   async getOne(@Param('id') id: string) {
     return this.service.getOne(id);
-  }
-
-  @Post(':ci')
-  @ApiOperation({ summary: 'Crea un nuevo registro' })
-  async create(
-    @Param('ci') ci: string,
-    @Body() createDto: CreateRegistroDonacionesDto,
-  ) {
-    return this.service.create(ci, createDto);
   }
 
   @ApiOperation({ summary: 'Actualizar un registro de donación' })

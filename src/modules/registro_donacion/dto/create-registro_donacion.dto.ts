@@ -8,10 +8,17 @@ import {
   Length,
   Max,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import { ObjectId, Types } from 'mongoose';
+import { Type } from 'class-transformer';
 
-export class CreateRegistroDonacionesDto {
+// DTO para la historia clínica
+export class HistoriaClinicaDto {
+  @IsString()
+  @IsNotEmpty()
+  no_hc: string;
+
   @IsString()
   @IsNotEmpty()
   @Length(11, 11)
@@ -19,7 +26,59 @@ export class CreateRegistroDonacionesDto {
 
   @IsString()
   @IsNotEmpty()
-  componente: ObjectId; //Nomenclador
+  nombre: string;
+
+  @IsString()
+  @IsNotEmpty()
+  primer_apellido: string;
+
+  @IsString()
+  @IsNotEmpty()
+  segundo_apellido: string;
+
+  @IsString()
+  @IsNotEmpty()
+  sexo: ObjectId;
+
+  @IsNumber()
+  @IsNotEmpty()
+  edad: number;
+
+  @IsString()
+  @IsNotEmpty()
+  municipio: string;
+
+  @IsString()
+  @IsNotEmpty()
+  provincia: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  color_piel: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  grupo_sanguine: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  factor: ObjectId;
+}
+
+// DTO principal de registro de donaciones
+export class CreateRegistroDonacionesDto {
+  @ValidateNested()
+  @Type(() => HistoriaClinicaDto)
+  @IsNotEmpty()
+  historiaClinica: HistoriaClinicaDto;
+
+  @IsString()
+  @IsNotEmpty()
+  consejo_popular: string;
+
+  @IsString()
+  @IsNotEmpty()
+  no_consultorio: string;
 
   @IsString()
   @IsNotEmpty()
@@ -38,8 +97,12 @@ export class CreateRegistroDonacionesDto {
   centro_laboral: string;
 
   @IsString()
-  @IsOptional()
-  otra_localizacion: string;
+  @IsNotEmpty()
+  componente: ObjectId; //Nomenclador
+
+
+
+  //Examenes Prechequeo
 
   @IsString()
   @IsOptional()
@@ -93,6 +156,8 @@ export class CreateRegistroDonacionesDto {
   @IsOptional()
   apto_examenFisico: boolean;
 
+  //Seleccion
+
   @IsArray()
   @IsOptional()
   respuestas_interrogatorio: [
@@ -110,6 +175,8 @@ export class CreateRegistroDonacionesDto {
   @IsString()
   @IsOptional()
   observacion_interrogatorio: string;
+
+  //Donacion
 
   @IsString()
   @IsOptional()
@@ -208,3 +275,4 @@ export class CreateRegistroDonacionesDto {
   @IsOptional()
   resultado_hemoglobina: number[];
 }
+

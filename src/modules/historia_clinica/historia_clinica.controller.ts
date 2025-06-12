@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { HistoriaClinicaService } from './historia_clinica.service';
 import { CreateHistoriaClinicaDto } from './dto/create-historia_clinica.dto';
 import { UpdateHistoriaClinicaDto } from './dto/update-historia_clinica.dto';
@@ -19,11 +19,14 @@ export class HistoriaClinicaController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
+    console.log('aaaaaaaaaa',id );
     return this.historiaClinicaService.getOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
+
   update(@Param('id') id: string, @Body() updateHistoriaClinicaDto: UpdateHistoriaClinicaDto) {
+
     return this.historiaClinicaService.update(id, updateHistoriaClinicaDto);
   }
 

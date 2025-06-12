@@ -12,9 +12,11 @@ export class HistoriaClinicaService {
     @InjectModel(Historia_Clinica.name)
     private Historia_ClinicaModel: Model<Historia_Clinica>,
   ) {}
+
+  
  // Obtener una historia clínica por ID
   async getOne(id: string) {
-    const historia = await this.Historia_ClinicaModel.findById(id).exec();
+    const historia = await this.Historia_ClinicaModel.findById(id);
     if (!historia) {
       throw new NotFoundException('No existe la historia clínica con id ' + id);
     }
