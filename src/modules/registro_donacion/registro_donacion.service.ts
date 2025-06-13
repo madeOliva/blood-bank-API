@@ -29,7 +29,7 @@ export class RegistroDonacionService {
     private estadosModel: Model<Estados>,
     @InjectModel(Sexo.name)
     private sexoModel: Model<Sexo>,
-  ) {}
+  ) { }
 
   async getOne(id: string) {
     const registro = await this.registroDonacionModel
@@ -221,27 +221,44 @@ export class RegistroDonacionService {
     }
     return deletedRegistro;
   }
-
+  // Metodo para cargar los donantes a prechequeo exceptuando los PLASMA
   async findAll() {
-    const registros = await this.registroDonacionModel
-      .find()
-      .populate('historiaClinica', 'ci nombre primer_apellido segundo_apellido edad sexo grupo_sanguine factor')
-      .populate('componente', 'nombreComponente')
-      .exec();
+  const registros = await this.registroDonacionModel
+    .find()
+    .populate({
+      path: 'historiaClinica',
+      select: 'ci nombre primer_apellido segundo_apellido edad sexo grupo_sanguine factor',
+      populate: [
+        { path: 'sexo', select: 'nombre' },
+        { path: 'grupo_sanguine', select: 'nombre' },
+        { path: 'factor', select: 'signo' },
+      ]
+    })
+    .populate('componente', 'nombreComponente nombre_componente')
+    .exec();
 
-    // Filtra los que NO son plasma
-    const filtrados = registros.filter(
-      (reg: any) => reg.componente?.nombreComponente?.toLowerCase() !== "plasma"
-    );
+  const filtrados = registros.filter(
+    (reg: any) =>
+      (reg.componente.nombreComponente ).toLowerCase() !== 'plasma')
 
-    return filtrados.map((reg: any) => ({
+  return filtrados.map((reg: any) => {
+    return {
       _id: reg._id,
-      historiaClinica: reg.historiaClinica,
+      ci: reg.historiaClinica?.ci || '',
+      nombre: reg.historiaClinica?.nombre || '',
+      primer_apellido: reg.historiaClinica?.primer_apellido || '',
+      segundo_apellido: reg.historiaClinica?.segundo_apellido || '',
+      edad: reg.historiaClinica?.edad || '',
+      sexo: reg.historiaClinica?.sexo?.nombre || '',
+      grupo_sanguine: reg.historiaClinica?.grupo_sanguine?.nombre || '',
+      factor: reg.historiaClinica?.factor?.signo || '',
       componente: {
         nombreComponente: reg.componente?.nombreComponente || ""
       }
-    }));
-  }
+    };
+  });
+}
+
 
   async getDatosCompletos() {
     const registros = await this.registroDonacionModel

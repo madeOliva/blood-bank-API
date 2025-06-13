@@ -150,7 +150,6 @@ export class UpdateRegistroDonacionDto {
   @IsOptional()
   respuestas_interrogatorio: [
     {
-      pregunta: number; //Relacionarlo con el nomenclador pregunta de made
       respuesta?: boolean;
       respuesta_escrita?: string;
     },

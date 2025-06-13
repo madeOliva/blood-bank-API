@@ -3,7 +3,6 @@ import { Types } from 'mongoose';
 import { Componentes } from 'src/modules/componentes_donacion/schemas/componentes.schemas';
 import { Estados } from 'src/modules/estados/schemas/estados.schemas';
 import { Historia_Clinica } from 'src/modules/historia_clinica/schema/historia_clinica.schema';
-import { Persona } from 'src/modules/persona/schema/persona.schema';
 import { Reacciones } from 'src/modules/reacciones/schemas/reacciones.schemas';
 
 @Schema()
@@ -51,8 +50,8 @@ export class RegistroDonacion {
   @Prop()
   no_lote?: string;
 
-  @Prop({ type: Types.ObjectId, ref: Estados.name})
-  estado?: Types.ObjectId; //Nomenclador
+  @Prop()
+  estado?:string;
 
   @Prop({ type: Types.ObjectId, ref: Reacciones.name})
   reaccion?: Types.ObjectId; //Nomenclador

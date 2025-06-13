@@ -17,6 +17,12 @@ export class HistoriaClinicaController {
     return this.historiaClinicaService.getAll();
   }
 
+  @Get('/datos/:id')
+  async getHistoriaClinica(@Param('id') id: string) {
+    const historia = await this.historiaClinicaService.getOnH(id);
+    return historia;
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     console.log('aaaaaaaaaa',id );
