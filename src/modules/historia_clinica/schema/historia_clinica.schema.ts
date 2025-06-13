@@ -68,7 +68,7 @@ export class Historia_Clinica {
   otra_localizacion: string;
 
   @Prop()
-  cat_ocupacional: string;
+  ocupacion: string;
 
   @Prop()
   estilo_vida: string;

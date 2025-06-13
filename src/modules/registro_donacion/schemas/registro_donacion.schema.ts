@@ -25,8 +25,7 @@ export class RegistroDonacion {
   })
   historiaClinica: Historia_Clinica;
   
-  @Prop()
-  ci_donante: string;
+  
 
   @Prop({ type: Types.ObjectId, ref: Componentes.name })
   componente: Componentes; //Nomenclador
@@ -57,7 +56,7 @@ export class RegistroDonacion {
   reaccion?: Types.ObjectId; //Nomenclador
   
   
-  @Prop()
+  @Prop({type:Date})
   fechaD?: Date;
 
   @Prop({ default: false })
@@ -148,9 +147,6 @@ export class RegistroDonacion {
   examenP_hemoglobina?: number; //Min Max
 
   @Prop()
-  apto_prechequeo?: boolean;
-
-  @Prop()
   examenF_peso?: number; //Min=50lb Max=400lb
 
   @Prop()
@@ -164,6 +160,9 @@ export class RegistroDonacion {
 
   @Prop()
   examenF_hemoglobina?: number; // Min=12 Max=17
+
+  @Prop()
+  apto_prechequeo?: boolean;
 
   @Prop()
   apto_examenFisico?: boolean;

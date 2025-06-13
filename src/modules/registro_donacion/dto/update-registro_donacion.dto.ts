@@ -1,3 +1,5 @@
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateRegistroDonacionesDto } from './create-registro_donacion.dto';
 
   import {
   IsArray,
@@ -262,4 +264,5 @@ export class UpdateRegistroDonacionDto {
   @IsOptional()
   resultado_hemoglobina: number[];
 }
+
 

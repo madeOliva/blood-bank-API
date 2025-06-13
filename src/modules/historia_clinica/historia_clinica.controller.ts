@@ -1,11 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { HistoriaClinicaService } from './historia_clinica.service';
 import { CreateHistoriaClinicaDto } from './dto/create-historia_clinica.dto';
 import { UpdateHistoriaClinicaDto } from './dto/update-historia_clinica.dto';
 
 @Controller('historia-clinica')
 export class HistoriaClinicaController {
-  constructor(private readonly historiaClinicaService: HistoriaClinicaService) {}
+  constructor(
+    private readonly historiaClinicaService: HistoriaClinicaService,
+  ) {}
 
   @Post()
   create(@Body() createHistoriaClinicaDto: CreateHistoriaClinicaDto) {
@@ -25,14 +36,19 @@ export class HistoriaClinicaController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    console.log('aaaaaaaaaa',id );
     return this.historiaClinicaService.getOne(id);
   }
 
+  @Get('ci/:ci')
+  getByCI(@Param('ci') ci: string) {
+    return this.historiaClinicaService.getByCI(ci);
+  }
+
   @Put(':id')
-
-  update(@Param('id') id: string, @Body() updateHistoriaClinicaDto: UpdateHistoriaClinicaDto) {
-
+  update(
+    @Param('id') id: string,
+    @Body() updateHistoriaClinicaDto: UpdateHistoriaClinicaDto,
+  ) {
     return this.historiaClinicaService.update(id, updateHistoriaClinicaDto);
   }
 

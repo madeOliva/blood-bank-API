@@ -1,114 +1,186 @@
 import { Injectable } from '@nestjs/common';
-import { CreateComponentesObtenidosDto } from './dto/create-componentes_obtenidos.dto';
-import { UpdateComponentesObtenidosDto } from './dto/update-componentes_obtenidos.dto';
-import { ComponentesObtenidos } from './schema/componentes_obtenidos.schema';
-import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Historia_Clinica } from '../historia_clinica/schema/historia_clinica.schema';
-import { RegistroDonacion } from '../registro_donacion/schemas/registro_donacion.schema';
+import { Model } from 'mongoose';
+import { ComponentesObtenidos, ComponentesObtenidosDocument } from './schema/componentes_obtenidos.schema';
+import { CreateComponentesObtenidosDto } from './dto/create-componentes_obtenidos.dto';
 
 @Injectable()
 export class ComponentesObtenidosService {
+  constructor(
+    @InjectModel(ComponentesObtenidos.name)
+    private readonly componentesObtenidosModel: Model<ComponentesObtenidosDocument>,
+  ) {}
 
-   constructor(@InjectModel(ComponentesObtenidos.name)private componentes_obtenidosModel: Model<ComponentesObtenidos>,
-      @InjectModel(Historia_Clinica.name) private historiaClinicaModel: Model<Historia_Clinica>,
-      @InjectModel(RegistroDonacion.name) private registroDonacionModel: Model<RegistroDonacion>){
+  async create(dto: CreateComponentesObtenidosDto) {
+    const creado = new this.componentesObtenidosModel(dto);
+    return creado.save();
+  }
+
+
+// ...existing code...
+async getAllObtenidos() {
+  // 1. Trae todos los componentes obtenidos
+  const componentes = await this.componentesObtenidosModel.find().lean();
+
+  // 2. Trae todos los registros de donación y los indexa por _id (como string)
+  const RegistroDonacionModel = this.componentesObtenidosModel.db.model('RegistroDonacion');
+  const registros = await RegistroDonacionModel.find().lean();
+  const registrosMap = {};
+  registros.forEach((reg: any) => {
+    registrosMap[reg._id.toString()] = reg;
+  });
+
+  // 3. Trae todas las historias clínicas y las indexa por _id (como string)
+  const HistoriaClinicaModel = this.componentesObtenidosModel.db.model('Historia_Clinica');
+  const historias = await HistoriaClinicaModel.find().lean();
+  const historiasMap = {};
+  historias.forEach((hc: any) => {
+    historiasMap[hc._id.toString()] = hc;
+  });
+
+  // Log de los datos base
+  console.log({
+    componentes: componentes.map(c => c._id?.toString() || c.no_consecutivo),
+    registros: Object.keys(registrosMap),
+    historias: Object.keys(historiasMap)
+  });
+
+  // 4. Une los datos y filtra solo los de estado "liberado"
+  return componentes
+  .map((comp: any) => {
+    try {
+      const reg = registrosMap[comp.registro_donacion?.toString()];
+      if (!reg) {
+        console.log('No se encontró registro para', comp.registro_donacion);
+        return null;
+      }
+      if (!reg.estado) {
+        console.log('El registro no tiene campo estado:', reg);
+        return null;
+      }
+      if (reg.estado?.toLowerCase() !== 'liberado') {
+        console.log('Registro no liberado:', reg._id, reg.estado);
+        return null;
+      }
+      console.log('reg.historiaClinica:', reg.historiaClinica);
+      if (!reg.historiaClinica) {
+        console.log('El registro no tiene historiaClinica:', reg);
+        return null;
+      }
+      const hc = historiasMap[reg.historiaClinica?.toString()];
+      if (!hc) {
+        console.log('No se encontró historia clínica para', reg.historiaClinica);
+        return null;
+      }
+return {
+  _id: comp._id,
+  no_consecutivo: comp.no_consecutivo,
+  historia_clinica: {
+    no_hc: hc.no_hc || "",
+    sexo: hc.sexo || "",
+    edad: hc.edad || "",
+    grupo: hc.grupo || "",
+    factor: hc.factor || "",
+  },
+  componentes: comp.componentes,
+  fecha_obtencion: (() => {
+    const valor = comp.fecha_obtencion;
+    console.log('Valor real de fecha_obtencion:', valor);
+    if (!valor) return "";
+    const d = new Date(valor);
+    return !isNaN(d.getTime()) ? d.toISOString().slice(0, 10) : "";
+  })(),
+};
+    } catch (err) {
+      console.error('Error procesando componente:', comp, err);
+      return null;
     }
-
-    //Metodo crear.
-    async create(createComponentesObtenidosDto: CreateComponentesObtenidosDto): Promise<ComponentesObtenidos | { message: string }> {
-  // Buscar la historia clínica por no_hc (ajusta si tu referencia es a centrifugacion)
-  const historia = await this.historiaClinicaModel.findOne({ no_hc: createComponentesObtenidosDto.no_hc });
-  if (!historia) {
-    return { message: "No existe la historia clínica para ese no_hc" };
-  }
-
-  // Verificar si ya existe el componente obtenido para esa historia clínica y componente
-  const existComponentes_Obtenidos = await this.componentes_obtenidosModel.findOne({
-    historia_clinica: historia._id,
-    componentes: createComponentesObtenidosDto.componentes
-  });
-
-  if (existComponentes_Obtenidos) {
-    return { message: "Ya existe el componente obtenido" };
-  }
-
-  // Crear el nuevo componente obtenido con la referencia
-  const nuevoComponentes_Obtenidos = new this.componentes_obtenidosModel({
-    ...createComponentesObtenidosDto,
-    historia_clinica: historia._id
-  });
-  await nuevoComponentes_Obtenidos.save();
-
-  if (createComponentesObtenidosDto.estado_obtencion === 'obtenido') {
-    return { message: "El componente obtenido fue creado correctamente" };
-  } else if (createComponentesObtenidosDto.estado_obtencion === 'baja') {
-    return { message: "El componente baja fue creado correctamente" };
-  } else {
-    return { message: "El componente fue creado correctamente" };
-  }
+  })
+  .filter(Boolean);
 }
+   
+async getObtenidos() {
+  // 1. Trae solo los componentes con estado_obtencion "obtenido"
+  const componentes = await this.componentesObtenidosModel
+    .find({ estado_obtencion: "obtenido" })
+    .lean();
 
+  // 2. Trae todos los registros de donación y los indexa por _id (como string)
+  const RegistroDonacionModel = this.componentesObtenidosModel.db.model('RegistroDonacion');
+  const registros = await RegistroDonacionModel.find().lean();
+  const registrosMap = {};
+  registros.forEach((reg: any) => {
+    registrosMap[reg._id.toString()] = reg;
+  });
 
-        /*async create(CreateComponentesObtenidosDto: CreateComponentesObtenidosDto): Promise<ComponentesObtenidos | {message: string}> {
-    const existComponentes_Obtenidos = await this.componentes_obtenidosModel.findOne({ np_hc: CreateComponentesObtenidosDto.no_hc);
-  
-    if (existComponentes_Obtenidos){
-      return { message:"Ya existe el componente obtenido" }
-    }
-    const nuevoComponentes_Obtenidos = new this.componentes_obtenidosModel(CreateComponentesObtenidosDto);
-    await nuevoComponentes_Obtenidos.save();
+  // 3. Trae todas las historias clínicas y las indexa por _id (como string)
+  const HistoriaClinicaModel = this.componentesObtenidosModel.db.model('Historia_Clinica');
+  const historias = await HistoriaClinicaModel.find().lean();
+  const historiasMap = {};
+  historias.forEach((hc: any) => {
+    historiasMap[hc._id.toString()] = hc;
+  });
 
-    if (CreateComponentesObtenidosDto.estado_obtencion === 'obtenido') {
-      return { message: "el componente obtenido fue creado correctamente" }
-    } else if (CreateComponentesObtenidosDto.estado_obtencion === 'baja') {
-      return { message: "el componente baja fue creado correctamente" }
-    } else {
-      return { message: "el componente fue creado correctamente" }
-    }
-  }*/
-    
-
- // Retornar todos los componentes con estado 'obtenido'
-  async findAllObtenidos(): Promise<ComponentesObtenidos[]> {
-    return this.componentes_obtenidosModel.find({ estado_obtencion: 'obtenido' }).populate('historia_clinica');
-  }
-
-  // Retornar todos los componentes con estado 'baja'
-  async findAllBaja(): Promise<ComponentesObtenidos[]> {
-    return this.componentes_obtenidosModel.find({ estado_obtencion: 'baja' }).populate('historia_clinica');
-  }
-
-
-    
-    //Metodo retornar un componente obtenido.
-     async findOne(id:string): Promise<ComponentesObtenidos | { message: string}>{
-      const comp_ob = await this.componentes_obtenidosModel.findById({id}).exec();
-      if (!comp_ob){
-        return { message: 'No existe el componente obtenido'}
+  // 4. Une los datos y devuelve el resultado
+  return componentes
+    .map((comp: any) => {
+      try {
+        const reg = registrosMap[comp.registro_donacion?.toString()];
+        if (!reg) return null;
+        const hc = historiasMap[reg.historiaClinica?.toString()];
+        if (!hc) return null;
+        return {
+          _id: comp._id,
+          no_consecutivo: comp.no_consecutivo,
+          historia_clinica: {
+            no_hc: hc.no_hc || "",
+            sexo: hc.sexo || "",
+            edad: hc.edad || "",
+            grupo: hc.grupo || "",
+            factor: hc.factor || "",
+          },
+          componentes: comp.componentes,
+          fecha_obtencion: (() => {
+            const valor = comp.fecha_obtencion;
+            if (!valor) return "";
+            const d = new Date(valor);
+            return !isNaN(d.getTime()) ? d.toISOString().slice(0, 10) : "";
+          })(),
+        };
+      } catch (err) {
+        console.error('Error procesando componente:', comp, err);
+        return null;
       }
-      return comp_ob;
-     }
-    
- 
-    //Metodo para actualizar
-    async update(id: string, UpdateComponentesObtenidosDto: UpdateComponentesObtenidosDto): Promise<ComponentesObtenidos | { message: string}> {
-      const updatecomp_ob= await this.componentes_obtenidosModel.findByIdAndUpdate(id,UpdateComponentesObtenidosDto, {new:true}).exec();    
-      if (!updatecomp_ob) {
-        return{ message: `El componente obtenido ${id} no existe`}
-      }
-        return updatecomp_ob;
-    }
-     
-    //Metodo para eliminar un componente obtenido.
-    async remove(id: string): Promise<ComponentesObtenidos | {message: string}>{
-      const deletecomp_ob = await this.componentes_obtenidosModel.findByIdAndDelete(id);
-    
-      if (!deletecomp_ob) {
-        return { message:"El componete obtenido no existe"}
-      }
-      return deletecomp_ob
-     
-    }
-    }
-  
+    })
+    .filter(Boolean);
+}
+async desecharComponente(id: string) {
+  // Busca el componente obtenido
+  const componente = await this.componentesObtenidosModel.findById(id).lean();
+  if (!componente) throw new Error('Componente no encontrado');
+
+  // Busca y actualiza el registro de donación relacionado
+  const RegistroDonacionModel = this.componentesObtenidosModel.db.model('RegistroDonacion');
+  await RegistroDonacionModel.findByIdAndUpdate(
+    componente.registro_donacion,
+    { estado: "desechadaa" }
+  );
+  return { success: true };
+}
+async liberarComponente(id: string) {
+  // Busca el componente obtenido
+  const componente = await this.componentesObtenidosModel.findById(id).lean();
+  if (!componente) throw new Error('Componente no encontrado');
+
+  // Busca y actualiza el registro de donación relacionado
+  const RegistroDonacionModel = this.componentesObtenidosModel.db.model('RegistroDonacion');
+  await RegistroDonacionModel.findByIdAndUpdate(
+    componente.registro_donacion,
+    { estado: "liberado" }
+  );
+  return { success: true };
+}
+async findByEstadoObtencion(estado: string) {
+  return this.componentesObtenidosModel.find({ estado_obtencion: estado }).lean();
+}
+}
