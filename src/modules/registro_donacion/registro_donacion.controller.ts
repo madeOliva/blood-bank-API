@@ -39,29 +39,20 @@ export class RegistroDonacionController {
 
     return this.service.findByRangoFechas(fechaInicio, fechaFin);
   }
+  
+  
+  @Get('aptos-interrogatorio')
+  @ApiOperation({ summary: 'Obtiene todos los registros de donacion que son aptos al interrogatorio' })
+  getDonacionesAptasInterrogatorio() {
+    return this.service.getDonacionesAptasInterrogatorio();
+  }
 
   @Get('consecutivo-historia-aceptada')
   async getConsecutivoAndHistoriaClinicaAceptada() {
     return this.service.getConsecutivoAndHistoriaClinicaAceptada();
   }
 
-  @Get('rango-fechas')
-  async findByRangoFechas(
-    @Query('inicio') inicio: string,
-    @Query('fin') fin: string,
-  ) {
-    if (!inicio || !fin) {
-      throw new BadRequestException('Debe proporcionar las fechas de inicio y fin');
-    }
-    const fechaInicio = new Date(inicio);
-    const fechaFin = new Date(fin);
-
-    if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
-      throw new BadRequestException('Formato de fecha inválido');
-    }
-
-    return this.service.findByRangoFechas(fechaInicio, fechaFin);
-  }
+  
 
   @Get('pueden-donar')
   async getDonantesQuePuedenDonar() {

@@ -28,6 +28,15 @@ export class HistoriaClinicaService {
     return this.Historia_ClinicaModel.find().exec();
   }
 
+  // Obtener una historia clínica por CI
+  async getByCI(ci: string) {
+  const historia = await this.Historia_ClinicaModel.findOne({ ci });
+  if (!historia) {
+    throw new NotFoundException('No existe la historia clínica con CI ' + ci);
+  }
+  return historia;
+}
+
   // Crear una nueva historia clínica
   async create(createHistoriaClinicaDto: CreateHistoriaClinicaDto) {
     // Puedes cambiar el campo de búsqueda si tienes un campo único (ej: nro_historia)

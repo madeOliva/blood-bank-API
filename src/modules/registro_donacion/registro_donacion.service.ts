@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { UpdateRegistroDonacionDto } from './dto/update-registro_donacion.dto';
 import { CreateRegistroDonacionesDto } from './dto/create-registro_donacion.dto';
@@ -55,10 +56,12 @@ export class RegistroDonacionService {
       const componente = await this.componentesModel.findById(
         createDto.componente,
       );
+
       if (!componente) {
         throw new NotFoundException('Componente no encontrado');
       }
       const anio = new Date().getFullYear();
+      console.log(componente);
 
       let numeroHC = '';
       if (!historia) {
@@ -68,7 +71,6 @@ export class RegistroDonacionService {
         historiaClinicaId = nuevaHistoria._id;
         numeroHC = nuevaHistoria.no_hc;
       } else {
-        // Modificar la historia clínica existente
         const updatedHistoria =
           await this.historiaclinicaModel.findOneAndUpdate(
             { ci: createDto.historiaClinica.ci },
@@ -84,7 +86,6 @@ export class RegistroDonacionService {
         numeroHC = updatedHistoria.no_hc;
       }
 
-      // Generar no_registro
       const siglasComponente = componente.siglas;
       const numeroConsecutivo =
         (await this.registroDonacionModel.countDocuments({
@@ -95,8 +96,49 @@ export class RegistroDonacionService {
         })) + 1;
       no_registro = `${siglasComponente}-${numeroHC}.${anio}.${numeroConsecutivo}`;
 
-      // Validaciones adicionales (si las tienes)
-      // ... (puedes dejar aquí tu lógica de validación de última donación, sexo, etc.)
+      const ultimaDonacion = await this.registroDonacionModel
+        .findOne({
+          historiaClinica: historiaClinicaId,
+          //componente: createDto.componente,
+          fechaD: { $ne: null }, // Solo registros con fecha de donación real
+        })
+        .sort({ fechaD: -1 });
+
+      if (ultimaDonacion) {
+        const sexoId = createDto.historiaClinica.sexo;
+        const sexo = await this.sexoModel.findById(sexoId);
+
+        if (!componente) {
+          throw new NotFoundException('Componente no encontrado');
+        }
+        let diasEspera = 0;
+        if (sexo?.nombre === 'M') {
+          diasEspera = componente.diasEsperaMasculino;
+          //diasEspera=90;
+          console.log(componente.diasEsperaMasculino);
+        } else if (sexo?.nombre === 'F') {
+          diasEspera = componente.diasEsperaFemenino;
+          console.log(componente.diasEsperaFemenino);
+          //diasEspera=120;
+        } else {
+          throw new BadRequestException('Sexo no válido');
+        }
+
+        if (!ultimaDonacion.fechaD) {
+          throw new BadRequestException(
+            'La última donación no tiene fecha de donación registrada',
+          );
+        }
+        const fechaUltima = ultimaDonacion.fechaD;
+        fechaUltima.setDate(fechaUltima.getDate() + diasEspera);
+
+        const hoy = new Date();
+        if (hoy < fechaUltima) {
+          throw new ConflictException(
+            `El donante debe esperar hasta el ${fechaUltima.toLocaleDateString()} para volver a donar este componente.`,
+          );
+        }
+      }
 
       const newRegistro = new this.registroDonacionModel({
         ...createDto,
@@ -169,19 +211,66 @@ export class RegistroDonacionService {
     }
   }
 
-  async update(
-    id: string,
-    updateRegistroDonacionDto: UpdateRegistroDonacionDto,
-  ) {
-    const updatedRegistro = await this.registroDonacionModel
-      .findByIdAndUpdate(id, updateRegistroDonacionDto, { new: true })
-      .exec();
+  // async update(
+  //   id: string,
+  //   updateRegistroDonacionDto: UpdateRegistroDonacionDto,
+  // ) {
+  //   const updatedRegistro = await this.registroDonacionModel
+  //     .findByIdAndUpdate(id, updateRegistroDonacionDto, { new: true })
+  //     .exec();
 
-    if (!updatedRegistro) {
-      throw new NotFoundException(`Registro con ID ${id} no encontrado`);
-    }
-    return updatedRegistro;
+  //   if (!updatedRegistro) {
+  //     throw new NotFoundException(`Registro con ID ${id} no encontrado`);
+  //   }
+  //   return updatedRegistro;
+  // }
+
+   async update(id: string, updateRegistroDonacionDto: UpdateRegistroDonacionDto) {
+  // 1. Busca el registro actual
+  const registro = await this.registroDonacionModel.findById(id);
+  if (!registro) throw new NotFoundException(`Registro con ID ${id} no encontrado`);
+
+  let nuevoNoRegistro = registro.no_registro;
+
+  // 2. Si el componente cambia, recalcula el no_registro
+  if (updateRegistroDonacionDto.componente && 
+      updateRegistroDonacionDto.componente.toString() !== registro.componente.toString()) {
+
+    // 3. Obtén el nuevo componente
+    const nuevoComponente = await this.componentesModel.findById(updateRegistroDonacionDto.componente);
+    if (!nuevoComponente) throw new NotFoundException('Componente no encontrado');
+
+    // 4. Obtén el año y el número de historia clínica
+    const anio = new Date().getFullYear();
+    const historia = await this.historiaclinicaModel.findById(registro.historiaClinica);
+    const numeroHC = historia?.no_hc || "";
+
+    // 5. Calcula el consecutivo para el nuevo componente y año
+    const numeroConsecutivo = (await this.registroDonacionModel.countDocuments({
+      componente: updateRegistroDonacionDto.componente,
+      fechaR: {
+        $gte: new Date(`${anio}-01-01T00:00:00.000Z`),
+        $lte: new Date(`${anio}-12-31T23:59:59.999Z`),
+      },
+    })) + 1;
+
+    // 6. Construye el nuevo no_registro
+    nuevoNoRegistro = `${nuevoComponente.siglas}-${numeroHC}.${anio}.${numeroConsecutivo}`;
   }
+
+  // 7. Actualiza el registro (incluyendo el nuevo no_registro si cambió)
+  const updatedRegistro = await this.registroDonacionModel.findByIdAndUpdate(
+    id,
+    { ...updateRegistroDonacionDto, no_registro: nuevoNoRegistro },
+    { new: true }
+  ).exec();
+
+  if (!updatedRegistro) {
+    throw new NotFoundException(`Registro con ID ${id} no encontrado`);
+  }
+  return updatedRegistro;
+}
+
 
   async updatee(
     id: string,
@@ -196,6 +285,8 @@ export class RegistroDonacionService {
     }
     return updatedRegistro;
   }
+
+ 
 
   async delete(id: string) {
     const deletedRegistro = await this.registroDonacionModel
@@ -386,6 +477,60 @@ export class RegistroDonacionService {
       estado: {
         nombre_estado: reg.estado?.nombre_estado || '',
       },
+    }));
+  }
+
+  //Donaciones
+  async getDonacionesAptasInterrogatorio() {
+    const hoy = new Date();
+    const inicioDia = new Date(
+      hoy.getFullYear(),
+      hoy.getMonth(),
+      hoy.getDate(),
+      0,
+      0,
+      0,
+      0,
+    );
+    const finDia = new Date(
+      hoy.getFullYear(),
+      hoy.getMonth(),
+      hoy.getDate(),
+      23,
+      59,
+      59,
+      999,
+    );
+
+    const registros = await this.registroDonacionModel
+      .find({
+        apto_interrogatorio: true,
+        fechaR: { $gte: inicioDia, $lte: finDia },
+        estado: "",
+      })
+      .populate({
+        path: 'historiaClinica',
+        populate: [
+          { path: 'sexo' },
+          { path: 'grupo_sanguine' },
+          { path: 'factor' },
+        ],
+      })
+      .populate('componente')
+      .exec();
+
+    return registros.map((reg: any) => ({
+      id: reg._id,
+      ci: reg.historiaClinica?.ci || '',
+      nombre: reg.historiaClinica?.nombre || '',
+      primer_apellido: reg.historiaClinica?.primer_apellido || '',
+      segundo_apellido: reg.historiaClinica?.segundo_apellido || '',
+      edad: reg.historiaClinica?.edad || '',
+      sexo: reg.historiaClinica?.sexo?.nombre || '',
+      grupo: reg.historiaClinica?.grupo_sanguine?.nombre || '',
+      rh: reg.historiaClinica?.factor?.signo || '',
+      donante: reg.componente?.nombreComponente || '',
+      // agrega aquí cualquier otro campo que tu DataGrid necesite
     }));
   }
 }

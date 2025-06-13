@@ -50,14 +50,14 @@ export class RegistroDonacion {
   @Prop()
   no_lote?: string;
 
-  @Prop({ type: Types.ObjectId, ref: Estados.name})
-  estado?: Types.ObjectId; //Nomenclador
+  @Prop()
+  estado?: string;
 
   @Prop({ type: Types.ObjectId, ref: Reacciones.name})
   reaccion?: Types.ObjectId; //Nomenclador
   
   
-  @Prop()
+  @Prop({type:Date})
   fechaD?: Date;
 
   @Prop({ default: false })
@@ -148,9 +148,6 @@ export class RegistroDonacion {
   examenP_hemoglobina?: number; //Min Max
 
   @Prop()
-  apto_prechequeo?: boolean;
-
-  @Prop()
   examenF_peso?: number; //Min=50lb Max=400lb
 
   @Prop()
@@ -164,6 +161,9 @@ export class RegistroDonacion {
 
   @Prop()
   examenF_hemoglobina?: number; // Min=12 Max=17
+
+  @Prop()
+  apto_prechequeo?: boolean;
 
   @Prop()
   apto_examenFisico?: boolean;

@@ -17,7 +17,7 @@ import { TransfusionesModule } from './modules/transfusiones/transfusiones.modul
 import { CalidadModule } from './modules/calidad/calidad.module';
 import { CausaModule } from './modules/causa/causa.module';
 import { CentrifugacionModule } from './modules/centrifugacion/centrifugacion.module';
-import { ComponenteModule } from './modules/componente/componente.module';
+
 import { ComponentesObtenidosModule } from './modules/componentes_obtenidos/componentes_obtenidos.module';
 import { EstadoCivilModule } from './modules/estado_civil/estado_civil.module';
 import { AreaSaludModule } from './modules/area_salud/area_salud.module';
@@ -42,20 +42,10 @@ import { RegistroDonacionModule } from './modules/registro_donacion/registro_don
 import { GruposSanguineosModule } from './modules/grupos_sanguineos/grupos_sanguineos.module';
 import { FactoresModule } from './modules/factores/factores.module';
 
-
-
-
-
-
-
-
 @Module({
-
   //MongooseModule.forRoot('mongodb://localhost/banco_sangre'),
   //MongooseModule.forRoot('mongodb+srv://carlosmonterrey:Karlos8200@bloodbank.au9pv.mongodb.net/?retryWrites=true&w=majority&appName=Bloodbank', {
   imports: [
-
-
     ConfigModule.forRoot(),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -71,7 +61,7 @@ import { FactoresModule } from './modules/factores/factores.module';
     CausaModule,
     CentrifugacionModule,
     ColorPielModule,
-    ComponenteModule,
+
     ComponentesModule,
     ComponentesObtenidosModule,
     ConsejoPopularModule,
@@ -106,4 +96,4 @@ import { FactoresModule } from './modules/factores/factores.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
