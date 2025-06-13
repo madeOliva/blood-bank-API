@@ -18,13 +18,13 @@ class ComponentesDto {
 }
 
 export class CreateComponentesObtenidosDto {
+  @IsNotEmpty()
+  @IsString()
+  no_consecutivo: string;
 
   @IsNotEmpty()
   @IsString()
-  no_hc: string; 
-
-  @IsString()
-  numero_consecutivo: string;
+  registro_donacion: string; // ObjectId del registro de donación
 
   @IsIn(['obtenido', 'baja', 'pendiente'])
   estado_obtencion: string;
@@ -41,6 +41,4 @@ export class CreateComponentesObtenidosDto {
 
   @IsOptional()
   fecha_obtencion?: Date;
-
- 
 }
