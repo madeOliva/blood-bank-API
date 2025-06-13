@@ -17,7 +17,7 @@ class Componentes {
   no_lote: string;
 }
 
-@Schema({ timestamps: true })
+@Schema({ collection: 'componentes_obtenidos'})
 export class ComponentesObtenidos {
   @Prop({ required: true })
   no_consecutivo: string;
@@ -30,7 +30,7 @@ export class ComponentesObtenidos {
   })
   registro_donacion: Types.ObjectId;
 
-  @Prop({ required: true, enum: ['obtenido', 'baja', 'pendiente'] })
+  @Prop({ required: true, enum: ['obtenido', 'baja', 'pendiente', 'liberado', 'desechada'] })
   estado_obtencion: string;
 
   @Prop({ type: [Componentes] })
