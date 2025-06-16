@@ -506,7 +506,7 @@ export class RegistroDonacionService {
       .find({
         apto_interrogatorio: true,
         fechaR: { $gte: inicioDia, $lte: finDia },
-        estado: "",
+        estado: null,
       })
       .populate({
         path: 'historiaClinica',
