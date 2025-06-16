@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Query } from '@nestjs/common';
 import { ComponentesObtenidosService } from './componentes_obtenidos.service';
 import { CreateComponentesObtenidosDto } from './dto/create-componentes_obtenidos.dto';
 
@@ -6,19 +6,13 @@ import { CreateComponentesObtenidosDto } from './dto/create-componentes_obtenido
 export class ComponentesObtenidosController {
   constructor(private readonly service: ComponentesObtenidosService) {}
 
-  @Post()
-  async create(@Body() dto: CreateComponentesObtenidosDto) {
-    return this.service.create(dto);
-  }
+ @Post()
+async create(@Body() body: any) {
+  return this.service.createComponente(body);
+}
 
-@Get('componentes_obtenidos')
-async getAllObtenidos() {
-  return this.service.getAllObtenidos();
-}
-@Get('obtenidos')
-async getObtenidos() {
-  return this.service.getObtenidos();
-}
+
+
 @Patch(':id/desechar')
 async desecharComponente(@Param('id') id: string) {
   return this.service.desecharComponente(id);
@@ -29,6 +23,10 @@ async liberarComponente(@Param('id') id: string) {
 }
 @Get('bajas')
 async getBajas() {
-  return this.service.findByEstadoObtencion('baja');
+  return this.service.findByEstadoObtencion('desechada');
+}
+@Get('componentes_obtenidos')
+async getComponentesObtenidos(@Query('estado') estado?: string) {
+  return this.service.getComponentesObtenidos(estado);
 }
 }

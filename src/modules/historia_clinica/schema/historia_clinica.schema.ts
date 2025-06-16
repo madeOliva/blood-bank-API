@@ -10,7 +10,7 @@ export type Historia_ClinicaDocument = HydratedDocument<Historia_Clinica>;
 
 @Schema()
 export class Historia_Clinica {
-  @Prop({ required: true, unique: true })
+  @Prop({ unique: true })
   ci: string;
 
   @Prop({ required: true })
@@ -25,13 +25,13 @@ export class Historia_Clinica {
   @Prop({ type: Types.ObjectId, ref: Sexo.name })
   sexo: Sexo; //Nomenclador
 
-  @Prop({ required: true })
+  @Prop({})
   edad: number;
 
   @Prop()
   estado_civil: string;
 
-  @Prop({ required: true })
+  @Prop({})
   municipio: string;
 
   @Prop({ type: Types.ObjectId, ref: Provincia.name })
@@ -40,7 +40,7 @@ export class Historia_Clinica {
   @Prop({ type: Types.ObjectId, ref: ColorPiel.name })
   color_piel: ColorPiel; //Nomenclador
 
-  @Prop({ required: true })
+  @Prop({})
   no_hc: string;
 
   @Prop({ type: Types.ObjectId, ref: GruposSanguineos.name })
@@ -49,19 +49,19 @@ export class Historia_Clinica {
   @Prop({ type: Types.ObjectId, ref: Factores.name })
   factor: Factores; //Nomenclador
 
-  @Prop({ required: true })
+  @Prop()
   consejo_popular: string;
 
-  @Prop({ required: true })
+  @Prop()
   no_consultorio: string;
 
-  @Prop({ required: true })
+  @Prop()
   telefono: string;
 
-  @Prop({ required: true })
+  @Prop()
   telefonoLaboral: string;
 
-  @Prop({ required: true })
+  @Prop()
   centro_laboral: string;
 
   @Prop()
@@ -86,10 +86,19 @@ export class Historia_Clinica {
   es_posibleDonante: boolean;
 
   @Prop()
-  alergias: string[]; // Array de strings
+  es_donanteActivo: boolean;
+
 
   @Prop()
-  antecedentesPersonales: string[]; // Array de strings
+  alergias: string[];
+
+  @Prop()
+  antecedentesPersonales?: [{ antecedente: string; año: string },];
+
+  @Prop()
+  antecedentesFamiliares?: [{ antecedente: string; parentesco: string },];
+
+
 }
 
 export const Historia_ClinicaSchema =
