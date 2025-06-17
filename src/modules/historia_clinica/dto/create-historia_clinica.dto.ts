@@ -122,6 +122,13 @@ export class CreateHistoriaClinicaDto {
   @IsNotEmpty()
   es_donanteActivo: boolean;
 
+  @IsBoolean()
+  @IsOptional()
+  citado?: boolean;
+ 
+  @IsOptional()
+  fechaCita?: Date;
+
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
