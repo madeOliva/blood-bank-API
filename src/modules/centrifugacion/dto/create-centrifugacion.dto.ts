@@ -1,28 +1,24 @@
-import { IsString, IsNumber, IsDate, IsNotEmpty} from 'class-validator';
+import { IsString, IsNumber, IsIn, IsDate, IsNotEmpty } from 'class-validator';
 
-export class CreateCentrifugacionDto  {
+export class CreateCentrifugacionDto {
+  @IsNotEmpty()
+  @IsString()
+  no_hc: string; 
 
   @IsString()
-  @IsNotEmpty()
-  no_tubuladura: string;
+  no_consecutivo: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsIn(['CEPL', 'CP', 'PFC', 'CRIO'])
   componente_a_obtener: string;
 
   @IsNumber()
-  @IsNotEmpty()
   no_centrifuga: number;
 
   @IsNumber()
-  @IsNotEmpty()
   temperatura: number;
 
   @IsNumber()
-  @IsNotEmpty()
   velocidad: number;
 
-  @IsDate()
-  @IsNotEmpty()
-  fecha: Date;
+ 
 }

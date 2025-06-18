@@ -3,7 +3,6 @@ import { Types } from 'mongoose';
 import { Componentes } from 'src/modules/componentes_donacion/schemas/componentes.schemas';
 import { Estados } from 'src/modules/estados/schemas/estados.schemas';
 import { Historia_Clinica } from 'src/modules/historia_clinica/schema/historia_clinica.schema';
-import { Persona } from 'src/modules/persona/schema/persona.schema';
 import { Reacciones } from 'src/modules/reacciones/schemas/reacciones.schemas';
 
 @Schema()
@@ -26,8 +25,7 @@ export class RegistroDonacion {
   })
   historiaClinica: Historia_Clinica;
   
-  @Prop()
-  ci_donante: string;
+  
 
   @Prop({ type: Types.ObjectId, ref: Componentes.name })
   componente: Componentes; //Nomenclador
@@ -37,7 +35,7 @@ export class RegistroDonacion {
 
   
    @Prop()
-  fecha_inscripcion: Date;
+  fechaR: Date;
 
   @Prop()
   nombre_unidad: string;
@@ -45,97 +43,97 @@ export class RegistroDonacion {
 
 
   //DONACION
-  @Prop({ required: true, unique: true })
-  no_tubuladura: string;
-
-  @Prop({ required: true })
-  no_lote: string;
-
-  @Prop({ type: Types.ObjectId, ref: Estados.name, required: true })
-  estado: Types.ObjectId; //Nomenclador
-
-  @Prop({ type: Types.ObjectId, ref: Reacciones.name, required: true })
-  reaccion: Types.ObjectId; //Nomenclador
-  
-  
-  @Prop({ default: Date.now })
-  fechaD: Date;
-
-  @Prop({ default: false })
-  es_desecho: boolean;
+  @Prop()
+  no_tubuladura?: string;
 
   @Prop()
-  numero_consecutivo: number;
+  no_lote?: string;
+
+  @Prop()
+  estado?:string;
+
+  @Prop({ type: Types.ObjectId, ref: Reacciones.name})
+  reaccion?: Types.ObjectId; //Nomenclador
+  
+  
+  @Prop({type:Date})
+  fechaD?: Date;
+
+  @Prop({ default: false })
+  es_desecho?: boolean;
+
+  @Prop()
+  numero_consecutivo?: number;
 
   //Donacion de Sangre
-  @Prop({ required: true })
-  tipo_bolsa: string;
+  @Prop()
+  tipo_bolsa?: string;
 
-  @Prop({ required: true })
-  volumen: number;
+  @Prop()
+  volumen?: number;
 
   //Donacion de Plasma
-  @Prop({ required: true })
-  TCM: number;
+  @Prop()
+  TCM?: number;
 
-  @Prop({ required: true })
-  TP: number;
+  @Prop()
+  TP?: number;
 
-  @Prop({ required: true })
-  tiempo: number; //en segundos
+  @Prop()
+  tiempo?: number; //en segundos
 
-  @Prop({ required: true })
-  ciclos: number;
+  @Prop()
+  ciclos?: number;
 
-  @Prop({ required: true })
-  ACD: string;
+  @Prop()
+  ACD?: string;
 
-  @Prop({ required: true })
-  no_lote_kitACD: string;
+  @Prop()
+  no_lote_kitACD?: string;
 
-  @Prop({ required: true })
-  no_lote_kitBach: string;
+  @Prop()
+  no_lote_kitBach?: string;
 
   //Laboratorio
 
   @Prop()
-  resultado_VIH: boolean[];
+  resultado_VIH?: boolean[];
 
   @Prop()
-  resultado_hepatitisB: boolean[];
+  resultado_hepatitisB?: boolean[];
 
   @Prop()
-  resultado_hepatitisC: boolean[];
+  resultado_hepatitisC?: boolean[];
 
   @Prop()
-  confirmatoria_hepatitisB: boolean[];
+  confirmatoria_hepatitisB?: boolean[];
 
   @Prop()
-  resultado_tipage: string[];
+  resultado_tipage?: string[];
 
   @Prop()
-  resultado_contratipaje: string[];
+  resultado_contratipaje?: string[];
 
   @Prop()
-  resultado_DU: boolean[];
+  resultado_DU?: boolean[];
 
   @Prop()
-  resultado_serologia: boolean[];
+  resultado_serologia?: boolean[];
 
   @Prop()
-  resultado_eritro: number[];
+  resultado_eritro?: number[];
 
   @Prop()
-  resultado_hematocrito: number[];
+  resultado_hematocrito?: number[];
 
   @Prop()
-  resultado_proteinas_totales: number[];
+  resultado_proteinas_totales?: number[];
 
   @Prop()
-  resultado_TGP: number[];
+  resultado_TGP?: number[];
 
   @Prop()
-  resultado_hemoglobina: number[];
+  resultado_hemoglobina?: number[];
 
 
  //SELECCION Y PRECHEQUEO
@@ -147,9 +145,6 @@ export class RegistroDonacion {
 
   @Prop()
   examenP_hemoglobina?: number; //Min Max
-
-  @Prop()
-  apto_prechequeo?: boolean;
 
   @Prop()
   examenF_peso?: number; //Min=50lb Max=400lb
@@ -167,6 +162,9 @@ export class RegistroDonacion {
   examenF_hemoglobina?: number; // Min=12 Max=17
 
   @Prop()
+  apto_prechequeo?: boolean;
+
+  @Prop()
   apto_examenFisico?: boolean;
 
   @Prop()
@@ -182,7 +180,12 @@ export class RegistroDonacion {
 
   @Prop()
   observacion_interrogatorio?: string;
+
+
+@Prop()
+motivo_desecho?: string;
 }
+
 
 export const RegistroDonacionSchema =
   SchemaFactory.createForClass(RegistroDonacion);

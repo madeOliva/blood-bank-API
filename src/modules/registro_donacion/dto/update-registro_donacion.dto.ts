@@ -1,5 +1,10 @@
-import {
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateRegistroDonacionesDto } from './create-registro_donacion.dto';
+
+  import {
+  IsArray,
   IsBoolean,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -7,37 +12,87 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { Types } from 'mongoose';
+import { ObjectId, Types } from 'mongoose';
 
 export class UpdateRegistroDonacionDto {
   @IsString()
-  @IsOptional()
-  no_registro: string;
+  @IsNotEmpty()
+  no_hc: string;
 
   @IsString()
-  @IsOptional()
-  @Length(11, 11)
-  ci: string;
+  @IsNotEmpty()
+  @Length(11, 11) // Assuming CI is a Cuban ID with 11 digits
+  ci_donante: string;
 
   @IsString()
-  @IsOptional()
-  componente: string;
+  @IsNotEmpty()
+  nombre: string;
 
   @IsString()
-  @IsOptional()
-  nombre_tecnico: string;
+  @IsNotEmpty()
+  primer_apellido: string;
 
   @IsString()
-  @IsOptional()
-  fecha_inscripcion: Date;
+  @IsNotEmpty()
+  segundo_apellido: string;
 
   @IsString()
-  @IsOptional()
-  nombre_unidad: string;
+  @IsNotEmpty()
+  sexo: ObjectId;
+
+  @IsNumber()
+  @IsNotEmpty()
+  edad: number;
 
   @IsString()
-  @IsOptional()
-  porParte_de: string;
+  @IsNotEmpty()
+  municipio: string;
+
+  @IsString()
+  @IsNotEmpty()
+  provincia: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  color_piel: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  grupo_sanguine: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  factor: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  consejo_popular: string;
+
+  @IsString()
+  @IsNotEmpty()
+  no_consultorio: string;
+
+  @IsString()
+  @IsNotEmpty()
+  ocupacion: string;
+
+  @IsString()
+  @IsNotEmpty()
+  telefono: string;
+
+  @IsString()
+  @IsNotEmpty()
+  telefonoLaboral: string;
+
+  @IsString()
+  @IsNotEmpty()
+  centro_laboral: string;
+
+  @IsString()
+  @IsNotEmpty()
+  componente: ObjectId; //Nomenclador
+
+  //Examenes Prechequeo
 
   @IsString()
   @IsOptional()
@@ -51,7 +106,7 @@ export class UpdateRegistroDonacionDto {
   @IsOptional()
   @Min(12)
   @Max(17)
-  examenP_hemoglobina: number;
+  examenP_hemoglobina: number; //Min=12 Max=17
 
   @IsBoolean()
   @IsOptional()
@@ -61,40 +116,42 @@ export class UpdateRegistroDonacionDto {
   @IsOptional()
   @Min(50)
   @Max(400)
-  examenF_peso: number;
+  examenF_peso: number; //Min=50lb Max=400lb
 
   @IsNumber()
   @IsOptional()
   @Min(40)
   @Max(180)
-  examenF_pulso: number;
+  examenF_pulso: number; // Min=40 Max=180
 
   @IsNumber()
   @IsOptional()
   @Min(35)
   @Max(40)
-  examenF_temSublingual: number;
+  examenF_temSublingual: number; //  Min=35 Max=40
 
   @IsNumber()
   @IsOptional()
   @Min(35)
   @Max(40)
-  examenF_temAxilar: number;
+  examenF_temAxilar: number; // Min=35 Max=40
 
   @IsNumber()
   @IsOptional()
   @Min(12)
   @Max(17)
-  examenF_hemoglobina: number;
+  examenF_hemoglobina: number; // Min=12 Max=17
 
   @IsBoolean()
   @IsOptional()
   apto_examenFisico: boolean;
 
+  //Seleccion
+
+  @IsArray()
   @IsOptional()
   respuestas_interrogatorio: [
     {
-      pregunta: number; //Relacionarlo con el nomenclador pregunta de made
       respuesta?: boolean;
       respuesta_escrita?: string;
     },
@@ -108,84 +165,104 @@ export class UpdateRegistroDonacionDto {
   @IsOptional()
   observacion_interrogatorio: string;
 
+  //Donacion
+
   @IsString()
+  @IsOptional()
   no_tubuladura: string;
 
   @IsString()
+  @IsOptional()
   no_lote: string;
 
-  @IsString()
-  ci_donante: string;
-
-  @IsString()
+ 
+  @IsOptional()
   estado: Types.ObjectId; //Nomenclador
 
-  @IsString()
+  @IsOptional()
   reaccion: Types.ObjectId; //Nomenclador
 
-  
-  @IsString()
-  nombre_tecnicoD: string;
-
   @IsBoolean()
+  @IsOptional()
   es_desecho: boolean;
-
-  @IsNumber()
-  numero_consecutivo: number;
 
   //Donacion de Sangre
   @IsString()
+  @IsOptional()
   tipo_bolsa: string; //Se puede poner como un nomenclador tambien
 
   @IsNumber()
+  @IsOptional()
   volumen: number;
 
   //Donacion de Plasma
   @IsNumber()
+  @IsOptional()
   TCM: number;
 
   @IsNumber()
+  @IsOptional()
   TP: number;
 
   @IsNumber()
+  @IsOptional()
   tiempo: number; //en segundos
 
   @IsNumber()
+  @IsOptional()
   ciclos: number;
 
   @IsString()
+  @IsOptional()
   ACD: string;
 
   @IsString()
+  @IsOptional()
   no_lote_kitACD: string;
 
   @IsString()
+  @IsOptional()
   no_lote_kitBach: string;
 
   //Laboratorio
+  @IsOptional()
   resultado_VIH: boolean[];
 
+  @IsOptional()
   resultado_hepatitisB: boolean[];
 
+  @IsOptional()
   resultado_hepatitisC: boolean[];
 
+  @IsOptional()
   confirmatoria_hepatitisB: boolean[];
 
+  @IsOptional()
   resultado_tipage: string[];
 
+  @IsOptional()
   resultado_contratipaje: string[];
 
+  @IsOptional()
   resultado_DU: boolean[];
 
+  @IsOptional()
   resultado_serologia: boolean[];
 
+  @IsOptional()
   resultado_eritro: number[];
 
+  @IsOptional()
   resultado_hematocrito: number[];
 
+  @IsOptional()
   resultado_proteinas_totales: number[];
 
+  @IsOptional()
   resultado_TGP: number[];
 
+  @IsOptional()
   resultado_hemoglobina: number[];
 }
+
+

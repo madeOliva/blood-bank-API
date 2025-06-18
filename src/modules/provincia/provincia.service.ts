@@ -13,13 +13,13 @@ export class ProvinciaService {
 
   //Metodo CREAR
   async create(createProvinciaDto: CreateProvinciaDto): Promise<Provincia | {message:string}> {
-    const existProvincia = await this.provinciaModel.findOne({id_provincia: createProvinciaDto.id_provincia});
+    const existProvincia = await this.provinciaModel.findOne({nombre_provincia: createProvinciaDto.nombre_provincia});
     if(existProvincia){
       return {message:"Ya existe la provincia"}
     }
     const nuevaProvincia = new this.provinciaModel(createProvinciaDto);
-    nuevaProvincia.save();
-    return {message: "La provincia fue creada exitosamente"};
+    
+    return nuevaProvincia.save();
   }
 
 

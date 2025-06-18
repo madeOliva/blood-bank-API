@@ -1,39 +1,44 @@
-import { IsString, IsNumber, IsDate, IsNotEmpty, IsBoolean, Length} from 'class-validator';
+import { IsString, IsNumber, IsBoolean, IsOptional, IsIn, ValidateNested, IsArray, IsNotEmpty } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export class CreateComponentesObtenidosDto  {
-
-  @IsString()
-  @IsNotEmpty()
-  no_tubuladura: string;
-
-  @IsString()
-  @IsNotEmpty()
-  tipo_componente: string;
+class ComponentesDto {
+  @IsIn(['CEPL', 'CP', 'PFC', 'CRIO'])
+  tipo: string;
 
   @IsNumber()
-  @IsNotEmpty()
   volumen: number;
 
-  @IsDate()
-  @IsNotEmpty()
-  fecha_obtencion: Date;
-
   @IsBoolean()
-  @IsNotEmpty()
-  es_desecho: boolean;
+  @IsOptional()
+  envio_industria?: boolean;
 
   @IsString()
-  @IsNotEmpty()
-  causa: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Length(4, 4)
-  confirmado_por: string;
-
-  @IsString()
-  @IsNotEmpty()
-  estado_componente: string;
-  
+  @IsOptional()
+  no_lote?: string;
 }
- 
+
+export class CreateComponentesObtenidosDto {
+  @IsNotEmpty()
+  @IsString()
+  no_consecutivo: string;
+
+  @IsNotEmpty()
+  @IsString()
+  registro_donacion: string; // ObjectId del registro de donación
+
+  @IsIn(['obtenido', 'baja', 'pendiente'])
+  estado_obtencion: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ComponentesDto)
+  @IsOptional()
+  componentes?: ComponentesDto[];
+
+  @IsIn(['Ictero', 'Lipemia', 'Hemolisis', 'Rotura'])
+  @IsOptional()
+  causa_baja?: string;
+
+  @IsOptional()
+  fecha_obtencion?: Date;
+}

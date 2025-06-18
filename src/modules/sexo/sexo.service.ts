@@ -11,7 +11,7 @@ export class SexoService {
     
   }
   async create(createSexoDto: CreateSexoDto): Promise<Sexo | {message: string}> {
-    const existSexo = await this.sexoModel.findOne({id: createSexoDto.id});
+    const existSexo = await this.sexoModel.findOne(createSexoDto);
     if(existSexo){
      return {message: "Ya existe el sexo"}
     }
@@ -27,9 +27,9 @@ export class SexoService {
   async findOne(id: string): Promise<Sexo | {message: string}> {
     const sexo = await this.sexoModel.findById({id}).exec();
     if(!sexo){
-      return {message: "No existe el sexo"}
+      return {message: "No existe el sexo"};
     }
-    return sexo
+    return sexo;
   }
 
   async update(id: string, UpdateSexoDto: UpdateSexoDto): Promise<Sexo | {message: string}> {

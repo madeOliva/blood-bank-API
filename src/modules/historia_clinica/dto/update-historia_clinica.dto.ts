@@ -1,6 +1,18 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateHistoriaClinicaDto } from './create-historia_clinica.dto';
-import { IsBoolean, IsString, IsNotEmpty, IsNumber } from 'class-validator';
+import {
+  IsBoolean,
+  IsString,
+  IsNotEmpty,
+  IsNumber,
+  IsArray,
+  IsOptional,
+  ValidateNested,
+  IsMongoId,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
+
 export class UpdateHistoriaClinicaDto extends PartialType(
   CreateHistoriaClinicaDto,
 ) {
@@ -20,7 +32,7 @@ export class UpdateHistoriaClinicaDto extends PartialType(
   @IsNotEmpty()
   segundo_apellido: string;
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   sexo: string;
 
@@ -36,7 +48,11 @@ export class UpdateHistoriaClinicaDto extends PartialType(
   @IsNotEmpty()
   municipio: string;
 
-  @IsString()
+  @IsMongoId()
+  @IsNotEmpty()
+  provincia: string;
+
+  @IsMongoId()
   @IsNotEmpty()
   color_piel: string;
 
@@ -44,11 +60,11 @@ export class UpdateHistoriaClinicaDto extends PartialType(
   @IsNotEmpty()
   no_hc: string;
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  grupo_sanguine: string;
+  grupo_sanguine: string; //Nomenclador
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   factor: string;
 
@@ -100,11 +116,27 @@ export class UpdateHistoriaClinicaDto extends PartialType(
   @IsNotEmpty()
   es_posibleDonante: boolean;
 
-  @IsString()
+  @IsBoolean()
   @IsNotEmpty()
-  alergias: string;
+  es_donanteActivo: boolean;
 
-  @IsString()
-  @IsNotEmpty()
-  antecedentesPersonales: string[];
+  @IsBoolean()
+  @IsOptional() 
+  citado?: boolean;
+
+  @IsOptional()
+  fechaCita?: Date;
+
+  @IsArray()
+  @IsOptional()
+  antecedentesPersonales?: [{ antecedente: string; año: string },];;
+
+  @IsArray()
+  @IsOptional()
+  antecedentesFamiliares?: [{ antecedente: string; parentesco: string },];
+
+
+  @IsArray()
+  @IsOptional()
+  alergias?: string[];
 }

@@ -2,14 +2,20 @@ import {
   IsString,
   IsBoolean,
   IsNumber,
-  IsDate,
-  IsEmpty,
   IsNotEmpty,
-  Min,
-  Length,
   IsOptional,
+  IsArray,
+  ValidateNested,
+  IsMongoId,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+
+
 export class CreateHistoriaClinicaDto {
+  @IsString()
+  @IsNotEmpty()
+  no_hc: string;
+
   @IsString()
   @IsNotEmpty()
   ci: string;
@@ -26,9 +32,9 @@ export class CreateHistoriaClinicaDto {
   @IsNotEmpty()
   segundo_apellido: string;
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  sexo: string;
+  sexo: string; //Nomenclador
 
   @IsNumber()
   @IsNotEmpty()
@@ -36,25 +42,21 @@ export class CreateHistoriaClinicaDto {
 
   @IsString()
   @IsNotEmpty()
-  estado_civil: string;
-
-  @IsString()
-  @IsNotEmpty()
   municipio: string;
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  color_piel: string;
+  provincia: string; //Nomenclador
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  no_hc: string;
+  color_piel: string; //Nomenclador
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  grupo_sanguine: string;
+  grupo_sanguine: string; //Nomenclador
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   factor: string;
 
@@ -82,39 +84,61 @@ export class CreateHistoriaClinicaDto {
   @IsNotEmpty()
   centro_laboral: string;
 
+  //Atributos opcionales
+
   @IsString()
   @IsOptional()
-  otra_localizacion: string;
+  otra_localizacion?: string;
 
   @IsString()
-  @IsNotEmpty()
-  cat_ocupacional: string;
+  @IsOptional()
+  estado_civil?: string;
 
   @IsString()
-  @IsNotEmpty()
-  estilo_vida: string;
+  @IsOptional()
+  cat_ocupacional?: string;
 
   @IsString()
-  @IsNotEmpty()
-  alimentacion: string;
+  @IsOptional()
+  estilo_vida?: string;
 
   @IsString()
-  @IsNotEmpty()
-  genero_vida: string;
+  @IsOptional()
+  alimentacion?: string;
+
+  @IsString()
+  @IsOptional()
+  genero_vida?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  es_donanteControlado?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  es_posibleDonante?: boolean;
 
   @IsBoolean()
   @IsNotEmpty()
-  es_donanteControlado: boolean;
+  es_donanteActivo: boolean;
 
   @IsBoolean()
-  @IsNotEmpty()
-  es_posibleDonante: boolean;
+  @IsOptional()
+  citado?: boolean;
+ 
+  @IsOptional()
+  fechaCita?: Date;
 
-  @IsString()
-  @IsNotEmpty()
-  alergias: string;
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  alergias?: string[];
 
-  @IsString()
-  @IsNotEmpty()
-  antecedentesPersonales: string[];
+  @IsArray()
+  @IsOptional()
+  antecedentesPersonales?: [{ antecedente: string; año: string },];;
+
+  @IsArray()
+  @IsOptional()
+  antecedentesFamiliares?:  [{ antecedente: string; parentesco: string },];
 }

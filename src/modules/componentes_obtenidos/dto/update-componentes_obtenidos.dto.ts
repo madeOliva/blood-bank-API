@@ -1,40 +1,45 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { IsString, IsNumber, IsDate, IsNotEmpty, IsBoolean, Length} from 'class-validator';
-import { CreateComponentesObtenidosDto } from './create-componentes_obtenidos.dto';
+import { IsString, IsNumber, IsBoolean, IsOptional, IsIn, ValidateNested, IsArray } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export class UpdateComponentesObtenidosDto extends PartialType(CreateComponentesObtenidosDto) {
-
- @IsString()
-  @IsNotEmpty()
-  no_tubuladura: string;
-
-  @IsString()
-  @IsNotEmpty()
-  tipo_componente: string;
+class UpdateComponentesDto {
+  @IsIn(['CEPL', 'CP', 'PFC', 'CRIO'])
+  @IsOptional()
+  tipo?: string;
 
   @IsNumber()
-  @IsNotEmpty()
-  volumen: number;
-
-  @IsDate()
-  @IsNotEmpty()
-  fecha_obtencion: Date;
+  @IsOptional()
+  volumen?: number;
 
   @IsBoolean()
-  @IsNotEmpty()
-  es_desecho: boolean;
+  @IsOptional()
+  envio_industria?: boolean;
 
   @IsString()
-  @IsNotEmpty()
-  causa: string;
+  @IsOptional()
+  no_lote?: string;
+}
+
+export class UpdateComponentesObtenidosDto {
+
 
   @IsString()
-  @IsNotEmpty()
-  @Length(4, 4)
-  confirmado_por: string;
+  @IsOptional()
+  numero_consecutivo?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  estado_componente: string;
-  
+  @IsIn(['obtenido', 'baja', 'pendiente'])
+  @IsOptional()
+  estado_obtencion?: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateComponentesDto)
+  @IsOptional()
+  componentes?: UpdateComponentesDto[];
+
+  @IsIn(['Ictero', 'Lipemia', 'Hemolisis', 'Rotura'])
+  @IsOptional()
+  causa_baja?: string;
+
+  @IsOptional()
+  fecha_obtencion?: Date;
 }

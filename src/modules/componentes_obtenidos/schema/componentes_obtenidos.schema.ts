@@ -1,34 +1,46 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, Types } from 'mongoose'
-import { LargeNumberLike } from "node:crypto";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Types, Document } from 'mongoose';
 
-export type Componentes_ObtenidosDocument = HydratedDocument<Componentes_Obtenidos>;
+export type ComponentesObtenidosDocument = ComponentesObtenidos & Document;
 
-@Schema()
-export class Componentes_Obtenidos {
-    @Prop({required:true, unique: true })
-    no_tubuladura: string;
+class Componentes {
+  @Prop({ required: true, enum: ['CEPL', 'CP', 'PFC', 'CRIO'] })
+  tipo: string;
 
-    @Prop({ required: true})
-    tipo_componente: string;
+  @Prop({ required: true })
+  volumen: number;
 
-    @Prop({ required: true })
-    volumen: number;
+  @Prop({ default: false })
+  envio_industria: boolean;
 
-    @Prop({ required: true })
-    fecha_obtencion: Date;
-
-    @Prop({ required: true })
-    es_desecho: boolean;
-
-    @Prop({ required: true })
-    causa: string;
-
-    @Prop({ required: true })
-    confirmado_por: string;
-
-    @Prop({ required: true })
-    estado_componente: string;
+  @Prop()
+  no_lote: string;
 }
 
-export const Componentes_ObtenidosSchema = SchemaFactory.createForClass(Componentes_Obtenidos);
+@Schema({ collection: 'componentes_obtenidos'})
+export class ComponentesObtenidos {
+  @Prop({ required: true })
+  no_consecutivo: string;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'RegistroDonacion',
+    index: true,
+    required: true,
+  })
+  registro_donacion: Types.ObjectId;
+
+  @Prop({ required: true, enum: ['obtenido', 'baja', 'pendiente', 'liberado', 'desechada'] })
+  estado_obtencion: string;
+
+  @Prop({ type: [Componentes] })
+  componentes: Componentes[];
+
+  @Prop({ enum: ['Ictero', 'Lipemia', 'Hemolisis', 'Rotura'] })
+  causa_baja: string;
+
+  @Prop()
+  fecha_obtencion: Date;
+}
+
+export const ComponentesObtenidosSchema = SchemaFactory.createForClass(ComponentesObtenidos);

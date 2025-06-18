@@ -8,10 +8,17 @@ import {
   Length,
   Max,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import { ObjectId, Types } from 'mongoose';
+import { Type } from 'class-transformer';
 
-export class CreateRegistroDonacionesDto {
+// DTO para la historia clínica
+export class HistoriaClinicaDto {
+  @IsString()
+  @IsNotEmpty()
+  no_hc: string;
+
   @IsString()
   @IsNotEmpty()
   @Length(11, 11)
@@ -19,7 +26,59 @@ export class CreateRegistroDonacionesDto {
 
   @IsString()
   @IsNotEmpty()
-  componente: ObjectId; //Nomenclador
+  nombre: string;
+
+  @IsString()
+  @IsNotEmpty()
+  primer_apellido: string;
+
+  @IsString()
+  @IsNotEmpty()
+  segundo_apellido: string;
+
+  @IsString()
+  @IsNotEmpty()
+  sexo: ObjectId;
+
+  @IsNumber()
+  @IsNotEmpty()
+  edad: number;
+
+  @IsString()
+  @IsNotEmpty()
+  municipio: string;
+
+  @IsString()
+  @IsNotEmpty()
+  provincia: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  color_piel: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  grupo_sanguine: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  factor: ObjectId;
+}
+
+// DTO principal de registro de donaciones
+export class CreateRegistroDonacionesDto {
+  @ValidateNested()
+  @Type(() => HistoriaClinicaDto)
+  @IsNotEmpty()
+  historiaClinica: HistoriaClinicaDto;
+
+  @IsString()
+  @IsNotEmpty()
+  consejo_popular: string;
+
+  @IsString()
+  @IsNotEmpty()
+  no_consultorio: string;
 
   @IsString()
   @IsNotEmpty()
@@ -38,8 +97,12 @@ export class CreateRegistroDonacionesDto {
   centro_laboral: string;
 
   @IsString()
-  @IsOptional()
-  otra_localizacion: string;
+  @IsNotEmpty()
+  componente: ObjectId; //Nomenclador
+
+
+
+  //Examenes Prechequeo
 
   @IsString()
   @IsOptional()
@@ -93,11 +156,12 @@ export class CreateRegistroDonacionesDto {
   @IsOptional()
   apto_examenFisico: boolean;
 
+  //Seleccion
+
   @IsArray()
   @IsOptional()
   respuestas_interrogatorio: [
     {
-      pregunta: number; //Relacionarlo con el nomenclador pregunta de made
       respuesta?: boolean;
       respuesta_escrita?: string;
     },
@@ -111,74 +175,103 @@ export class CreateRegistroDonacionesDto {
   @IsOptional()
   observacion_interrogatorio: string;
 
+  //Donacion
+
   @IsString()
+  @IsOptional()
   no_tubuladura: string;
 
   @IsString()
+  @IsOptional()
   no_lote: string;
 
-  @IsString()
+ 
+  @IsOptional()
   estado: Types.ObjectId; //Nomenclador
 
-  @IsString()
+  @IsOptional()
   reaccion: Types.ObjectId; //Nomenclador
 
   @IsBoolean()
+  @IsOptional()
   es_desecho: boolean;
 
   //Donacion de Sangre
   @IsString()
+  @IsOptional()
   tipo_bolsa: string; //Se puede poner como un nomenclador tambien
 
   @IsNumber()
+  @IsOptional()
   volumen: number;
 
   //Donacion de Plasma
   @IsNumber()
+  @IsOptional()
   TCM: number;
 
   @IsNumber()
+  @IsOptional()
   TP: number;
 
   @IsNumber()
+  @IsOptional()
   tiempo: number; //en segundos
 
   @IsNumber()
+  @IsOptional()
   ciclos: number;
 
   @IsString()
+  @IsOptional()
   ACD: string;
 
   @IsString()
+  @IsOptional()
   no_lote_kitACD: string;
 
   @IsString()
+  @IsOptional()
   no_lote_kitBach: string;
 
   //Laboratorio
+  @IsOptional()
   resultado_VIH: boolean[];
 
+  @IsOptional()
   resultado_hepatitisB: boolean[];
 
+  @IsOptional()
   resultado_hepatitisC: boolean[];
 
+  @IsOptional()
   confirmatoria_hepatitisB: boolean[];
 
+  @IsOptional()
   resultado_tipage: string[];
 
+  @IsOptional()
   resultado_contratipaje: string[];
 
+  @IsOptional()
   resultado_DU: boolean[];
 
+  @IsOptional()
   resultado_serologia: boolean[];
 
+  @IsOptional()
   resultado_eritro: number[];
 
+  @IsOptional()
   resultado_hematocrito: number[];
 
+  @IsOptional()
   resultado_proteinas_totales: number[];
 
+  @IsOptional()
   resultado_TGP: number[];
 
+  @IsOptional()
   resultado_hemoglobina: number[];
 }
+
