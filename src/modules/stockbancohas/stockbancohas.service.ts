@@ -23,7 +23,16 @@ export class StockbancohasService {
   //Metodo para retornar todas las bolsas
   async findAll(): Promise<stockdelbancohas[] | { message: string }> {
     const stock = await this.stockdelbancohasbmodel.find().exec();
-    if (stock.length===0) {return  {message: "No se han realizado pruebas pre transfusionales"}}
+    if (stock.length === 0) { return { message: "No se han realizado pruebas pre transfusionales" } }
+    return stock;
+  }
+
+  //Metodo para retornar todas las bolsas segun el tipo de paciente
+  async findAllTipoPaciente(tipo_paciente: string): Promise<stockdelbancohas[] | { message: string }> {
+    const stock = await this.stockdelbancohasbmodel.find({ tipo_paciente }).exec();
+    if (stock.length === 0) {
+      return { message: "No se han realizado pruebas pre transfusionales para ese tipo de paciente" };
+    }
     return stock;
   }
 
