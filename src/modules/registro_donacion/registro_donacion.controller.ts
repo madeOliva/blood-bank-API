@@ -4,7 +4,10 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -13,6 +16,7 @@ import { RegistroDonacionService } from './registro_donacion.service';
 import { CreateRegistroDonacionesDto } from './dto/create-registro_donacion.dto';
 import { UpdateRegistroDonacionDto } from './dto/update-registro_donacion.dto';
 import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
+import { RegistroDonacion } from './schemas/registro_donacion.schema';
 
 @ApiTags('Registro de Donación')
 @Controller('registro-donacion')
@@ -121,7 +125,29 @@ export class RegistroDonacionController {
     required: true,
     description: 'ID del registro a actualizar',
   })
-  @Put(':id')
+ 
+  // Actualizar datos del lab Suma
+  @Patch('update-laboratorio/:id')
+async updateLaboratorio(
+  @Param('id') id: string,
+  @Body() updateData: any,
+): Promise<any> {
+  console.log('Datos recibidos para actualizar:', updateData);
+  return await this.service.updateLaboratorio(id, updateData);
+}
+
+// Actualizar datos del lab Inmuno
+@Patch('update-laboratorio-inmuno/:id')
+async updateLaboratorioInmuno(
+  @Param('id') id: string,
+  @Body() updateData: any,
+): Promise<any> {
+  console.log('Datos recibidos para actualizar:', updateData);
+  return await this.service.updateLaboratorioInmuno(id, updateData);
+}
+
+
+ @Put(':id')
   update(
     @Body() updateRegistroDonacionDto: UpdateRegistroDonacionDto,
     @Param('id') id: string,

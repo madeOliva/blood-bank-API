@@ -7,7 +7,6 @@ import { Historia_Clinica, Historia_ClinicaSchema } from '../historia_clinica/sc
 import { Donacion, DonacionSchema } from '../donacion/schemas/donacion.schemas';
 import { Componentes, ComponentesSchema } from '../componentes_donacion/schemas/componentes.schemas';
 import { RegistroDonacionController } from './registro_donacion.controller';
-import { Estados, EstadosSchema } from '../estados/schemas/estados.schemas';
 import { Sexo, SexoSchema } from '../sexo/schema/sexo.schema';
 
 @Module({
@@ -18,7 +17,6 @@ import { Sexo, SexoSchema } from '../sexo/schema/sexo.schema';
       { name: Historia_Clinica.name, schema: Historia_ClinicaSchema },
       { name: Donacion.name, schema: DonacionSchema },
       { name: Componentes.name, schema: ComponentesSchema },
-      { name: Estados.name, schema: EstadosSchema },
       { name: Sexo.name, schema: SexoSchema },
     ]),
   ],
