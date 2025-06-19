@@ -11,7 +11,6 @@ import { Historia_Clinica } from '../historia_clinica/schema/historia_clinica.sc
 import { RegistroDonacion } from './schemas/registro_donacion.schema';
 import { Donacion } from '../donacion/schemas/donacion.schemas';
 import { Componentes } from '../componentes_donacion/schemas/componentes.schemas';
-import { Estados } from '../estados/schemas/estados.schemas';
 import { Sexo } from '../sexo/schema/sexo.schema';
 
 @Injectable()
@@ -25,8 +24,6 @@ export class RegistroDonacionService {
     private donacionModel: Model<Donacion>,
     @InjectModel(Componentes.name)
     private componentesModel: Model<Componentes>,
-    @InjectModel(Estados.name)
-    private estadosModel: Model<Estados>,
     @InjectModel(Sexo.name)
     private sexoModel: Model<Sexo>,
   ) {}
@@ -212,6 +209,73 @@ export class RegistroDonacionService {
     return updatedRegistro;
   }
 
+  //Actualizar datos laboratorios
+  async updateLaboratorio(id: string, updateData: any): Promise<any> {
+    try {
+      const updatedRegistro = await this.registroDonacionModel.findOneAndUpdate(
+        { _id: id }, // Busca por el ID del registro
+        {
+          $push: {
+            resultado_VIH: { $each: updateData.resultado_VIH },
+            resultado_hepatitisB: { $each: updateData.resultado_hepatitisB },
+            resultado_hepatitisC: { $each: updateData.resultado_hepatitisC },
+            
+          },
+          $set: {
+            estado: updateData.estado,
+            fechaLab: updateData.fechaLab,
+          },
+        },
+        { new: true } // Devuelve el documento actualizado
+      );
+  
+      if (!updatedRegistro) {
+        throw new Error(`Registro con ID ${id} no encontrado.`);
+      }
+  
+      return updatedRegistro;
+    } catch (error) {
+      console.error('Error al actualizar el registro:', error);
+      throw new Error('No se pudo actualizar el registro.');
+    }
+  }
+
+  
+
+  //Actualizar datos laboratorio Inmuno
+  async updateLaboratorioInmuno(id: string, updateData: any): Promise<any> {
+    try {
+      const updatedRegistro = await this.registroDonacionModel.findOneAndUpdate(
+        { _id: id }, // Busca por el ID del registro
+        {
+          $push: {
+            resultado_serologia: { $each: updateData.resultado_serologia },
+            resultado_tipage: { $each: updateData.resultado_tipage },
+            resultado_contratipaje: { $each: updateData.resultado_contratipaje },
+            resultado_rh: { $each: updateData.resultado_rh },
+            resultado_DU: { $each: updateData.resultado_DU },
+            
+          },
+          $set: {
+            estado: updateData.estado,
+            fechaLab: updateData.fechaLab,
+          },
+        },
+        { new: true } // Devuelve el documento actualizado
+      );
+  
+      if (!updatedRegistro) {
+        throw new Error(`Registro con ID ${id} no encontrado.`);
+      }
+  
+      return updatedRegistro;
+    } catch (error) {
+      console.error('Error al actualizar el registro:', error);
+      throw new Error('No se pudo actualizar el registro.');
+    }
+  }
+  //Eliminar registro de donacion
+
   async delete(id: string) {
     const deletedRegistro = await this.registroDonacionModel
       .findByIdAndDelete(id)
@@ -376,21 +440,19 @@ export class RegistroDonacionService {
   async getConsecutivoAndHistoriaClinicaAceptada() {
     const registros = await this.registroDonacionModel
       .find()
-      .populate('historiaClinica', 'no_hc')
-      .populate('estado', 'nombre_estado')
+      .populate('historiaClinica', 'no_hc') // Se mantiene la población de historia clínica
       .exec();
-
-    // Filtra los que tienen estado "aceptada"
+  
+    // Filtra los registros que tienen estado "aceptada" (insensible a mayúsculas/minúsculas)
     const filtrados = registros.filter(
-      (reg: any) => reg.estado?.nombre_estado?.toLowerCase() === "aceptada"
+      (reg: any) => reg.estado?.toLowerCase() === "aceptada"
     );
-
+  
+    // Mapea los registros filtrados para devolver el formato esperado
     return filtrados.map((reg: any) => ({
       _id: reg._id,
       historiaClinica: reg.historiaClinica,
-      estado: {
-        nombre_estado: reg.estado?.nombre_estado || ""
-      }
+      estado: reg.estado || "" // Devuelve el estado directamente como string
     }));
   }
 }

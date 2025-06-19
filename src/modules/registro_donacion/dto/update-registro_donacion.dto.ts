@@ -174,9 +174,9 @@ export class UpdateRegistroDonacionDto {
   @IsOptional()
   no_lote: string;
 
- 
+  @IsString()
   @IsOptional()
-  estado: Types.ObjectId; //Nomenclador
+  estado: string; 
 
   @IsOptional()
   reaccion: Types.ObjectId; //Nomenclador
@@ -225,16 +225,16 @@ export class UpdateRegistroDonacionDto {
 
   //Laboratorio
   @IsOptional()
-  resultado_VIH: boolean[];
+  resultado_VIH: string[];
 
   @IsOptional()
-  resultado_hepatitisB: boolean[];
+  resultado_hepatitisB: string[];
 
   @IsOptional()
-  resultado_hepatitisC: boolean[];
+  resultado_hepatitisC: string[];
 
-  @IsOptional()
-  confirmatoria_hepatitisB: boolean[];
+ @IsOptional()
+   resultado_rh?: string[];
 
   @IsOptional()
   resultado_tipage: string[];
@@ -243,10 +243,10 @@ export class UpdateRegistroDonacionDto {
   resultado_contratipaje: string[];
 
   @IsOptional()
-  resultado_DU: boolean[];
+  resultado_DU: string[];
 
   @IsOptional()
-  resultado_serologia: boolean[];
+  resultado_serologia: string[];
 
   @IsOptional()
   resultado_eritro: number[];
@@ -262,5 +262,8 @@ export class UpdateRegistroDonacionDto {
 
   @IsOptional()
   resultado_hemoglobina: number[];
+
+  @IsOptional()
+  fechaLab?: Date;
 }
 
