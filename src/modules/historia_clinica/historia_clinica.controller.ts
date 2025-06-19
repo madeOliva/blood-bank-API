@@ -16,7 +16,7 @@ import { UpdateHistoriaClinicaDto } from './dto/update-historia_clinica.dto';
 export class HistoriaClinicaController {
   constructor(
     private readonly historiaClinicaService: HistoriaClinicaService,
-  ) {}
+  ) { }
 
   @Post()
   create(@Body() createHistoriaClinicaDto: CreateHistoriaClinicaDto) {
@@ -50,6 +50,14 @@ export class HistoriaClinicaController {
     @Body() updateHistoriaClinicaDto: UpdateHistoriaClinicaDto,
   ) {
     return this.historiaClinicaService.update(id, updateHistoriaClinicaDto);
+  }
+
+  @Patch(':id')
+  async updateCitadoYFecha(
+    @Param('id') id: string,
+    @Body() body: { citado: boolean; fechaCita: Date }
+  ) {
+    return this.historiaClinicaService.updateCitadoYFecha(id, body.citado, body.fechaCita);
   }
 
   @Delete(':id')

@@ -71,6 +71,9 @@ export class Historia_Clinica {
   ocupacion: string;
 
   @Prop()
+  cat_ocupacional: string;
+
+  @Prop()
   estilo_vida: string;
 
   @Prop()
@@ -88,6 +91,11 @@ export class Historia_Clinica {
   @Prop()
   es_donanteActivo: boolean;
 
+  @Prop()
+  citado: boolean;
+
+  @Prop()
+  fechaCita: Date;
 
   @Prop()
   alergias: string[];

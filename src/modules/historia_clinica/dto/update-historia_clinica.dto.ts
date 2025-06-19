@@ -120,6 +120,13 @@ export class UpdateHistoriaClinicaDto extends PartialType(
   @IsNotEmpty()
   es_donanteActivo: boolean;
 
+  @IsBoolean()
+  @IsOptional() 
+  citado?: boolean;
+
+  @IsOptional()
+  fechaCita?: Date;
+
   @IsArray()
   @IsOptional()
   antecedentesPersonales?: [{ antecedente: string; año: string },];;

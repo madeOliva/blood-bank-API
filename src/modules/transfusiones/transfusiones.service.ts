@@ -44,6 +44,20 @@ export class TransfusionesService {
     return transf;
   }
 
+  //Metodo para buscar una orden de transfusion por el nombre y los apellidos
+  async findByNombreCompleto(nombre: string, primerApellido: string, segundoApellido: string) {
+    const transf = await this.transfusionesModel.findOne({
+      Nombre: nombre,
+      PApellido: primerApellido,
+      SApellido: segundoApellido,
+    }).exec();
+
+    if (!transf) {
+      throw new ConflictException(`No existe la orden de transfusión para ${nombre} ${primerApellido} ${segundoApellido}`);
+    }
+    return transf;
+  }
+
   //Metodo para ACTUALIZAR las ordenes de transfusion
 
   async update(

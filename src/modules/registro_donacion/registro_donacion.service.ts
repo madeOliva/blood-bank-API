@@ -225,51 +225,51 @@ export class RegistroDonacionService {
   //   return updatedRegistro;
   // }
 
-   async update(id: string, updateRegistroDonacionDto: UpdateRegistroDonacionDto) {
-  // 1. Busca el registro actual
-  const registro = await this.registroDonacionModel.findById(id);
-  if (!registro) throw new NotFoundException(`Registro con ID ${id} no encontrado`);
+  async update(id: string, updateRegistroDonacionDto: UpdateRegistroDonacionDto) {
+    // 1. Busca el registro actual
+    const registro = await this.registroDonacionModel.findById(id);
+    if (!registro) throw new NotFoundException(`Registro con ID ${id} no encontrado`);
 
-  let nuevoNoRegistro = registro.no_registro;
+    let nuevoNoRegistro = registro.no_registro;
 
-  // 2. Si el componente cambia, recalcula el no_registro
-  if (updateRegistroDonacionDto.componente && 
+    // 2. Si el componente cambia, recalcula el no_registro
+    if (updateRegistroDonacionDto.componente &&
       updateRegistroDonacionDto.componente.toString() !== registro.componente.toString()) {
 
-    // 3. Obtén el nuevo componente
-    const nuevoComponente = await this.componentesModel.findById(updateRegistroDonacionDto.componente);
-    if (!nuevoComponente) throw new NotFoundException('Componente no encontrado');
+      // 3. Obtén el nuevo componente
+      const nuevoComponente = await this.componentesModel.findById(updateRegistroDonacionDto.componente);
+      if (!nuevoComponente) throw new NotFoundException('Componente no encontrado');
 
-    // 4. Obtén el año y el número de historia clínica
-    const anio = new Date().getFullYear();
-    const historia = await this.historiaclinicaModel.findById(registro.historiaClinica);
-    const numeroHC = historia?.no_hc || "";
+      // 4. Obtén el año y el número de historia clínica
+      const anio = new Date().getFullYear();
+      const historia = await this.historiaclinicaModel.findById(registro.historiaClinica);
+      const numeroHC = historia?.no_hc || "";
 
-    // 5. Calcula el consecutivo para el nuevo componente y año
-    const numeroConsecutivo = (await this.registroDonacionModel.countDocuments({
-      componente: updateRegistroDonacionDto.componente,
-      fechaR: {
-        $gte: new Date(`${anio}-01-01T00:00:00.000Z`),
-        $lte: new Date(`${anio}-12-31T23:59:59.999Z`),
-      },
-    })) + 1;
+      // 5. Calcula el consecutivo para el nuevo componente y año
+      const numeroConsecutivo = (await this.registroDonacionModel.countDocuments({
+        componente: updateRegistroDonacionDto.componente,
+        fechaR: {
+          $gte: new Date(`${anio}-01-01T00:00:00.000Z`),
+          $lte: new Date(`${anio}-12-31T23:59:59.999Z`),
+        },
+      })) + 1;
 
-    // 6. Construye el nuevo no_registro
-    nuevoNoRegistro = `${nuevoComponente.siglas}-${numeroHC}.${anio}.${numeroConsecutivo}`;
+      // 6. Construye el nuevo no_registro
+      nuevoNoRegistro = `${nuevoComponente.siglas}-${numeroHC}.${anio}.${numeroConsecutivo}`;
+    }
+
+    // 7. Actualiza el registro (incluyendo el nuevo no_registro si cambió)
+    const updatedRegistro = await this.registroDonacionModel.findByIdAndUpdate(
+      id,
+      { ...updateRegistroDonacionDto, no_registro: nuevoNoRegistro },
+      { new: true }
+    ).exec();
+
+    if (!updatedRegistro) {
+      throw new NotFoundException(`Registro con ID ${id} no encontrado`);
+    }
+    return updatedRegistro;
   }
-
-  // 7. Actualiza el registro (incluyendo el nuevo no_registro si cambió)
-  const updatedRegistro = await this.registroDonacionModel.findByIdAndUpdate(
-    id,
-    { ...updateRegistroDonacionDto, no_registro: nuevoNoRegistro },
-    { new: true }
-  ).exec();
-
-  if (!updatedRegistro) {
-    throw new NotFoundException(`Registro con ID ${id} no encontrado`);
-  }
-  return updatedRegistro;
-}
 
 
   async updatee(
@@ -286,7 +286,7 @@ export class RegistroDonacionService {
     return updatedRegistro;
   }
 
- 
+
 
   async delete(id: string) {
     const deletedRegistro = await this.registroDonacionModel
@@ -297,51 +297,64 @@ export class RegistroDonacionService {
     }
     return deletedRegistro;
   }
+
+
   // Metodo para cargar los donantes a prechequeo exceptuando los PLASMA
   async findAll() {
+    const hoy = new Date();
+    const inicioDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 0, 0, 0, 0);
+    const finDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 23, 59, 59, 999);
 
-  const registros = await this.registroDonacionModel
-    .find()
-    .populate({
-      path: 'historiaClinica',
-      select: 'ci nombre primer_apellido segundo_apellido edad sexo grupo_sanguine factor',
-      populate: [
-        { path: 'sexo', select: 'nombre' },
-        { path: 'grupo_sanguine', select: 'nombre' },
-        { path: 'factor', select: 'signo' },
-      ]
-    })
-    .populate('componente', 'nombreComponente nombre_componente')
-    .exec();
-
-  const filtrados = registros.filter(
-    (reg: any) =>
-      (reg.componente.nombreComponente ).toLowerCase() !== 'plasma')
-
-
-  return filtrados.map((reg: any) => {
-    return {
-      _id: reg._id,
-      ci: reg.historiaClinica?.ci || '',
-      nombre: reg.historiaClinica?.nombre || '',
-      primer_apellido: reg.historiaClinica?.primer_apellido || '',
-      segundo_apellido: reg.historiaClinica?.segundo_apellido || '',
-      edad: reg.historiaClinica?.edad || '',
-      sexo: reg.historiaClinica?.sexo?.nombre || '',
-      grupo_sanguine: reg.historiaClinica?.grupo_sanguine?.nombre || '',
-      factor: reg.historiaClinica?.factor?.signo || '',
-      componente: {
-        nombreComponente: reg.componente?.nombreComponente || ""
-      }
-    };
-  });
-}
-
-
-
-  async getDatosCompletos() {
     const registros = await this.registroDonacionModel
-      .find()
+      .find({
+        fechaR: { $gte: inicioDia, $lte: finDia }
+      })
+      .populate({
+        path: 'historiaClinica',
+        select: 'ci nombre primer_apellido segundo_apellido edad sexo grupo_sanguine factor',
+        populate: [
+          { path: 'sexo', select: 'nombre' },
+          { path: 'grupo_sanguine', select: 'nombre' },
+          { path: 'factor', select: 'signo' },
+        ]
+      })
+      .populate('componente', 'nombreComponente nombre_componente')
+      .exec();
+
+    const filtrados = registros.filter(
+      (reg: any) => (reg.componente.nombreComponente).toLowerCase() !== 'plasma'
+    );
+
+    return filtrados.map((reg: any) => {
+      return {
+        _id: reg._id,
+        ci: reg.historiaClinica?.ci || '',
+        nombre: reg.historiaClinica?.nombre || '',
+        primer_apellido: reg.historiaClinica?.primer_apellido || '',
+        segundo_apellido: reg.historiaClinica?.segundo_apellido || '',
+        edad: reg.historiaClinica?.edad || '',
+        sexo: reg.historiaClinica?.sexo?.nombre || '',
+        grupo_sanguine: reg.historiaClinica?.grupo_sanguine?.nombre || '',
+        factor: reg.historiaClinica?.factor?.signo || '',
+        componente: {
+          nombreComponente: reg.componente?.nombreComponente || ""
+        }
+      };
+    });
+  }
+
+
+  //Metodo para modulo prechequeo para vista Resultados de Prechequeo  
+  async getDatosCompletos() {
+    // Calcula el inicio y fin del día de hoy
+    const hoy = new Date();
+    const inicioDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 0, 0, 0, 0);
+    const finDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 23, 59, 59, 999);
+
+    const registros = await this.registroDonacionModel
+      .find({
+        fechaR: { $gte: inicioDia, $lte: finDia }
+      })
       .populate('historiaClinica', 'nombre primer_apellido segundo_apellido')
       .exec();
 
@@ -374,6 +387,8 @@ export class RegistroDonacionService {
     };
   }
 
+
+  // Metodo para modulo prechequeo para vista Donantes no Aptos
   async getDonantesNoAptos() {
     // Busca todos los registros donde apto_interrogatorio es false
     const registros = await this.registroDonacionModel
@@ -416,27 +431,31 @@ export class RegistroDonacionService {
     }));
   }
 
+
+  //Metodo para citar donantes por el medico.
   async getDonantesQuePuedenDonar() {
     const hoy = new Date();
 
-    // Busca todos los registros con la info necesaria
     const registros = await this.registroDonacionModel
       .find()
-      .populate(
-        'historiaClinica',
-        'ci nombre primer_apellido segundo_apellido sexo',
-      )
+      .populate({
+        path: 'historiaClinica',
+        select: 'ci nombre primer_apellido segundo_apellido sexo citado',
+        populate: { path: 'sexo', select: 'nombre' }
+      })
       .populate(
         'componente',
         'nombreComponente diasEsperaMasculino diasEsperaFemenino',
       )
       .exec();
 
-    // Filtra los que ya pueden donar según la fecha y el sexo
     const donantes = registros.filter((reg: any) => {
       if (!reg.fechaR || !reg.componente) return false;
+      const historiaClinica = reg.historiaClinica;
+      if (!historiaClinica || historiaClinica.citado !== false) return false; // Solo los NO citados
+
       const fechaUltima = new Date(reg.fechaR);
-      const sexo = reg.historiaClinica?.sexo;
+      const sexo = historiaClinica.sexo?.nombre;
       let diasEspera = 0;
 
       if (sexo === 'M') {
@@ -453,19 +472,19 @@ export class RegistroDonacionService {
       return hoy >= fechaPermitida;
     });
 
-    // Devuelve los datos que necesites
     return donantes.map((reg: any) => ({
       id: reg._id,
+      historiaClinicaId: reg.historiaClinica?._id,
       ci: reg.historiaClinica?.ci,
       nombre: reg.historiaClinica?.nombre,
       primer_apellido: reg.historiaClinica?.primer_apellido,
       segundo_apellido: reg.historiaClinica?.segundo_apellido,
-      sexo: reg.historiaClinica?.sexo,
+      sexo: reg.historiaClinica?.sexo?.nombre,
       componente: reg.componente?.nombreComponente,
       fechaUltimaDonacion: reg.fechaR,
       fechaPermitida: (() => {
         const fechaUltima = new Date(reg.fechaR);
-        const sexo = reg.historiaClinica?.sexo;
+        const sexo = reg.historiaClinica?.sexo?.nombre;
         let diasEspera = 0;
         if (sexo === 'M') diasEspera = reg.componente.diasEsperaMasculino || 0;
         if (sexo === 'F') diasEspera = reg.componente.diasEsperaFemenino || 0;
