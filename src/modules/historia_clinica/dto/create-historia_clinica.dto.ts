@@ -2,11 +2,15 @@ import {
   IsString,
   IsBoolean,
   IsNumber,
-  IsDate,
   IsNotEmpty,
   IsOptional,
+  IsArray,
+  ValidateNested,
+  IsMongoId,
 } from 'class-validator';
-import { ObjectId } from 'mongoose';
+import { Type } from 'class-transformer';
+
+
 export class CreateHistoriaClinicaDto {
   @IsString()
   @IsNotEmpty()
@@ -28,9 +32,9 @@ export class CreateHistoriaClinicaDto {
   @IsNotEmpty()
   segundo_apellido: string;
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  sexo: ObjectId; //Nomenclador
+  sexo: string; //Nomenclador
 
   @IsNumber()
   @IsNotEmpty()
@@ -40,21 +44,21 @@ export class CreateHistoriaClinicaDto {
   @IsNotEmpty()
   municipio: string;
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  provincia: ObjectId; //Nomenclador
+  provincia: string; //Nomenclador
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  color_piel: ObjectId; //Nomenclador
+  color_piel: string; //Nomenclador
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  grupo_sanguine: ObjectId; //Nomenclador
+  grupo_sanguine: string; //Nomenclador
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  factor: ObjectId;
+  factor: string;
 
   @IsString()
   @IsNotEmpty()
@@ -84,42 +88,57 @@ export class CreateHistoriaClinicaDto {
 
   @IsString()
   @IsOptional()
-  otra_localizacion: string;
+  otra_localizacion?: string;
 
   @IsString()
   @IsOptional()
-  estado_civil: string;
+  estado_civil?: string;
 
   @IsString()
   @IsOptional()
-  cat_ocupacional: string;
+  cat_ocupacional?: string;
 
   @IsString()
   @IsOptional()
-  estilo_vida: string;
+  estilo_vida?: string;
 
   @IsString()
   @IsOptional()
-  alimentacion: string;
+  alimentacion?: string;
 
   @IsString()
   @IsOptional()
-  genero_vida: string;
+  genero_vida?: string;
 
   @IsBoolean()
   @IsOptional()
-  es_donanteControlado: boolean;
+  es_donanteControlado?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  es_posibleDonante: boolean;
+  es_posibleDonante?: boolean;
 
-  @IsString()
+  @IsBoolean()
   @IsNotEmpty()
-  alergias: string[];
+  es_donanteActivo: boolean;
 
-
-  @IsString()
+  @IsBoolean()
   @IsOptional()
-  antecedentesPersonales: string[];
+  citado?: boolean;
+ 
+  @IsOptional()
+  fechaCita?: Date;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  alergias?: string[];
+
+  @IsArray()
+  @IsOptional()
+  antecedentesPersonales?: [{ antecedente: string; año: string },];;
+
+  @IsArray()
+  @IsOptional()
+  antecedentesFamiliares?:  [{ antecedente: string; parentesco: string },];
 }

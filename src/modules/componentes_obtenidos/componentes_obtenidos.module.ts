@@ -11,7 +11,7 @@ import { Historia_Clinica, Historia_ClinicaSchema } from '../historia_clinica/sc
    imports:[
 
       MongooseModule.forFeature([
-      {name:ComponentesObtenidos.name, schema: ComponentesObtenidosSchema},  
+      {name:ComponentesObtenidos.name, schema: ComponentesObtenidosSchema, collection:'componentes_obtenidos'},  
         { name: Historia_Clinica.name, schema: Historia_ClinicaSchema },
              { name: RegistroDonacion.name, schema: RegistroDonacionSchema },
     ])

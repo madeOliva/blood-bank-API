@@ -22,7 +22,7 @@ export class HistoriaClinicaDto {
   @IsString()
   @IsNotEmpty()
   @Length(11, 11)
-  ci_donante: string;
+  ci: string;
 
   @IsString()
   @IsNotEmpty()
@@ -162,7 +162,6 @@ export class CreateRegistroDonacionesDto {
   @IsOptional()
   respuestas_interrogatorio: [
     {
-      pregunta: number; //Relacionarlo con el nomenclador pregunta de made
       respuesta?: boolean;
       respuesta_escrita?: string;
     },

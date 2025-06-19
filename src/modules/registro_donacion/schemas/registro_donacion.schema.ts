@@ -3,7 +3,6 @@ import { Types } from 'mongoose';
 import { Componentes } from 'src/modules/componentes_donacion/schemas/componentes.schemas';
 import { Estados } from 'src/modules/estados/schemas/estados.schemas';
 import { Historia_Clinica } from 'src/modules/historia_clinica/schema/historia_clinica.schema';
-import { Persona } from 'src/modules/persona/schema/persona.schema';
 import { Reacciones } from 'src/modules/reacciones/schemas/reacciones.schemas';
 
 @Schema()
@@ -26,8 +25,7 @@ export class RegistroDonacion {
   })
   historiaClinica: Historia_Clinica;
   
-  @Prop()
-  ci_donante: string;
+  
 
   @Prop({ type: Types.ObjectId, ref: Componentes.name })
   componente: Componentes; //Nomenclador
@@ -54,11 +52,12 @@ export class RegistroDonacion {
   @Prop()
   estado?: string;
 
+
   @Prop({ type: Types.ObjectId, ref: Reacciones.name})
   reaccion?: Types.ObjectId; //Nomenclador
   
   
-  @Prop()
+  @Prop({type:Date})
   fechaD?: Date;
 
   @Prop({ default: false })
@@ -152,9 +151,6 @@ export class RegistroDonacion {
   examenP_hemoglobina?: number; //Min Max
 
   @Prop()
-  apto_prechequeo?: boolean;
-
-  @Prop()
   examenF_peso?: number; //Min=50lb Max=400lb
 
   @Prop()
@@ -168,6 +164,9 @@ export class RegistroDonacion {
 
   @Prop()
   examenF_hemoglobina?: number; // Min=12 Max=17
+
+  @Prop()
+  apto_prechequeo?: boolean;
 
   @Prop()
   apto_examenFisico?: boolean;

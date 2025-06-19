@@ -4,21 +4,21 @@ import { Document } from 'mongoose';
 export type UserDocument = User & Document;
 
 export enum UserRole {
-  ADMIN = 'admin',
-  MEDICO = 'medico',
-  MEDICO_HOSPITAL = 'medico_hospital',
-  MEDICO_CONSULTORIO = 'medico_consultorio',
-  TECNICO_PRECHEQUEO = 'tecnico_prechequeo',
-  TECNICO_ASEGURAMIENTO_CALIDAD = 'tecnico_aseguramiento_calidad',
-  JEFE_EXTRACCION_MOVIL = 'jefe_extraccion_movil',
-  TECNICO_MOVIL = 'tecnico_movil',
-  TECNICO_INSCRIPCION = 'tecnico_inscripcion',
-  TECNICO_TRANSFUSION = 'tecnico_transfusion',
-  TECNICO_DONACION = 'tecnico_donacion',
-  TECNICO_LABORATORIO_SUMA = 'tecnico_laboratorio_suma',
-  TECNICO_LABRORATORIO_INMUNO = 'tecnico_laboratorio_inmuno',
-  TECNICO_LABORATORIO_CALIDAD = 'tecnico_laboratorio_calidad',
-  TECNICO_PRODUCCION = 'tecnico_produccion',
+  ADMIN = 'Admin',
+  MEDICO = 'Médico de selección',
+  MEDICO_HOSPITAL = 'Médico del hospital',
+  MEDICO_CONSULTORIO = 'Médico del consultorio',
+  TECNICO_PRECHEQUEO = 'Técnico de prechequeo',
+  TECNICO_ASEGURAMIENTO_CALIDAD = 'Técnico de aseguramiento de calidad',
+  JEFE_EXTRACCION_MOVIL = 'Jefe de extracción móvil',
+  TECNICO_MOVIL = 'Técnico de móvil',
+  TECNICO_INSCRIPCION = 'Técnico de inscripción',
+  TECNICO_TRANSFUSION = 'Técnico de transfusión',
+  TECNICO_DONACION = 'Técnico de donación',
+  TECNICO_LABORATORIO_SUMA = 'Tecnico de laboratorio suma',
+  TECNICO_LABRORATORIO_INMUNO = 'Técnico de laboratorio inmuno',
+  TECNICO_LABORATORIO_CALIDAD = 'Técnico de laboratorio calidad',
+  TECNICO_PRODUCCION = 'Técnico de producción',
 }
 
 @Schema()

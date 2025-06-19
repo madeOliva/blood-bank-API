@@ -1,31 +1,21 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument ,Types} from "mongoose";
-import { tipocomponente } from "src/modules/tipocomponente/schemas/tipocomponente.schemas";
-import { tipocomponenteespecial } from "src/modules/tipocomponenteespecial/schemas/tipocomponenteespecial.schemas";
-import { tipocomponentehabitual } from "src/modules/tipocomponentehabitual/schemas/tipocomponentehabitual.schemas";
-import { tipopaciente } from "src/modules/tipopaciente/schemas/tipopaciente.schemas";
 
 export type stockdelbancohasDocument = HydratedDocument<stockdelbancohas>;
 
 @Schema()
 export class stockdelbancohas {
-    @Prop({required: true,unique: true})
-    id: number;
-
     @Prop({ required: true, unique: true })
     codigo_bolsa: string;
 
-    @Prop({ type: Types.ObjectId, ref:tipopaciente.name, required: true })
-    tipo_paciente: tipopaciente;
+    @Prop({ required: true, unique: true })
+    tipo_paciente: string;
 
-    @Prop({ type: Types.ObjectId, ref:tipocomponente.name,required: true })
-    tipo_componente: tipocomponente;
+    @Prop({ required: true, unique: true })
+    tipo_componente: string;
 
-    @Prop({ type: Types.ObjectId, ref:tipocomponentehabitual.name,required: true })
-    tipo_componente_habitual: tipocomponentehabitual;
-
-    @Prop({ type: Types.ObjectId, ref:tipocomponenteespecial.name,required: true })
-    tipo_componente_especial: tipocomponenteespecial;
+    @Prop({ required: true, unique: true })
+    tipo_componente_habitual: string;
 
     @Prop({ type: Date, required: true })
     fecha_extraccion: Date;
@@ -44,6 +34,9 @@ export class stockdelbancohas {
 
     @Prop({ required: true })
     volumen_final: number;
+
+    @Prop({ required: true })
+    estado: string;
 }
 
 export const stockdelbancohasSchema = SchemaFactory.createForClass(stockdelbancohas);

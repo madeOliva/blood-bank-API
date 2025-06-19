@@ -1,3 +1,5 @@
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateRegistroDonacionesDto } from './create-registro_donacion.dto';
 
   import {
   IsArray,
@@ -150,7 +152,6 @@ export class UpdateRegistroDonacionDto {
   @IsOptional()
   respuestas_interrogatorio: [
     {
-      pregunta: number; //Relacionarlo con el nomenclador pregunta de made
       respuesta?: boolean;
       respuesta_escrita?: string;
     },
@@ -266,4 +267,5 @@ export class UpdateRegistroDonacionDto {
   @IsOptional()
   fechaLab?: Date;
 }
+
 

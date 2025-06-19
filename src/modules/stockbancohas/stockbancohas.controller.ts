@@ -17,6 +17,11 @@ export class StockbancohasController {
     return this.stockbancohasService.findAll();
   }
 
+  @Get(':tipo_paciente')
+  findAllTipoPaciente(@Param('tipo_paciente') tipo_paciente: string) {
+    return this.stockbancohasService.findAllTipoPaciente(tipo_paciente);
+  }
+
   @Get(':codigo_bolsa')
   findOne(@Param('codigo_bolsa') codigo_bolsa: string) {
     return this.stockbancohasService.findOne(codigo_bolsa);
