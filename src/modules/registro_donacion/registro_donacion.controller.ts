@@ -39,8 +39,8 @@ export class RegistroDonacionController {
 
     return this.service.findByRangoFechas(fechaInicio, fechaFin);
   }
-  
-  
+
+
   @Get('aptos-interrogatorio')
   @ApiOperation({ summary: 'Obtiene todos los registros de donacion que son aptos al interrogatorio' })
   getDonacionesAptasInterrogatorio() {
@@ -52,7 +52,12 @@ export class RegistroDonacionController {
     return this.service.getConsecutivoAndHistoriaClinicaAceptada();
   }
 
-  
+
+  @Get('historia-clinica/:id')
+  async getRegistrosPorHistoriaClinica(@Param('id') historiaClinicaId: string) {
+    return this.service.getRegistrosPorHistoriaClinica(historiaClinicaId);
+  }
+
 
   @Get('pueden-donar')
   async getDonantesQuePuedenDonar() {

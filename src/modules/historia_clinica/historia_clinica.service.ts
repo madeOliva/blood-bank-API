@@ -132,6 +132,8 @@ async updateCitadoYFecha(id: string, citado: boolean, fechaCita: Date) {
     alergias: h.alergias,
     antecedentesPersonales: h.antecedentesPersonales,
     antecedentesFamiliares: h.antecedentesFamiliares,
+    habitosToxicos: h.habitosToxicos,
+    estanciaExtranjero: h.estanciaExtranjero,
   };
 
   }

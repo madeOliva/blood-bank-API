@@ -50,6 +50,22 @@ export class Historia_Clinica {
   factor: Factores; //Nomenclador
 
   @Prop()
+  habitosToxicos?: [
+    {
+      habito?: string;
+      intensidad?: string;
+    },
+  ];
+
+  @Prop()
+  estanciaExtranjero?:[ {
+    fecha?: Date;
+    pais?: string;
+    estadia?: string;
+    motivo?: string;  
+  }]
+
+  @Prop()
   consejo_popular: string;
 
   @Prop()

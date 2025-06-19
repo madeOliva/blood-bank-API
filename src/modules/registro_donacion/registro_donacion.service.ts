@@ -7,7 +7,7 @@ import {
 import { UpdateRegistroDonacionDto } from './dto/update-registro_donacion.dto';
 import { CreateRegistroDonacionesDto } from './dto/create-registro_donacion.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Historia_Clinica } from '../historia_clinica/schema/historia_clinica.schema';
 import { RegistroDonacion } from './schemas/registro_donacion.schema';
 import { Donacion } from '../donacion/schemas/donacion.schemas';
@@ -568,4 +568,19 @@ export class RegistroDonacionService {
       // agrega aquí cualquier otro campo que tu DataGrid necesite
     }));
   }
+
+  //Metodo para cargar todos los registros de donacion de una misma historia Modulo HC
+  async getRegistrosPorHistoriaClinica(historiaClinicaId: string) {
+  const registros = await this.registroDonacionModel
+    .find({ historiaClinica: new Types.ObjectId(historiaClinicaId) })
+    .populate('reaccion', 'nombre_estado')
+    .exec();
+
+  return registros.map((reg: any) => ({
+    _id: reg._id,
+    fechaD: reg.fechaD,
+    lugar: "Banco de sangre",
+    reaccion: reg.reaccion?.nombre_estado || '',
+  }));
+}
 }
