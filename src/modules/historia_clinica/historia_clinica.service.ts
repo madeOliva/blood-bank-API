@@ -111,7 +111,7 @@ export class HistoriaClinicaService {
     telefonoLaboral: h.telefonoLaboral,
     centro_laboral: h.centro_laboral,
     otra_localizacion: h.otra_localizacion,
-    cat_ocupacional: h.cat_ocupacional,
+    cat_ocupacional: h.ocupacion,
     estilo_vida: h.estilo_vida,
     alimentacion: h.alimentacion,
     genero_vida: h.genero_vida,
