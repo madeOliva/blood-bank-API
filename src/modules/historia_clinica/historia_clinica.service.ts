@@ -62,6 +62,16 @@ export class HistoriaClinicaService {
     return updatedHistoria;
   }
 
+
+  //Metodo para actualizar el estado de citado y la fecha de cita
+async updateCitadoYFecha(id: string, citado: boolean, fechaCita: Date) {
+  return this.Historia_ClinicaModel.findByIdAndUpdate(
+    id,
+    { citado, fechaCita },
+    { new: true }
+  );
+}
+
   // Eliminar una historia clínica
   async delete(id: string) {
     const deletedHistoria = await this.Historia_ClinicaModel.findByIdAndDelete(id).exec();
@@ -81,7 +91,7 @@ export class HistoriaClinicaService {
       .populate('color_piel', 'nombre')
       .populate('grupo_sanguine', 'nombre')
       .populate('factor', 'signo')
-      .populate('provincia', 'nombre');
+      .populate('provincia', 'nombre_provincia');
 
     if (!historia) {
       throw new NotFoundException(`Historia clínica con id ${id} no encontrada`);
@@ -103,6 +113,7 @@ export class HistoriaClinicaService {
     provincia: h.provincia?.nombre_provincia || null,
     color_piel: h.color_piel?.nombre || null,
     no_hc: h.no_hc,
+    ocupacion:h.ocupacion || null,
     grupo_sanguine: h.grupo_sanguine?.nombre || null,
     factor: h.factor?.signo || null,
     consejo_popular: h.consejo_popular,
@@ -111,7 +122,7 @@ export class HistoriaClinicaService {
     telefonoLaboral: h.telefonoLaboral,
     centro_laboral: h.centro_laboral,
     otra_localizacion: h.otra_localizacion,
-    cat_ocupacional: h.cat_ocupacional,
+    cat_ocupacional: h.ocupacion,
     estilo_vida: h.estilo_vida,
     alimentacion: h.alimentacion,
     genero_vida: h.genero_vida,
@@ -121,6 +132,8 @@ export class HistoriaClinicaService {
     alergias: h.alergias,
     antecedentesPersonales: h.antecedentesPersonales,
     antecedentesFamiliares: h.antecedentesFamiliares,
+    habitosToxicos: h.habitosToxicos,
+    estanciaExtranjero: h.estanciaExtranjero,
   };
 
   }

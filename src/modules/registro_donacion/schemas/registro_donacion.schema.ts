@@ -46,7 +46,8 @@ historiaClinica: Historia_Clinica;
   no_lote?: string;
 
   @Prop()
-  estado?:string;
+  estado?: string;
+
 
   @Prop({ type: Types.ObjectId, ref: Reacciones.name})
   reaccion?: Types.ObjectId; //Nomenclador
@@ -93,28 +94,28 @@ historiaClinica: Historia_Clinica;
   //Laboratorio
 
   @Prop()
-  resultado_VIH?: boolean[];
+  resultado_VIH?: string[];
+
+  @Prop({ type: [String] })
+ resultado_rh?: string[];
 
   @Prop()
-  resultado_hepatitisB?: boolean[];
+  resultado_hepatitisB?: string[];
 
   @Prop()
-  resultado_hepatitisC?: boolean[];
+  resultado_hepatitisC?: string[];
 
-  @Prop()
-  confirmatoria_hepatitisB?: boolean[];
-
-  @Prop()
+ @Prop()
   resultado_tipage?: string[];
 
   @Prop()
   resultado_contratipaje?: string[];
 
   @Prop()
-  resultado_DU?: boolean[];
+  resultado_DU?: string[];
 
   @Prop()
-  resultado_serologia?: boolean[];
+  resultado_serologia?: string[];
 
   @Prop()
   resultado_eritro?: number[];
@@ -130,6 +131,9 @@ historiaClinica: Historia_Clinica;
 
   @Prop()
   resultado_hemoglobina?: number[];
+
+  @Prop()
+  fechaLab?: Date;
 
 
  //SELECCION Y PRECHEQUEO

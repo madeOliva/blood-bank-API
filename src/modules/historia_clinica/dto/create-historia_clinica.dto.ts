@@ -122,6 +122,21 @@ export class CreateHistoriaClinicaDto {
   @IsNotEmpty()
   es_donanteActivo: boolean;
 
+  @IsBoolean()
+  @IsOptional()
+  citado?: boolean;
+ 
+  @IsOptional()
+  fechaCita?: Date;
+
+  @IsArray()
+  @IsOptional()   
+  habitosToxicos?: [ { habito?: string; intensidad?: string },]
+
+  @IsArray()
+  @IsOptional()
+  estanciaExtranjero?:[{fecha:Date; pais?:string; estadia?:string; motivo?:string}]
+
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
