@@ -82,11 +82,10 @@ export class RegistroDonacionController {
     return this.service.getDonantesNoAptos();
   }
 
-  @Get('donaciones-diarias')
-  async getDonacionesDiarias() {
-    return this.service.getDonacionesDiarias();
-  }
-
+@Get('donaciones-diarias')
+async findDonacionesDiarias() {
+  return this.service.getDonacionesDiarias();
+}
   @Get('prechequeo/:id')
   getPrechequeoById(@Param('id') id: string) {
     return this.service.getPrechequeoById(id);
@@ -155,4 +154,5 @@ export class RegistroDonacionController {
   delete(@Param('id') id: string) {
     return this.service.delete(id);
   }
+  
 }

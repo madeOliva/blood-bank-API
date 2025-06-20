@@ -34,7 +34,7 @@ export const PedidosFarmaciaSchema = SchemaFactory.createForClass(PedidosFarmaci
 
 @Schema()
 export class PedidosMensual extends Document {
-  @Prop({ required: true }) planId: string;
+  @Prop({ required:false }) planId: string;
   @Prop({ required: true }) tohallas: number;
   @Prop({ required: true }) jabon: number;
   @Prop({ required: true }) detergente: number;

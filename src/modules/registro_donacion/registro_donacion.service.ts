@@ -392,29 +392,27 @@ export class RegistroDonacionService {
     }));
   }
 
-  async getDonacionesDiarias() {
-    const registros = await this.registroDonacionModel
-      .find()
-      .populate('historiaClinica', 'ci sexo edad grupo_sanguineo factor')
-      .exec();
+ async getDonacionesDiarias() {
+  const registros = await this.registroDonacionModel
+    .find()
+    .populate('historiaClinica', 'ci no_hc sexo edad grupo_sanguineo factor')
+    .exec();
 
-    console.log(JSON.stringify(registros, null, 2)); // <-- Agrega esto
-
-    return registros.map((reg: any) => ({
-      id: reg._id,
-      no: reg.no_registro,
-      hc: reg.historiaClinica?.ci,
-      desecho: 'Bolsa',
-      motivo_desecho: reg.motivo_desecho,
-      sexo: reg.historiaClinica?.sexo,
-      edad: reg.historiaClinica?.edad,
-      grupo: reg.examenP_grupo,
-      factor: reg.examenP_factor,
-      volumen: reg.volumen,
-      estado: reg.estado,
-      entidad: 'Banco de Sangre',
-    }));
-  }
+  return registros.map((reg: any) => ({
+    id: reg._id,
+    no: reg.no_registro,
+    hc: reg.historiaClinica?.no_hc ?? "Sin historia",
+    desecho: 'Bolsa',
+    motivo_desecho: reg.motivo_desecho,
+    sexo: reg.historiaClinica?.sexo,
+    edad: reg.historiaClinica?.edad,
+    grupo: reg.examenP_grupo,
+    factor: reg.examenP_factor,
+    volumen: reg.volumen,
+    estado: reg.estado,
+    entidad: 'Banco de Sangre',
+  }));
+} 
 
   async getDonantesQuePuedenDonar() {
     const hoy = new Date();
@@ -549,4 +547,5 @@ export class RegistroDonacionService {
       // agrega aquí cualquier otro campo que tu DataGrid necesite
     }));
   }
+  
 }

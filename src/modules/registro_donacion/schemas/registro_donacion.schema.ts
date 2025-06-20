@@ -18,12 +18,8 @@ export class RegistroDonacion {
   // })
   // persona: Persona;
 
-  @Prop({
-    type: Types.ObjectId,
-    ref: 'Historia_Clinica',
-    index: true,
-  })
-  historiaClinica: Historia_Clinica;
+@Prop({ type: Types.ObjectId, ref: 'Historia_Clinica' })
+historiaClinica: Historia_Clinica;
   
   
 

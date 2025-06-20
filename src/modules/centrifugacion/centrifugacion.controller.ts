@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { CentrifugacionService } from './centrifugacion.service';
 import { CreateCentrifugacionDto } from './dto/create-centrifugacion.dto';
 import { UpdateCentrifugacionDto } from './dto/update-centrifugacion.dto';
@@ -51,4 +51,8 @@ export class CentrifugacionController {
   remove(@Param('id') id: string) {
     return this.centrifugacionService.remove(id);
   }
+@Put()
+async createOrUpdateCentrifugacion(@Body() dto: CreateCentrifugacionDto) {
+  return this.centrifugacionService.createOrUpdate(dto);
+}
 }

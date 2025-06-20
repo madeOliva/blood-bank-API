@@ -34,6 +34,9 @@ export class Historia_Clinica {
   @Prop({})
   municipio: string;
 
+   @Prop()
+  cat_ocupacional: string;
+
   @Prop({ type: Types.ObjectId, ref: Provincia.name })
   provincia: Provincia; //Nomenclador
 
