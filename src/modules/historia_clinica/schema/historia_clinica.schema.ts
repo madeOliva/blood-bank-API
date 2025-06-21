@@ -90,9 +90,6 @@ export class Historia_Clinica {
   ocupacion: string;
 
   @Prop()
-  cat_ocupacional: string;
-
-  @Prop()
   estilo_vida: string;
 
   @Prop()

@@ -122,7 +122,7 @@ async updateCitadoYFecha(id: string, citado: boolean, fechaCita: Date) {
     telefonoLaboral: h.telefonoLaboral,
     centro_laboral: h.centro_laboral,
     otra_localizacion: h.otra_localizacion,
-    cat_ocupacional: h.ocupacion,
+    cat_ocupacional: h.cat_ocupacional,
     estilo_vida: h.estilo_vida,
     alimentacion: h.alimentacion,
     genero_vida: h.genero_vida,
