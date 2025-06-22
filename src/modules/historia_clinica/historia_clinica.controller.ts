@@ -23,6 +23,11 @@ export class HistoriaClinicaController {
     return this.historiaClinicaService.create(createHistoriaClinicaDto);
   }
 
+  @Get('donantes-activos')
+  async getDonantesActivos() {
+    return this.historiaClinicaService.getDonantesActivos();
+  }
+
   @Get()
   findAll() {
     return this.historiaClinicaService.getAll();

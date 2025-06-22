@@ -31,6 +31,9 @@ export class Historia_Clinica {
   @Prop()
   estado_civil: string;
 
+  @Prop()
+  fechaDieta:Date;
+
   @Prop({})
   municipio: string;
 

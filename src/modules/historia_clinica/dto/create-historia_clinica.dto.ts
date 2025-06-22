@@ -125,28 +125,21 @@ export class CreateHistoriaClinicaDto {
   @IsBoolean()
   @IsOptional()
   citado?: boolean;
- 
-  @IsOptional()
-  fechaCita?: Date;
 
-  @IsArray()
-  @IsOptional()   
+
+  @IsArray() 
   habitosToxicos?: [ { habito?: string; intensidad?: string },]
 
   @IsArray()
-  @IsOptional()
   estanciaExtranjero?:[{fecha:Date; pais?:string; estadia?:string; motivo?:string}]
 
   @IsArray()
   @IsString({ each: true })
-  @IsOptional()
   alergias?: string[];
 
   @IsArray()
-  @IsOptional()
   antecedentesPersonales?: [{ antecedente: string; año: string },];;
 
   @IsArray()
-  @IsOptional()
   antecedentesFamiliares?:  [{ antecedente: string; parentesco: string },];
 }

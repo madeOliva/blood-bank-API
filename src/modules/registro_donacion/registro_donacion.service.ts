@@ -418,13 +418,14 @@ export class RegistroDonacionService {
       .find({
         fechaR: { $gte: inicioDia, $lte: finDia }
       })
-      .populate('historiaClinica', 'nombre primer_apellido segundo_apellido')
+      .populate('historiaClinica', 'nombre primer_apellido segundo_apellido _id')
       .exec();
 
     if (!registros) throw new NotFoundException('Registro no encontrado');
 
     return registros.map((reg: any) => ({
       _id: reg._id,
+      historiaClinicaId: reg.historiaClinica?._id,
       nombre: reg.historiaClinica?.nombre || '',
       primer_apellido: reg.historiaClinica?.primer_apellido || '',
       segundo_apellido: reg.historiaClinica?.segundo_apellido || '',
