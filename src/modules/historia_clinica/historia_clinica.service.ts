@@ -18,9 +18,25 @@ export class HistoriaClinicaService {
 
   
   // Obtener todas las historias clínicas con donante activo
-  async getDonantesActivos() {
-    return this.Historia_ClinicaModel.find({ es_donanteActivo: true }).exec();
-  }
+ async getDonantesActivos() {
+  const historias = await this.Historia_ClinicaModel
+    .find({ es_donanteActivo: true })
+    .populate('grupo_sanguine', 'nombre')
+    .populate('factor', 'signo')
+    .populate('provincia', 'nombre_provincia')
+    .exec();
+
+  return historias.map(h => {
+    const obj = h.toObject();
+    return {
+      ...obj,
+      grupo_sanguine: obj.grupo_sanguine?.nombre || null,
+      factor: obj.factor?.signo || null,
+      provincia: obj.provincia?.nombre_provincia || null,
+    };
+  });
+}
+
 
 
   // Obtener una historia clínica por ID
