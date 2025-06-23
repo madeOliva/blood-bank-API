@@ -44,7 +44,6 @@ export class RegistroDonacionController {
     return this.service.findByRangoFechas(fechaInicio, fechaFin);
   }
 
-
   @Get('aptos-interrogatorio')
   @ApiOperation({ summary: 'Obtiene todos los registros de donacion que son aptos al interrogatorio' })
   getDonacionesAptasInterrogatorio() {

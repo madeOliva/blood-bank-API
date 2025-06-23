@@ -27,7 +27,19 @@ historiaClinica: Historia_Clinica;
   componente: Componentes; //Nomenclador
 
   @Prop()
-  nombre_tecnico: string;
+  responsableInscripcion: string;
+  @Prop()
+  responsablePrechequeo: string;
+  @Prop()
+  responsableSeleccion: string;
+  @Prop()
+  responsableExtraccion: string;
+  @Prop()
+  responsableCalidad: string;
+  @Prop()
+  responsableProduccion: string;
+  @Prop()
+  responsableLaboratorio: string;
 
   
    @Prop()
@@ -83,7 +95,7 @@ historiaClinica: Historia_Clinica;
   ciclos?: number;
 
   @Prop()
-  ACD?: string;
+  ACD?: number;
 
   @Prop()
   no_lote_kitACD?: string;

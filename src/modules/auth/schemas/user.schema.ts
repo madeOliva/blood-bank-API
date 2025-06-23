@@ -23,7 +23,7 @@ export enum UserRole {
 
 @Schema()
 export class User {
-  @Prop({required:true})
+  @Prop()
   name: string;
 
   @Prop({ required: true, unique: true })

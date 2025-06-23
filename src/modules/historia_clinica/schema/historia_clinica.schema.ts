@@ -25,7 +25,11 @@ export class Historia_Clinica {
   @Prop({ type: Types.ObjectId, ref: Sexo.name })
   sexo: Sexo; //Nomenclador
 
-  @Prop({})
+  
+  @Prop()
+  fecha_nacimiento: Date; //Formato: YYYY-MM-DD
+
+  @Prop()
   edad: number;
 
   @Prop()
@@ -46,7 +50,7 @@ export class Historia_Clinica {
   @Prop({ type: Types.ObjectId, ref: ColorPiel.name })
   color_piel: ColorPiel; //Nomenclador
 
-  @Prop({})
+  @Prop()
   no_hc: string;
 
   @Prop({ type: Types.ObjectId, ref: GruposSanguineos.name })
@@ -85,6 +89,10 @@ export class Historia_Clinica {
 
   @Prop()
   centro_laboral: string;
+
+
+  @Prop()
+  direccion: string;
 
   @Prop()
   otra_localizacion: string;
