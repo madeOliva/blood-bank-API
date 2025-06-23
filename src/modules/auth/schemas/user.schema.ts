@@ -15,7 +15,7 @@ export enum UserRole {
   TECNICO_INSCRIPCION = 'Técnico de inscripción',
   TECNICO_TRANSFUSION = 'Técnico de transfusión',
   TECNICO_DONACION = 'Técnico de donación',
-  TECNICO_LABORATORIO_SUMA = 'Tecnico de laboratorio suma',
+  TECNICO_LABORATORIO_SUMA = 'Técnico de laboratorio suma',
   TECNICO_LABRORATORIO_INMUNO = 'Técnico de laboratorio inmuno',
   TECNICO_LABORATORIO_CALIDAD = 'Técnico de laboratorio calidad',
   TECNICO_PRODUCCION = 'Técnico de producción',

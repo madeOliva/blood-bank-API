@@ -20,5 +20,5 @@ export class CreateCentrifugacionDto {
   @IsNumber()
   velocidad: number;
 
- 
+ no_tubuladura?: string; 
 }

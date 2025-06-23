@@ -4,7 +4,10 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -13,6 +16,7 @@ import { RegistroDonacionService } from './registro_donacion.service';
 import { CreateRegistroDonacionesDto } from './dto/create-registro_donacion.dto';
 import { UpdateRegistroDonacionDto } from './dto/update-registro_donacion.dto';
 import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
+import { RegistroDonacion } from './schemas/registro_donacion.schema';
 
 @ApiTags('Registro de Donación')
 @Controller('registro-donacion')
@@ -40,17 +44,6 @@ export class RegistroDonacionController {
     return this.service.findByRangoFechas(fechaInicio, fechaFin);
   }
 
-  @Get('hoja-cargo-donaciones')
-async hojaCargoDonaciones(
-  @Query('inicio') inicio: string,
-  @Query('fin') fin: string
-) {
-  const fechaInicio = new Date(`${inicio}T00:00:00.000Z`);
-const fechaFin = new Date(`${fin}T23:59:59.999Z`);
-  return this.service.hojaCargoDonaciones(fechaInicio, fechaFin);
-}
-  
-  
   @Get('aptos-interrogatorio')
   @ApiOperation({ summary: 'Obtiene todos los registros de donacion que son aptos al interrogatorio' })
   getDonacionesAptasInterrogatorio() {
@@ -62,7 +55,12 @@ const fechaFin = new Date(`${fin}T23:59:59.999Z`);
     return this.service.getConsecutivoAndHistoriaClinicaAceptada();
   }
 
-  
+
+  @Get('historia-clinica/:id')
+  async getRegistrosPorHistoriaClinica(@Param('id') historiaClinicaId: string) {
+    return this.service.getRegistrosPorHistoriaClinica(historiaClinicaId);
+  }
+
 
   @Get('pueden-donar')
   async getDonantesQuePuedenDonar() {
@@ -92,11 +90,10 @@ const fechaFin = new Date(`${fin}T23:59:59.999Z`);
     return this.service.getDonantesNoAptos();
   }
 
-  @Get('donaciones-diarias')
-  async getDonacionesDiarias() {
-    return this.service.getDonacionesDiarias();
-  }
-
+@Get('donaciones-diarias')
+async findDonacionesDiarias() {
+  return this.service.getDonacionesDiarias();
+}
   @Get('prechequeo/:id')
   getPrechequeoById(@Param('id') id: string) {
     return this.service.getPrechequeoById(id);
@@ -126,7 +123,29 @@ const fechaFin = new Date(`${fin}T23:59:59.999Z`);
     required: true,
     description: 'ID del registro a actualizar',
   })
-  @Put(':id')
+ 
+  // Actualizar datos del lab Suma
+  @Patch('update-laboratorio/:id')
+async updateLaboratorio(
+  @Param('id') id: string,
+  @Body() updateData: any,
+): Promise<any> {
+  console.log('Datos recibidos para actualizar:', updateData);
+  return await this.service.updateLaboratorio(id, updateData);
+}
+
+// Actualizar datos del lab Inmuno
+@Patch('update-laboratorio-inmuno/:id')
+async updateLaboratorioInmuno(
+  @Param('id') id: string,
+  @Body() updateData: any,
+): Promise<any> {
+  console.log('Datos recibidos para actualizar:', updateData);
+  return await this.service.updateLaboratorioInmuno(id, updateData);
+}
+
+
+ @Put(':id')
   update(
     @Body() updateRegistroDonacionDto: UpdateRegistroDonacionDto,
     @Param('id') id: string,
@@ -165,4 +184,5 @@ const fechaFin = new Date(`${fin}T23:59:59.999Z`);
   delete(@Param('id') id: string) {
     return this.service.delete(id);
   }
+  
 }

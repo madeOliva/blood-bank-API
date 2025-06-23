@@ -1,5 +1,5 @@
 export class CreatePedidosMensualDto {
-  planId: string;
+
   tohallas: number;
   jabon: number;
   detergente: number;

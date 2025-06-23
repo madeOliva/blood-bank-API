@@ -36,7 +36,13 @@ export class Historia_Clinica {
   estado_civil: string;
 
   @Prop()
+  fechaDieta:Date;
+
+  @Prop({})
   municipio: string;
+
+   @Prop()
+  cat_ocupacional: string;
 
   @Prop({ type: Types.ObjectId, ref: Provincia.name })
   provincia: Provincia; //Nomenclador
@@ -52,6 +58,22 @@ export class Historia_Clinica {
 
   @Prop({ type: Types.ObjectId, ref: Factores.name })
   factor: Factores; //Nomenclador
+
+  @Prop()
+  habitosToxicos?: [
+    {
+      habito?: string;
+      intensidad?: string;
+    },
+  ];
+
+  @Prop()
+  estanciaExtranjero?:[ {
+    fecha?: Date;
+    pais?: string;
+    estadia?: string;
+    motivo?: string;  
+  }]
 
   @Prop()
   consejo_popular: string;
@@ -77,9 +99,6 @@ export class Historia_Clinica {
 
   @Prop()
   ocupacion: string;
-
-  @Prop()
-  cat_ocupacional: string;
 
   @Prop()
   estilo_vida: string;

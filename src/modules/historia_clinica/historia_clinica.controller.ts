@@ -28,9 +28,11 @@ export class HistoriaClinicaController {
     return this.historiaClinicaService.create(createHistoriaClinicaDto);
   }
 
-  @ApiOperation({ summary: 'Obtener todas las HC' })
-  @ApiResponse({ status: 201, description: 'HC obtenidas exitosamente' })
-  @ApiResponse({ status: 400, description: 'Bad request' })
+  @Get('donantes-activos')
+  async getDonantesActivos() {
+    return this.historiaClinicaService.getDonantesActivos();
+  }
+
   @Get()
   findAll() {
     return this.historiaClinicaService.getAll();

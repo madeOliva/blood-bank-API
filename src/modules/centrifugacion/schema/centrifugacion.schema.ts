@@ -34,6 +34,8 @@ export class Centrifugacion {
 
   @Prop({ required: true })
   temperatura: number;
+   @Prop({ required: true })
+  no_hc: string;
 
   @Prop({ required: true })
   velocidad: number;

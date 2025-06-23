@@ -7,12 +7,11 @@ import {
 import { UpdateRegistroDonacionDto } from './dto/update-registro_donacion.dto';
 import { CreateRegistroDonacionesDto } from './dto/create-registro_donacion.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Historia_Clinica } from '../historia_clinica/schema/historia_clinica.schema';
 import { RegistroDonacion } from './schemas/registro_donacion.schema';
 import { Donacion } from '../donacion/schemas/donacion.schemas';
 import { Componentes } from '../componentes_donacion/schemas/componentes.schemas';
-import { Estados } from '../estados/schemas/estados.schemas';
 import { Sexo } from '../sexo/schema/sexo.schema';
 
 const CODIGOS_MUNICIPIOS_PINAR_DEL_RIO: Record<string, string> = {
@@ -40,8 +39,6 @@ export class RegistroDonacionService {
     private donacionModel: Model<Donacion>,
     @InjectModel(Componentes.name)
     private componentesModel: Model<Componentes>,
-    @InjectModel(Estados.name)
-    private estadosModel: Model<Estados>,
     @InjectModel(Sexo.name)
     private sexoModel: Model<Sexo>,
   ) {}
@@ -371,6 +368,74 @@ export class RegistroDonacionService {
     return updatedRegistro;
   }
 
+  //Actualizar datos laboratorios
+  async updateLaboratorio(id: string, updateData: any): Promise<any> {
+    try {
+      const updatedRegistro = await this.registroDonacionModel.findOneAndUpdate(
+        { _id: id }, // Busca por el ID del registro
+        {
+          $push: {
+            resultado_VIH: { $each: updateData.resultado_VIH },
+            resultado_hepatitisB: { $each: updateData.resultado_hepatitisB },
+            resultado_hepatitisC: { $each: updateData.resultado_hepatitisC },
+            
+          },
+          $set: {
+            estado: updateData.estado,
+            fechaLab: updateData.fechaLab,
+          },
+        },
+        { new: true } // Devuelve el documento actualizado
+      );
+  
+      if (!updatedRegistro) {
+        throw new Error(`Registro con ID ${id} no encontrado.`);
+      }
+  
+      return updatedRegistro;
+    } catch (error) {
+      console.error('Error al actualizar el registro:', error);
+      throw new Error('No se pudo actualizar el registro.');
+    }
+  }
+
+  
+
+  //Actualizar datos laboratorio Inmuno
+  async updateLaboratorioInmuno(id: string, updateData: any): Promise<any> {
+    try {
+      const updatedRegistro = await this.registroDonacionModel.findOneAndUpdate(
+        { _id: id }, // Busca por el ID del registro
+        {
+          $push: {
+            resultado_serologia: { $each: updateData.resultado_serologia },
+            resultado_tipage: { $each: updateData.resultado_tipage },
+            resultado_contratipaje: { $each: updateData.resultado_contratipaje },
+            resultado_rh: { $each: updateData.resultado_rh },
+            resultado_DU: { $each: updateData.resultado_DU },
+            
+          },
+          $set: {
+            estado: updateData.estado,
+            fechaLab: updateData.fechaLab,
+          },
+        },
+        { new: true } // Devuelve el documento actualizado
+      );
+  
+      if (!updatedRegistro) {
+        throw new Error(`Registro con ID ${id} no encontrado.`);
+      }
+  
+      return updatedRegistro;
+    } catch (error) {
+      console.error('Error al actualizar el registro:', error);
+      throw new Error('No se pudo actualizar el registro.');
+    }
+  }
+  //Eliminar registro de donacion
+
+
   async delete(id: string) {
     const deletedRegistro = await this.registroDonacionModel
       .findByIdAndDelete(id)
@@ -469,13 +534,14 @@ export class RegistroDonacionService {
       .find({
         fechaR: { $gte: inicioDia, $lte: finDia },
       })
-      .populate('historiaClinica', 'nombre primer_apellido segundo_apellido')
+      .populate('historiaClinica', 'nombre primer_apellido segundo_apellido _id')
       .exec();
 
     if (!registros) throw new NotFoundException('Registro no encontrado');
 
     return registros.map((reg: any) => ({
       _id: reg._id,
+      historiaClinicaId: reg.historiaClinica?._id,
       nombre: reg.historiaClinica?.nombre || '',
       primer_apellido: reg.historiaClinica?.primer_apellido || '',
       segundo_apellido: reg.historiaClinica?.segundo_apellido || '',
@@ -520,29 +586,27 @@ export class RegistroDonacionService {
     }));
   }
 
-  async getDonacionesDiarias() {
-    const registros = await this.registroDonacionModel
-      .find()
-      .populate('historiaClinica', 'ci sexo edad grupo_sanguineo factor')
-      .exec();
+ async getDonacionesDiarias() {
+  const registros = await this.registroDonacionModel
+    .find()
+    .populate('historiaClinica', 'ci no_hc sexo edad grupo_sanguineo factor')
+    .exec();
 
-    console.log(JSON.stringify(registros, null, 2)); // <-- Agrega esto
-
-    return registros.map((reg: any) => ({
-      id: reg._id,
-      no: reg.no_registro,
-      hc: reg.historiaClinica?.ci,
-      desecho: 'Bolsa',
-      motivo_desecho: reg.motivo_desecho,
-      sexo: reg.historiaClinica?.sexo,
-      edad: reg.historiaClinica?.edad,
-      grupo: reg.examenP_grupo,
-      factor: reg.examenP_factor,
-      volumen: reg.volumen,
-      estado: reg.estado,
-      entidad: 'Banco de Sangre',
-    }));
-  }
+  return registros.map((reg: any) => ({
+    id: reg._id,
+    no: reg.no_registro,
+    hc: reg.historiaClinica?.no_hc ?? "Sin historia",
+    desecho: 'Bolsa',
+    motivo_desecho: reg.motivo_desecho,
+    sexo: reg.historiaClinica?.sexo,
+    edad: reg.historiaClinica?.edad,
+    grupo: reg.examenP_grupo,
+    factor: reg.examenP_factor,
+    volumen: reg.volumen,
+    estado: reg.estado,
+    entidad: 'Banco de Sangre',
+  }));
+} 
 
   //Metodo para citar donantes por el medico.
   async getDonantesQuePuedenDonar() {
@@ -609,21 +673,24 @@ export class RegistroDonacionService {
   async getConsecutivoAndHistoriaClinicaAceptada() {
     const registros = await this.registroDonacionModel
       .find()
-      .populate('historiaClinica', 'no_hc')
-      .populate('estado', 'nombre_estado')
+      .populate('historiaClinica', 'no_hc') // Se mantiene la población de historia clínica
       .exec();
-
-    // Filtra los que tienen estado "aceptada"
+  
+    // Filtra los registros que tienen estado "aceptada" (insensible a mayúsculas/minúsculas)
     const filtrados = registros.filter(
-      (reg: any) => reg.estado?.nombre_estado?.toLowerCase() === 'aceptada',
-    );
+    (reg: any) => reg.estado?.toLowerCase() === "aceptada"
 
+    );
+  
+    // Mapea los registros filtrados para devolver el formato esperado
     return filtrados.map((reg: any) => ({
       _id: reg._id,
       historiaClinica: reg.historiaClinica,
+
       estado: {
         nombre_estado: reg.estado?.nombre_estado || '',
       },
+
     }));
   }
 
@@ -680,4 +747,21 @@ export class RegistroDonacionService {
       // agrega aquí cualquier otro campo que tu DataGrid necesite
     }));
   }
+
+
+  //Metodo para cargar todos los registros de donacion de una misma historia Modulo HC
+  async getRegistrosPorHistoriaClinica(historiaClinicaId: string) {
+  const registros = await this.registroDonacionModel
+    .find({ historiaClinica: new Types.ObjectId(historiaClinicaId) })
+    .populate('reaccion', 'nombre_estado')
+    .exec();
+
+  return registros.map((reg: any) => ({
+    _id: reg._id,
+    fechaD: reg.fechaD,
+    lugar: "Banco de sangre",
+    reaccion: reg.reaccion?.nombre_estado || '',
+  }));
+}
+
 }

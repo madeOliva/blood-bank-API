@@ -135,6 +135,18 @@ export class UpdateHistoriaClinicaDto extends PartialType(
   @IsOptional()
   antecedentesFamiliares?: [{ antecedente: string; parentesco: string },];
 
+  @IsArray()
+  @IsOptional() 
+  habitosToxicos?: [
+    {
+      habito?: string;
+      intensidad?: string;
+    },
+  ];
+
+   @IsArray()
+  @IsOptional()
+  estanciaExtranjero?:[{fecha:Date; pais?:string; estadia?:string; motivo?:string}]
 
   @IsArray()
   @IsOptional()
