@@ -17,107 +17,107 @@ export class UpdateHistoriaClinicaDto extends PartialType(
   CreateHistoriaClinicaDto,
 ) {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   ci: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   nombre: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   primer_apellido: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   segundo_apellido: string;
 
   @IsMongoId()
-  @IsNotEmpty()
+  @IsOptional() 
   sexo: string;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional() 
   edad: number;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   estado_civil: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   municipio: string;
 
   @IsMongoId()
-  @IsNotEmpty()
+  @IsOptional() 
   provincia: string;
 
   @IsMongoId()
-  @IsNotEmpty()
+  @IsOptional() 
   color_piel: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   no_hc: string;
 
   @IsMongoId()
-  @IsNotEmpty()
+  @IsOptional() 
   grupo_sanguine: string; //Nomenclador
 
   @IsMongoId()
-  @IsNotEmpty()
+  @IsOptional() 
   factor: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   consejo_popular: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   no_consultorio: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   ocupacion: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   telefono: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   centro_laboral: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   otra_localizacion: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   cat_ocupacional: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   estilo_vida: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   alimentacion: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional() 
   genero_vida: string;
 
   @IsBoolean()
-  @IsNotEmpty()
+  @IsOptional() 
   es_donanteControlado: boolean;
 
   @IsBoolean()
-  @IsNotEmpty()
+  @IsOptional() 
   es_posibleDonante: boolean;
 
   @IsBoolean()
-  @IsNotEmpty()
+  @IsOptional() 
   es_donanteActivo: boolean;
 
   @IsBoolean()

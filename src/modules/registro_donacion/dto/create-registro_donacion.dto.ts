@@ -63,10 +63,22 @@ export class HistoriaClinicaDto {
   @IsString()
   @IsNotEmpty()
   factor: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  otra_localizacion: string;
 }
 
 // DTO principal de registro de donaciones
 export class CreateRegistroDonacionesDto {
+  @IsString()
+  @IsNotEmpty()
+  responsableInscripcion: string;
+
+  @IsString()
+  @IsOptional()
+  responsableExtraccion?: string;
+
   @ValidateNested()
   @Type(() => HistoriaClinicaDto)
   @IsNotEmpty()
@@ -99,8 +111,6 @@ export class CreateRegistroDonacionesDto {
   @IsString()
   @IsNotEmpty()
   componente: ObjectId; //Nomenclador
-
-
 
   //Examenes Prechequeo
 
@@ -185,9 +195,8 @@ export class CreateRegistroDonacionesDto {
   @IsOptional()
   no_lote: string;
 
- 
   @IsOptional()
-  estado: Types.ObjectId; //Nomenclador
+  estado: string; //Nomenclador
 
   @IsOptional()
   reaccion: Types.ObjectId; //Nomenclador
@@ -222,9 +231,9 @@ export class CreateRegistroDonacionesDto {
   @IsOptional()
   ciclos: number;
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  ACD: string;
+  ACD: number;
 
   @IsString()
   @IsOptional()
@@ -274,4 +283,3 @@ export class CreateRegistroDonacionesDto {
   @IsOptional()
   resultado_hemoglobina: number[];
 }
-

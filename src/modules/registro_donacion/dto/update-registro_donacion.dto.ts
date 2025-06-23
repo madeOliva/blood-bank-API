@@ -1,7 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateRegistroDonacionesDto } from './create-registro_donacion.dto';
-
-  import {
+import {
   IsArray,
   IsBoolean,
   IsNotEmpty,
@@ -11,18 +8,21 @@ import { CreateRegistroDonacionesDto } from './create-registro_donacion.dto';
   Length,
   Max,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import { ObjectId, Types } from 'mongoose';
+import { Type } from 'class-transformer';
 
-export class UpdateRegistroDonacionDto {
+// DTO para la historia clínica
+export class HistoriaClinicaDto {
   @IsString()
   @IsNotEmpty()
   no_hc: string;
 
   @IsString()
   @IsNotEmpty()
-  @Length(11, 11) // Assuming CI is a Cuban ID with 11 digits
-  ci_donante: string;
+  @Length(11, 11)
+  ci: string;
 
   @IsString()
   @IsNotEmpty()
@@ -63,6 +63,26 @@ export class UpdateRegistroDonacionDto {
   @IsString()
   @IsNotEmpty()
   factor: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  otra_localizacion: string;
+}
+
+// DTO principal de registro de donaciones
+export class  UpdateRegistroDonacionDto {
+  @IsString()
+  @IsOptional()
+  responsableInscripcion: string;
+
+  @IsString()
+  @IsOptional()
+  responsableExtraccion?: string;
+
+  @ValidateNested()
+  @Type(() => HistoriaClinicaDto)
+  @IsNotEmpty()
+  historiaClinica: HistoriaClinicaDto;
 
   @IsString()
   @IsNotEmpty()
@@ -175,9 +195,8 @@ export class UpdateRegistroDonacionDto {
   @IsOptional()
   no_lote: string;
 
- 
   @IsOptional()
-  estado: Types.ObjectId; //Nomenclador
+  estado: string; //Nomenclador
 
   @IsOptional()
   reaccion: Types.ObjectId; //Nomenclador
@@ -212,9 +231,9 @@ export class UpdateRegistroDonacionDto {
   @IsOptional()
   ciclos: number;
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  ACD: string;
+  ACD: number;
 
   @IsString()
   @IsOptional()
@@ -264,5 +283,3 @@ export class UpdateRegistroDonacionDto {
   @IsOptional()
   resultado_hemoglobina: number[];
 }
-
-
