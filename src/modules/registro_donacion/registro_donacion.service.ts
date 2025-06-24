@@ -174,6 +174,7 @@ export class RegistroDonacionService {
         fechaR: fechaActual,
         no_registro,
         nombre_unidad: 'Banco de Sangre',
+        numero_consecutivo:numeroConsecutivo,
       });
 
       return newRegistro.save();
