@@ -229,43 +229,81 @@ export class UpdateRegistroDonacionDto {
   resultado_VIH: string[];
 
   @IsOptional()
+    fecha_VIH: Date[];
+
+  @IsOptional()
   resultado_hepatitisB: string[];
+
+  @IsOptional()
+    fecha_hepatitisB: Date[];
 
   @IsOptional()
   resultado_hepatitisC: string[];
 
+  @IsOptional()
+    fecha_hepatitisC: Date[];
+
  @IsOptional()
    resultado_rh?: string[];
+
+   @IsOptional()
+     fecha_rh: Date[];
 
   @IsOptional()
   resultado_tipage: string[];
 
   @IsOptional()
+    fecha_tipage: Date[];
+
+  @IsOptional()
   resultado_contratipaje: string[];
+
+  @IsOptional()
+    fecha_contratipaje: Date[];
 
   @IsOptional()
   resultado_DU: string[];
 
   @IsOptional()
+    fecha_DU: Date[];
+
+  @IsOptional()
   resultado_serologia: string[];
+
+  @IsOptional()
+    fecha_serologia: Date[];
 
   @IsOptional()
   resultado_eritro: number[];
 
   @IsOptional()
+    fecha_eritro: Date[];
+
+  @IsOptional()
   resultado_hematocrito: number[];
+
+  @IsOptional()
+    fecha_hematocrito: Date[];
 
   @IsOptional()
   resultado_proteinas_totales: number[];
 
   @IsOptional()
+    fecha_proteinas_totales: Date[];
+
+  @IsOptional()
   resultado_TGP: number[];
+
+  @IsOptional()
+    fecha_TGP: Date[];
 
   @IsOptional()
   resultado_hemoglobina: number[];
 
   @IsOptional()
-  fechaLab?: Date;
+    fecha_hemoglobina: Date[];
+
+  
 }
 
 

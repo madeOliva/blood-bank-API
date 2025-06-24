@@ -7,7 +7,7 @@ import {
 import { UpdateRegistroDonacionDto } from './dto/update-registro_donacion.dto';
 import { CreateRegistroDonacionesDto } from './dto/create-registro_donacion.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { Historia_Clinica } from '../historia_clinica/schema/historia_clinica.schema';
 import { RegistroDonacion } from './schemas/registro_donacion.schema';
 import { Donacion } from '../donacion/schemas/donacion.schemas';
@@ -286,18 +286,22 @@ export class RegistroDonacionService {
   //Actualizar datos laboratorios
   async updateLaboratorio(id: string, updateData: any): Promise<any> {
     try {
+      console.log("Datos recibidos para actualizar:", updateData);
       const updatedRegistro = await this.registroDonacionModel.findOneAndUpdate(
         { _id: id }, // Busca por el ID del registro
         {
           $push: {
             resultado_VIH: { $each: updateData.resultado_VIH },
+            fecha_VIH: { $each: updateData.fecha_VIH },
             resultado_hepatitisB: { $each: updateData.resultado_hepatitisB },
+            fecha_hepatitisB: { $each: updateData.fecha_hepatitisB },
             resultado_hepatitisC: { $each: updateData.resultado_hepatitisC },
+            fecha_hepatitisC: { $each: updateData.fecha_hepatitisC },
             
           },
           $set: {
             estado: updateData.estado,
-            fechaLab: updateData.fechaLab,
+           
           },
         },
         { new: true } // Devuelve el documento actualizado
@@ -324,15 +328,20 @@ export class RegistroDonacionService {
         {
           $push: {
             resultado_serologia: { $each: updateData.resultado_serologia },
+            fecha_serologia: { $each: updateData.fecha_serologia },
             resultado_tipage: { $each: updateData.resultado_tipage },
+            fecha_tipage: { $each: updateData.fecha_tipage },
             resultado_contratipaje: { $each: updateData.resultado_contratipaje },
+            fecha_contratipaje: { $each: updateData.fecha_contratipaje },
             resultado_rh: { $each: updateData.resultado_rh },
+            fecha_rh: { $each: updateData.fecha_rh },
             resultado_DU: { $each: updateData.resultado_DU },
+            fecha_DU: { $each: updateData.fecha_DU }
             
           },
           $set: {
             estado: updateData.estado,
-            fechaLab: updateData.fechaLab,
+          
           },
         },
         { new: true } // Devuelve el documento actualizado
@@ -348,6 +357,48 @@ export class RegistroDonacionService {
       throw new Error('No se pudo actualizar el registro.');
     }
   }
+  
+  
+  //Actualizar datos laboratorio Calidad
+  async updateLaboratorioCalidad(id: string, updateData: any): Promise<any> {
+    try {
+      const updatedRegistro = await this.registroDonacionModel.findOneAndUpdate(
+        { _id: id }, // Busca por el ID del registro
+        {
+          $push: {
+            resultado_hemoglobina: { $each: updateData.resultado_hemoglobina },
+            fecha_hemoglobina: { $each: updateData.fecha_hemoglobina },
+            resultado_TGP: { $each: updateData.resultado_TGP },
+            fecha_TGP: { $each: updateData.fecha_TGP },
+            resultado_eritro: { $each: updateData.resultado_eritro },
+            fecha_eritro: { $each: updateData.fecha_eritro },
+            resultado_hematocrito: { $each: updateData.resultado_hematocrito },
+            fecha_hematocrito: { $each: updateData.fecha_hematocrito },
+            resultado_proteinas_totales: { $each: updateData.resultado_proteinas_totales },
+            fecha_proteinas_totales: { $each: updateData.fecha_proteinas_totales },
+            
+          },
+          $set: {
+            estado: updateData.estado,
+            
+          },
+        },
+        { new: true } // Devuelve el documento actualizado
+      );
+  
+      if (!updatedRegistro) {
+        throw new Error(`Registro con ID ${id} no encontrado.`);
+      }
+  
+      return updatedRegistro;
+    } catch (error) {
+      console.error('Error al actualizar el registro:', error);
+      throw new Error('No se pudo actualizar el registro.');
+    }
+  }
+  
+  
+  
   //Eliminar registro de donacion
 
 
@@ -557,15 +608,18 @@ export class RegistroDonacionService {
     }));
   }
 
+ // Cargar datos para laboratorios
   async getConsecutivoAndHistoriaClinicaAceptada() {
     const registros = await this.registroDonacionModel
       .find()
-      .populate('historiaClinica', 'no_hc') // Se mantiene la población de historia clínica
+      .populate('historiaClinica', 'no_hc')
+       // Se mantiene la población de historia clínica
       .exec();
   
     // Filtra los registros que tienen estado "aceptada" (insensible a mayúsculas/minúsculas)
     const filtrados = registros.filter(
-    (reg: any) => reg.estado?.toLowerCase() === "aceptada"
+
+      (reg: any) => reg.estado?.toLowerCase() === "aceptada"
 
     );
   
@@ -573,13 +627,39 @@ export class RegistroDonacionService {
     return filtrados.map((reg: any) => ({
       _id: reg._id,
       historiaClinica: reg.historiaClinica,
-
-      estado: {
-        nombre_estado: reg.estado?.nombre_estado || '',
-      },
-
+      estado: reg.estado?.toString() || "",
+      numero_consecutivo: reg.numero_consecutivo,
     }));
   }
+
+  // Cargar datos para laboratorio Calidad
+  async getConsecutivoAndHistoriaClinicaControlados() {
+    const registros = await this.registroDonacionModel
+      .find()
+      .populate('historiaClinica', 'no_hc es_donanteControlado')
+      //.populate('historiaClinica','es_donanteControlado')
+      
+       // Se mantiene la población de historia clínica
+      .exec();
+  
+    // Filtra los registros que tienen estado "aceptada" (insensible a mayúsculas/minúsculas)
+    const filtrados = registros.filter(
+
+      (reg: any) => reg.estado?.toLowerCase() === "aceptada" && 
+       reg.historiaClinica?.es_donanteControlado === true
+
+    );
+  
+    // Mapea los registros filtrados para devolver el formato esperado
+    return filtrados.map((reg: any) => ({
+      _id: reg._id,
+      historiaClinica: reg.historiaClinica,
+      estado: reg.estado?.toString() || "",
+      numero_consecutivo: reg.numero_consecutivo,
+    }));
+  }
+
+
 
   //Donaciones
   async getDonacionesAptasInterrogatorio() {
@@ -633,20 +713,182 @@ export class RegistroDonacionService {
       donante: reg.componente?.nombreComponente || '',
       // agrega aquí cualquier otro campo que tu DataGrid necesite
     }));
+ 
   }
 
-  //Metodo para cargar todos los registros de donacion de una misma historia Modulo HC
-  async getRegistrosPorHistoriaClinica(historiaClinicaId: string) {
-  const registros = await this.registroDonacionModel
-    .find({ historiaClinica: new Types.ObjectId(historiaClinicaId) })
-    .populate('reaccion', 'nombre_estado')
-    .exec();
+  // Método para cargar las muestras analizadas 
+  async getAnalizadas(): Promise<any> {
+    const registros = await this.registroDonacionModel
+      .find() // Filtra por estado "Analizada"
+      .populate('historiaClinica', 'no_hc') // Popula el número de historia clínica
+      .exec();
+  
+    console.log("Registros obtenidos:", registros); // Verifica los datos obtenidos
+  
+    return registros.map((reg: any) => ({
+      id: reg._id,
+      numero_consecutivo: reg.numero_consecutivo,
+      no_hc: reg.historiaClinica?.no_hc || "",
+      resultado_VIH: reg.resultado_VIH?.length > 0 ? reg.resultado_VIH[0] : "", // Primera posición del array si existe
+      fecha_VIH: reg.fecha_VIH?.length > 0 ? reg.fecha_VIH[0] : "",
+      resultado_hepatitisB: reg.resultado_hepatitisB?.length > 0 ? reg.resultado_hepatitisB[0] : "", // Primera posición del array si existe
+      fecha_hepatitisB: reg.fecha_hepatitisB?.length > 0 ? reg.fecha_hepatitisB[0] : "",
+      resultado_hepatitisC: reg.resultado_hepatitisC?.length > 0 ? reg.resultado_hepatitisC[0] : "", // Primera posición del array si existe
+      fecha_hepatitisC: reg.fecha_hepatitisC?.length > 0 ? reg.fecha_hepatitisC[0] : "",
+      resultado_serologia: reg.resultado_serologia?.length > 0 ? reg.resultado_serologia[0] : "", // Primera posición del array si existe
+      fecha_serologia: reg.fecha_serologia?.length > 0 ? reg.fecha_serologia[0] : "",
+      resultado_tipage: reg.resultado_tipage?.length > 0 ? reg.resultado_tipage[0] : "", // Primera posición del array si existe
+      fecha_tipage: reg.fecha_tipage?.length > 0 ? reg.fecha_tipage[0] : "",
+      resultado_rh: reg.resultado_rh?.length > 0 ? reg.resultado_rh[0] : "", // Primera posición del array si existe
+      fecha_rh: reg.fecha_rh?.length > 0 ? reg.fecha_rh[0] : "",
+      resultado_contratipaje: reg.resultado_contratipaje?.length > 0 ? reg.resultado_contratipaje[0] : "", // Primera posición del array si existe
+      fecha_contratipaje: reg.fecha_contratipaje?.length > 0 ? reg.fecha_contratipaje[0] : "",
+      resultado_DU: reg.resultado_DU?.length > 0 ? reg.resultado_DU[0] : "", // Primera posición del array si existe
+      fecha_DU: reg.fecha_DU?.length > 0 ? reg.fecha_DU[0] : "",
+    }));
+  }
 
-  return registros.map((reg: any) => ({
-    _id: reg._id,
-    fechaD: reg.fechaD,
-    lugar: "Banco de sangre",
-    reaccion: reg.reaccion?.nombre_estado || '',
-  }));
-}
+  async getReanalizadasSuma(): Promise<any> {
+    const registros = await this.registroDonacionModel
+      .find({ estado: "Reanalizada" }) // Filtra por estado "Reanalizada"
+      .populate('historiaClinica', 'no_hc') // Popula el número de historia clínica
+      .exec();
+  
+    console.log("Registros obtenidos:", registros); // Verifica los datos obtenidos
+  
+    return registros.map((reg: any) => ({
+      id: reg._id,
+      numero_consecutivo: reg.numero_consecutivo,
+      no_hc: reg.historiaClinica?.no_hc || "",
+      resultado_VIH1: reg.resultado_VIH?.length > 1 ? reg.resultado_VIH[1] : "", // Segunda posición del array si existe
+      fecha_VIH1: reg.fecha_VIH?.length > 1 ? reg.fecha_VIH[1] : "", // Segunda posición del array si existe
+      resultado_hepatitisB1: reg.resultado_hepatitisB?.length > 1 ? reg.resultado_hepatitisB[1] : "", // Segunda posición del array si existe
+      fecha_hepatitisB1: reg.fecha_hepatitisB?.length > 1 ? reg.fecha_hepatitisB[1] : "", // Segunda posición del array si existe
+      resultado_hepatitisC1: reg.resultado_hepatitisC?.length > 1 ? reg.resultado_hepatitisC[1] : "", // Segunda posición del array si existe
+      fecha_hepatitisC1: reg.fecha_hepatitisC?.length > 1 ? reg.fecha_hepatitisC[1] : "", // Segunda posición del array si existe
+
+      // segunda repeticion
+      resultado_VIH2: reg.resultado_VIH?.length > 1 ? reg.resultado_VIH[2] : "", // Segunda posición del array si existe
+      fecha_VIH2: reg.fecha_VIH?.length > 1 ? reg.fecha_VIH[2] : "", // Segunda posición del array si existe
+      resultado_hepatitisB2: reg.resultado_hepatitisB?.length > 1 ? reg.resultado_hepatitisB[2] : "", // Segunda posición del array si existe
+      fecha_hepatitisB2: reg.fecha_hepatitisB?.length > 1 ? reg.fecha_hepatitisB[2] : "", // Segunda posición del array si existe
+      resultado_hepatitisC2: reg.resultado_hepatitisC?.length > 1 ? reg.resultado_hepatitisC[2] : "", // Segunda posición del array si existe
+      fecha_hepatitisC2: reg.fecha_hepatitisC?.length > 1 ? reg.fecha_hepatitisC[2] : "", // Segunda posición del array si existe
+     
+      //tercera repeticion
+      resultado_VIH3: reg.resultado_VIH?.length > 1 ? reg.resultado_VIH[3] : "", // Segunda posición del array si existe
+      fecha_VIH3: reg.fecha_VIH?.length > 1 ? reg.fecha_VIH[3] : "", // Segunda posición del array si existe
+      resultado_hepatitisB3: reg.resultado_hepatitisB?.length > 1 ? reg.resultado_hepatitisB[3] : "", // Segunda posición del array si existe
+      fecha_hepatitisB3: reg.fecha_hepatitisB?.length > 1 ? reg.fecha_hepatitisB[3] : "", // Segunda posición del array si existe
+      resultado_hepatitisC3: reg.resultado_hepatitisC?.length > 1 ? reg.resultado_hepatitisC[3] : "", // Segunda posición del array si existe
+      fecha_hepatitisC3: reg.fecha_hepatitisC?.length > 1 ? reg.fecha_hepatitisC[3] : "", // Segunda posición del array si existe
+    }));
+  }
+
+  // Reanalizadas Inmunohematología
+  async getReanalizadasInmuno(): Promise<any> {
+    const registros = await this.registroDonacionModel
+      .find({ estado: "Reanalizada" }) // Filtra por estado "Reanalizada"
+      .populate('historiaClinica', 'no_hc') // Popula el número de historia clínica
+      .exec();
+  
+    console.log("Registros obtenidos:", registros); // Verifica los datos obtenidos
+  
+    return registros.map((reg: any) => ({
+      id: reg._id,
+      numero_consecutivo: reg.numero_consecutivo,
+      no_hc: reg.historiaClinica?.no_hc || "",
+      resultado_serologia1: reg.resultado_serologia?.length > 1 ? reg.resultado_serologia[1] : "", // Segunda posición del array si existe
+      fecha_serologia1: reg.fecha_serologia?.length > 1 ? reg.fecha_serologia[1] : "", // Segunda posición del array si existe
+      resultado_DU1: reg.resultado_DU?.length > 1 ? reg.resultado_DU[1] : "", // Segunda posición del array si existe
+      fecha_DU1: reg.fecha_DU?.length > 1 ? reg.fecha_DU[1] : "", // Segunda posición del array si existe
+      resultado_tipage1: reg.resultado_tipage?.length > 1 ? reg.resultado_tipage[1] : "", // Segunda posición del array si existe
+      fecha_tipage1: reg.fecha_tipage?.length > 1 ? reg.fecha_tipage[1] : "", // Segunda posición del array si existe
+      resultado_contratipaje1: reg.resultado_contratipaje?.length > 1 ? reg.resultado_contratipaje[1] : "", // Segunda posición del array si existe
+      fecha_contratipaje1: reg.fecha_contratipaje?.length > 1 ? reg.fecha_contratipaje[1] : "", // Segunda posición del array si existe
+      resultado_rh1: reg.resultado_rh?.length > 1 ? reg.resultado_rh[1] : "", // Segunda posición del array si existe
+      fecha_rh1: reg.fecha_rh?.length > 1 ? reg.fecha_rh[1] : "", // Segunda posición del array si existe
+
+      // segunda repeticion
+      resultado_serologia2: reg.resultado_serologia?.length > 1 ? reg.resultado_serologia[2] : "", // Segunda posición del array si existe
+      fecha_serologia2: reg.fecha_serologia?.length > 1 ? reg.fecha_serologia[2] : "", // Segunda posición del array si existe
+      resultado_DU2: reg.resultado_DU?.length > 1 ? reg.resultado_DU[2] : "", // Segunda posición del array si existe
+      fecha_DU2: reg.fecha_DU?.length > 1 ? reg.fecha_DU[2] : "", // Segunda posición del array si existe
+      resultado_tipage2: reg.resultado_tipage?.length > 1 ? reg.resultado_tipage[2] : "", // Segunda posición del array si existe
+      fecha_tipage2: reg.fecha_tipage?.length > 1 ? reg.fecha_tipage[2] : "", // Segunda posición del array si existe
+      resultado_contratipaje2: reg.resultado_contratipaje?.length > 1 ? reg.resultado_contratipaje[2] : "", // Segunda posición del array si existe
+      fecha_contratipaje2: reg.fecha_contratipaje?.length > 1 ? reg.fecha_contratipaje[2] : "", // Segunda posición del array si existe
+      resultado_rh2: reg.resultado_rh?.length > 1 ? reg.resultado_rh[2] : "", // Segunda posición del array si existe
+      fecha_rh2: reg.fecha_rh?.length > 1 ? reg.fecha_rh[2] : "" ,// Segunda posición del array si existe
+     
+      //tercera repeticion
+      resultado_serologia3: reg.resultado_serologia?.length > 1 ? reg.resultado_serologia[3] : "", // Segunda posición del array si existe
+      fecha_serologia3: reg.fecha_serologia?.length > 1 ? reg.fecha_serologia[3] : "", 
+      resultado_DU3: reg.resultado_DU?.length > 1 ? reg.resultado_DU[3] : "", // Segunda posición del array si existe
+      fecha_DU3: reg.fecha_DU?.length > 1 ? reg.fecha_DU[3] : "", // Segunda posición del array si existe
+    }));
+  }
+
+  // Método para cargar las muestras analizadas de calidad
+  async getAnalizadasCalidad(): Promise<any> {
+    const registros = await this.registroDonacionModel
+      .find() // Filtra por estado "Analizada"
+      .populate('historiaClinica', 'no_hc es_donanteControlado') // Popula el número de historia clínica
+      .exec();
+  
+    console.log("Registros obtenidos:", registros); // Verifica los datos obtenidos
+  
+    // Filtra los registros que tienen es_donanteControlado = true
+    const filtrados = registros.filter(
+      (reg: any) => reg.historiaClinica?.es_donanteControlado === true
+    );
+  
+    return filtrados.map((reg: any) => ({
+      id: reg._id,
+      numero_consecutivo: reg.numero_consecutivo,
+      no_hc: reg.historiaClinica?.no_hc || "",
+      resultado_hemoglobina: reg.resultado_hemoglobina?.length > 0 ? reg.resultado_hemoglobina[0] : "", // Primera posición del array si existe
+      fecha_hemoglobina: reg.fecha_hemoglobina?.length > 0 ? reg.fecha_hemoglobina[0] : "",
+      resultado_eritro: reg.resultado_eritro?.length > 0 ? reg.resultado_eritro[0] : "", // Primera posición del array si existe
+      fecha_eritro: reg.fecha_eritro?.length > 0 ? reg.fecha_eritro[0] : "",
+      resultado_hematocrito: reg.resultado_hematocrito?.length > 0 ? reg.resultado_hematocrito[0] : "", // Primera posición del array si existe
+      fecha_hematocrito: reg.fecha_hematocrito?.length > 0 ? reg.fecha_hematocrito[0] : "",
+      resultado_TGP: reg.resultado_TGP?.length > 0 ? reg.resultado_TGP[0] : "", // Primera posición del array si existe
+      fecha_TGP: reg.fecha_TGP?.length > 0 ? reg.fecha_TGP[0] : "",
+      resultado_proteinas_totales: reg.resultado_proteinas_totales?.length > 0 ? reg.resultado_proteinas_totales[0] : "", // Primera posición del array si existe
+      fecha_proteinas_totales: reg.fecha_proteinas_totales?.length > 0 ? reg.fecha_proteinas_totales[0] : "",
+    }));
+  }
+
+  // Método para cargar las muestras analizadas de calidad
+  async getCalidadRepeticion(): Promise<any> {
+    const registros = await this.registroDonacionModel
+      .find({ estado: "Reanalizada" }) // Filtra por estado "Analizada"
+      .populate('historiaClinica', 'no_hc es_donanteControlado') // Popula el número de historia clínica
+      .exec();
+  
+    console.log("Registros obtenidos:", registros); // Verifica los datos obtenidos
+  
+     // Filtra los registros que tienen es_donanteControlado = true
+     const filtrados = registros.filter(
+      (reg: any) => reg.historiaClinica?.es_donanteControlado === true
+    );
+
+    return filtrados.map((reg: any) => ({
+      id: reg._id,
+      numero_consecutivo: reg.numero_consecutivo,
+      no_hc: reg.historiaClinica?.no_hc || "",
+      resultado_hemoglobina1: reg.resultado_hemoglobina?.length > 1 ? reg.resultado_hemoglobina[1] : "", // Primera posición del array si existe
+      fecha_hemoglobina1: reg.fecha_hemoglobina?.length > 1 ? reg.fecha_hemoglobina[1] : "",
+      resultado_eritro1: reg.resultado_eritro?.length > 1 ? reg.resultado_eritro[1] : "", // Primera posición del array si existe
+      fecha_eritro1: reg.fecha_eritro?.length > 1 ? reg.fecha_eritro[1] : "",
+      resultado_hematocrito1: reg.resultado_hematocrito?.length > 1 ? reg.resultado_hematocrito[1] : "", // Primera posición del array si existe
+      fecha_hematocrito1: reg.fecha_hematocrito?.length > 1 ? reg.fecha_hematocrito[1] : "",
+      resultado_TGP1: reg.resultado_TGP?.length > 1 ? reg.resultado_TGP[1] : "", // Primera posición del array si existe
+      fecha_TGP1: reg.fecha_TGP?.length > 1 ? reg.fecha_TGP[1] : "",
+      resultado_proteinas_totales1: reg.resultado_proteinas_totales?.length > 1 ? reg.resultado_proteinas_totales[1] : "", // Primera posición del array si existe
+      fecha_proteinas_totales1: reg.fecha_proteinas_totales?.length > 1 ? reg.fecha_proteinas_totales[1] : "",
+      
+    }));
+  }
 }

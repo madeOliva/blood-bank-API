@@ -99,45 +99,93 @@ export class RegistroDonacion {
 
   @Prop()
   resultado_VIH?: string[];
+ 
+  @Prop()
+  fecha_VIH?: Date[];
 
   @Prop({ type: [String] })
  resultado_rh?: string[];
+ 
+ @Prop()
+ fecha_rh?: Date[];
+
 
   @Prop()
   resultado_hepatitisB?: string[];
 
   @Prop()
+  fecha_hepatitisB?: Date[];
+
+  @Prop()
   resultado_hepatitisC?: string[];
+
+  @Prop()
+  fecha_hepatitisC?: Date[];
+
 
  @Prop()
   resultado_tipage?: string[];
+ 
+  @Prop()
+  fecha_tipage?: Date[];
+
 
   @Prop()
   resultado_contratipaje?: string[];
 
   @Prop()
+  fecha_contratipaje?: Date[];
+
+
+  @Prop()
   resultado_DU?: string[];
+
+  @Prop()
+  fecha_DU?: Date[];
+
 
   @Prop()
   resultado_serologia?: string[];
 
   @Prop()
+  fecha_serologia?: Date[];
+
+
+  @Prop()
   resultado_eritro?: number[];
+
+  @Prop()
+  fecha_eritro?: Date[];
+
 
   @Prop()
   resultado_hematocrito?: number[];
 
   @Prop()
+  fecha_hematocrito?: Date[];
+
+
+  @Prop()
   resultado_proteinas_totales?: number[];
 
   @Prop()
+  fecha_proteinas_totales?: Date[];
+
+
+  @Prop()
   resultado_TGP?: number[];
+   
+  @Prop()
+  fecha_TGP?: Date[];
 
   @Prop()
   resultado_hemoglobina?: number[];
 
   @Prop()
-  fechaLab?: Date;
+  fecha_hemoglobina?: Date[];
+
+
+  
 
 
  //SELECCION Y PRECHEQUEO

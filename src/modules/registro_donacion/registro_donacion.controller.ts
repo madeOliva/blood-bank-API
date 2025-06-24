@@ -56,11 +56,16 @@ export class RegistroDonacionController {
     return this.service.getConsecutivoAndHistoriaClinicaAceptada();
   }
 
-
-  @Get('historia-clinica/:id')
-  async getRegistrosPorHistoriaClinica(@Param('id') historiaClinicaId: string) {
-    return this.service.getRegistrosPorHistoriaClinica(historiaClinicaId);
+  @Get('consecutivo-historia-aceptada-controlados')
+  async getConsecutivoAndHistoriaClinicaControlados() {
+    return this.service.getConsecutivoAndHistoriaClinicaControlados();
   }
+
+
+  // @Get('historia-clinica/:id')
+  // async getRegistrosPorHistoriaClinica(@Param('id') historiaClinicaId: string) {
+  //   return this.service.getRegistrosPorHistoriaClinica(historiaClinicaId);
+  // }
 
 
   @Get('pueden-donar')
@@ -71,6 +76,36 @@ export class RegistroDonacionController {
   @Get('find')
   async findAll() {
     return this.service.findAll();
+  }
+
+  //Cargar muestras Analizadas
+  @Get('analizadas')
+async getAnalizadas(): Promise<any> {
+  return this.service.getAnalizadas();
+}
+
+ //Cargar muestras Reanalizadas Suma
+ @Get('reanalizadas-suma')
+ async getReanalizadasSuma(): Promise<any> {
+   return this.service.getReanalizadasSuma();
+ }
+
+ //Cargar muestras Reanalizadas Inmuno
+ @Get('reanalizadas-inmuno')
+ async getReanalizadasInmuno(): Promise<any> {
+   return this.service.getReanalizadasInmuno();
+ }
+
+  //Cargar muestras Calidad
+  @Get('analizadas-calidad')
+  async getAnalizadasCalidad(): Promise<any> {
+    return this.service.getAnalizadasCalidad();
+  }
+  
+  //Cargar muestras Calidad
+  @Get('reanalizadas-calidad')
+  async getCalidadRepeticion(): Promise<any> {
+    return this.service.getCalidadRepeticion();
   }
 
   @Get('datos')
@@ -146,6 +181,15 @@ async updateLaboratorioInmuno(
   return await this.service.updateLaboratorioInmuno(id, updateData);
 }
 
+// Actualizar datos del lab Calidad
+@Patch('update-laboratorio-calidad/:id')
+async updateLaboratorioCalidad(
+  @Param('id') id: string,
+  @Body() updateData: any,
+): Promise<any> {
+  console.log('Datos recibidos para actualizar:', updateData);
+  return await this.service.updateLaboratorioCalidad(id, updateData);
+}
 
  @Put(':id')
   update(
