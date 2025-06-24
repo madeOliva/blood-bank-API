@@ -600,7 +600,7 @@ async getDonacionesDiarias() {
 
   return registros.map((reg: any) => ({
     id: reg._id,
-    no: reg.no_registro,
+    no: reg.no_consecutivo,
     hc: reg.historiaClinica?.no_hc ?? "Sin historia",
     desecho: 'Bolsa',
     motivo_desecho: reg.motivo_desecho,

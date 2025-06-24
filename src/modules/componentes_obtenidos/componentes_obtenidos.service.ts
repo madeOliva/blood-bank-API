@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { ComponentesObtenidos, ComponentesObtenidosDocument } from './schema/componentes_obtenidos.schema';
 import { CreateComponentesObtenidosDto } from './dto/create-componentes_obtenidos.dto';
 
@@ -48,15 +48,19 @@ async getComponentesObtenidos(estado?: string) {
   const filter = estado ? { estado_obtencion: estado } : {};
   return this.componentesObtenidosModel
     .find(filter)
-    .populate({
-      path: 'registro_donacion',
-      populate: { path: 'historiaClinica' }
-    })
+  .populate({
+  path: 'registro_donacion',
+  populate: {
+    path: 'historiaClinica',
+    populate: { path: 'sexo' }
+  }
+})
     .lean();
 }
-async actualizarNoLote(id: string, no_lote: string) {
+
+async actualizarNoLotePorComponenteId(componente_id: string, no_lote: string) {
   return this.componentesObtenidosModel.updateOne(
-    { _id: id, "componentes.tipo": "PFC" },
+    { "componentes._id": new Types.ObjectId(componente_id) },
     { $set: { "componentes.$.no_lote": no_lote } }
   );
 }
@@ -77,3 +81,4 @@ async getBajas() {
   return resultado;
 }
 }
+
