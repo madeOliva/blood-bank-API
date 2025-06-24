@@ -21,7 +21,7 @@ import { RegistroDonacion } from './schemas/registro_donacion.schema';
 @ApiTags('Registro de Donación')
 @Controller('registro-donacion')
 export class RegistroDonacionController {
-  constructor(private readonly service: RegistroDonacionService) { }
+  constructor(private readonly service: RegistroDonacionService) {}
 
   @Get()
   @ApiOperation({ summary: 'Obtiene todos los registros de donacion' })
@@ -44,9 +44,21 @@ export class RegistroDonacionController {
     return this.service.findByRangoFechas(fechaInicio, fechaFin);
   }
 
+  @Get('hoja-cargo-donaciones')
+  async hojaCargoDonaciones(
+    @Query('inicio') inicio: string,
+    @Query('fin') fin: string,
+  ) {
+    const fechaInicio = new Date(`${inicio}T00:00:00.000Z`);
+    const fechaFin = new Date(`${fin}T23:59:59.999Z`);
+    return this.service.hojaCargoDonaciones(fechaInicio, fechaFin);
+  }
 
   @Get('aptos-interrogatorio')
-  @ApiOperation({ summary: 'Obtiene todos los registros de donacion que son aptos al interrogatorio' })
+  @ApiOperation({
+    summary:
+      'Obtiene todos los registros de donacion que son aptos al interrogatorio',
+  })
   getDonacionesAptasInterrogatorio() {
     return this.service.getDonacionesAptasInterrogatorio();
   }
@@ -56,16 +68,20 @@ export class RegistroDonacionController {
     return this.service.getConsecutivoAndHistoriaClinicaAceptada();
   }
 
+
   @Get('consecutivo-historia-aceptada-controlados')
   async getConsecutivoAndHistoriaClinicaControlados() {
     return this.service.getConsecutivoAndHistoriaClinicaControlados();
   }
 
 
-  // @Get('historia-clinica/:id')
-  // async getRegistrosPorHistoriaClinica(@Param('id') historiaClinicaId: string) {
-  //   return this.service.getRegistrosPorHistoriaClinica(historiaClinicaId);
-  // }
+
+
+
+  @Get('historia-clinica/:id')
+  async getRegistrosPorHistoriaClinica(@Param('id') historiaClinicaId: string) {
+    return this.service.getRegistrosPorHistoriaClinica(historiaClinicaId);
+  }
 
 
   @Get('pueden-donar')
@@ -127,10 +143,9 @@ async getAnalizadas(): Promise<any> {
   }
 
   @Get('donaciones-diarias')
-  async getDonacionesDiarias() {
+  async findDonacionesDiarias() {
     return this.service.getDonacionesDiarias();
   }
-
   @Get('prechequeo/:id')
   getPrechequeoById(@Param('id') id: string) {
     return this.service.getPrechequeoById(id);
@@ -160,26 +175,27 @@ async getAnalizadas(): Promise<any> {
     required: true,
     description: 'ID del registro a actualizar',
   })
- 
+
   // Actualizar datos del lab Suma
   @Patch('update-laboratorio/:id')
-async updateLaboratorio(
-  @Param('id') id: string,
-  @Body() updateData: any,
-): Promise<any> {
-  console.log('Datos recibidos para actualizar:', updateData);
-  return await this.service.updateLaboratorio(id, updateData);
-}
+  async updateLaboratorio(
+    @Param('id') id: string,
+    @Body() updateData: any,
+  ): Promise<any> {
+    console.log('Datos recibidos para actualizar:', updateData);
+    return await this.service.updateLaboratorio(id, updateData);
+  }
 
-// Actualizar datos del lab Inmuno
-@Patch('update-laboratorio-inmuno/:id')
-async updateLaboratorioInmuno(
-  @Param('id') id: string,
-  @Body() updateData: any,
-): Promise<any> {
-  console.log('Datos recibidos para actualizar:', updateData);
-  return await this.service.updateLaboratorioInmuno(id, updateData);
-}
+  // Actualizar datos del lab Inmuno
+  @Patch('update-laboratorio-inmuno/:id')
+  async updateLaboratorioInmuno(
+    @Param('id') id: string,
+    @Body() updateData: any,
+  ): Promise<any> {
+    console.log('Datos recibidos para actualizar:', updateData);
+    return await this.service.updateLaboratorioInmuno(id, updateData);
+  }
+
 
 // Actualizar datos del lab Calidad
 @Patch('update-laboratorio-calidad/:id')

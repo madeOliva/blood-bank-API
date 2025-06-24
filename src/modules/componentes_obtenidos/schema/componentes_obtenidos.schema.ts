@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types, Document } from 'mongoose';
+import mongoose, { Types, Document } from 'mongoose';
+import { Centrifugacion } from 'src/modules/centrifugacion/schema/centrifugacion.schema';
+import { RegistroDonacion } from 'src/modules/registro_donacion/schemas/registro_donacion.schema';
 
 export type ComponentesObtenidosDocument = ComponentesObtenidos & Document;
 
@@ -22,13 +24,11 @@ export class ComponentesObtenidos {
   @Prop({ required: true })
   no_consecutivo: string;
 
-  @Prop({
-    type: Types.ObjectId,
-    ref: 'RegistroDonacion',
-    index: true,
-    required: true,
-  })
-  registro_donacion: Types.ObjectId;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Centrifugacion' })
+centrifugacion: Centrifugacion;
+
+@Prop({ type: Types.ObjectId, ref: 'RegistroDonacion' })
+registro_donacion: RegistroDonacion;
 
   @Prop({ required: true, enum: ['obtenido', 'baja', 'pendiente', 'liberado', 'desechada'] })
   estado_obtencion: string;

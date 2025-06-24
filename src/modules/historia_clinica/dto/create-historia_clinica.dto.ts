@@ -7,6 +7,7 @@ import {
   IsArray,
   ValidateNested,
   IsMongoId,
+  IsDate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -35,6 +36,10 @@ export class CreateHistoriaClinicaDto {
   @IsMongoId()
   @IsNotEmpty()
   sexo: string; //Nomenclador
+
+  @IsDate()
+  @IsNotEmpty()
+  fecha_nacimiento: Date; //Formato: YYYY-MM-DD
 
   @IsNumber()
   @IsNotEmpty()
@@ -84,6 +89,12 @@ export class CreateHistoriaClinicaDto {
   @IsNotEmpty()
   centro_laboral: string;
 
+  @IsString()
+  @IsNotEmpty()
+  direccion: string;
+
+  
+
   //Atributos opcionales
 
   @IsString()
@@ -125,28 +136,21 @@ export class CreateHistoriaClinicaDto {
   @IsBoolean()
   @IsOptional()
   citado?: boolean;
- 
-  @IsOptional()
-  fechaCita?: Date;
 
-  @IsArray()
-  @IsOptional()   
+
+  @IsArray() 
   habitosToxicos?: [ { habito?: string; intensidad?: string },]
 
   @IsArray()
-  @IsOptional()
   estanciaExtranjero?:[{fecha:Date; pais?:string; estadia?:string; motivo?:string}]
 
   @IsArray()
   @IsString({ each: true })
-  @IsOptional()
   alergias?: string[];
 
   @IsArray()
-  @IsOptional()
   antecedentesPersonales?: [{ antecedente: string; año: string },];;
 
   @IsArray()
-  @IsOptional()
   antecedentesFamiliares?:  [{ antecedente: string; parentesco: string },];
 }

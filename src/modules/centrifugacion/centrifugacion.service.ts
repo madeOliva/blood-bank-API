@@ -99,4 +99,15 @@ async findAll() {
    return deletecentrif;
  
   }
- }
+async createOrUpdate(dto: CreateCentrifugacionDto) {
+  const filter = { no_consecutivo: dto.no_consecutivo, no_hc: dto.no_hc };
+  const update = { ...dto };
+  if (update.no_tubuladura === undefined || update.no_tubuladura === null) {
+    delete update.no_tubuladura;
+  }
+  const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+  return await this.centrifugacionModel.findOneAndUpdate(filter, update, options).exec();
+}
+}
+
+ 

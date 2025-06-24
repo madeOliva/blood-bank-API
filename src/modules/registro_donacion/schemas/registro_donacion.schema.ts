@@ -10,37 +10,31 @@ export class RegistroDonacion {
   @Prop({ unique: true })
   no_registro: string;
 
-  // @Prop({
-  //   type: Types.ObjectId,
-  //   ref: 'Persona',
-  //   required: true,
-  //   index: true,
-  // })
-  // persona: Persona;
-
-  @Prop({
-    type: Types.ObjectId,
-    ref: 'Historia_Clinica',
-    index: true,
-  })
+  @Prop({ type: Types.ObjectId, ref: 'Historia_Clinica' })
   historiaClinica: Historia_Clinica;
-  
-  
 
   @Prop({ type: Types.ObjectId, ref: Componentes.name })
   componente: Componentes; //Nomenclador
 
   @Prop()
-  nombre_tecnico: string;
-
+  responsableInscripcion: string;
+  @Prop()
+  responsablePrechequeo: string;
+  @Prop()
+  responsableSeleccion: string;
+  @Prop()
+  responsableExtraccion: string;
+  @Prop()
+  responsableCalidad: string;
   
-   @Prop()
+  @Prop()
+  responsableLaboratorio: string;
+
+  @Prop()
   fechaR: Date;
 
   @Prop()
   nombre_unidad: string;
-
-
 
   //DONACION
   @Prop()
@@ -52,12 +46,10 @@ export class RegistroDonacion {
   @Prop()
   estado?: string;
 
-
-  @Prop({ type: Types.ObjectId, ref: Reacciones.name})
+  @Prop({ type: Types.ObjectId, ref: Reacciones.name })
   reaccion?: Types.ObjectId; //Nomenclador
-  
-  
-  @Prop({type:Date})
+
+  @Prop({ type: Date })
   fechaD?: Date;
 
   @Prop({ default: false })
@@ -87,7 +79,7 @@ export class RegistroDonacion {
   ciclos?: number;
 
   @Prop()
-  ACD?: string;
+  ACD?: number;
 
   @Prop()
   no_lote_kitACD?: string;
@@ -104,10 +96,12 @@ export class RegistroDonacion {
   fecha_VIH?: Date[];
 
   @Prop({ type: [String] })
+
  resultado_rh?: string[];
  
  @Prop()
  fecha_rh?: Date[];
+
 
 
   @Prop()
@@ -187,8 +181,7 @@ export class RegistroDonacion {
 
   
 
-
- //SELECCION Y PRECHEQUEO
+  //SELECCION Y PRECHEQUEO
   @Prop()
   examenP_grupo?: string;
 
@@ -233,11 +226,9 @@ export class RegistroDonacion {
   @Prop()
   observacion_interrogatorio?: string;
 
-
-@Prop()
-motivo_desecho?: string;
+  @Prop()
+  motivo_desecho?: string;
 }
-
 
 export const RegistroDonacionSchema =
   SchemaFactory.createForClass(RegistroDonacion);

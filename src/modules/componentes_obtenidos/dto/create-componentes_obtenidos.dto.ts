@@ -28,7 +28,9 @@ export class CreateComponentesObtenidosDto {
 
   @IsIn(['obtenido', 'baja', 'pendiente'])
   estado_obtencion: string;
-
+@IsNotEmpty()
+@IsString()
+centrifugacion: string;
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ComponentesDto)

@@ -10,43 +10,32 @@ export class ComponentesObtenidosService {
     @InjectModel(ComponentesObtenidos.name)
     private readonly componentesObtenidosModel: Model<ComponentesObtenidosDocument>,
   ) {}
-
-async createComponente(data: any) {
-  console.log('Datos recibidos en createComponente:', data); // <-- Agregado para depuración
-  return this.componentesObtenidosModel.create(data);
+async create(createDto: CreateComponentesObtenidosDto) {
+  return this.componentesObtenidosModel.create(createDto);
 }
 
-
+async getRegistrosDonacionUsados() {
+  return this.componentesObtenidosModel.distinct('registro_donacion');
+}
 
 // ...existing code...
 
    
 
 async desecharComponente(id: string) {
-  // Busca el componente obtenido
-  const componente = await this.componentesObtenidosModel.findById(id).lean();
-  if (!componente) throw new Error('Componente no encontrado');
-
-  // Busca y actualiza el registro de donación relacionado
-  const RegistroDonacionModel = this.componentesObtenidosModel.db.model('RegistroDonacion');
-  await RegistroDonacionModel.findByIdAndUpdate(
-    componente.registro_donacion,
-    { estado: "desechada" }
-  );
-  return { success: true };
-}
+    return this.componentesObtenidosModel.findByIdAndUpdate(
+      id,
+      { estado_obtencion: 'desechada' },
+      { new: true }
+    );
+  }
 async liberarComponente(id: string) {
-  // Busca el componente obtenido
-  const componente = await this.componentesObtenidosModel.findById(id).lean();
-  if (!componente) throw new Error('Componente no encontrado');
-
-  // Busca y actualiza el registro de donación relacionado
-  const RegistroDonacionModel = this.componentesObtenidosModel.db.model('RegistroDonacion');
-  await RegistroDonacionModel.findByIdAndUpdate(
-    componente.registro_donacion,
-    { estado: "liberado" }
+  console.log("Liberando componente:", id);
+  return this.componentesObtenidosModel.findByIdAndUpdate(
+    id,
+    { estado_obtencion: "liberado" },
+    { new: true }
   );
-  return { success: true };
 }
 async findByEstadoObtencion(estado: string) {
   return this.componentesObtenidosModel
@@ -54,17 +43,37 @@ async findByEstadoObtencion(estado: string) {
     .lean();
 }
 // Ejemplo en el servicio
+// ...existing code...
 async getComponentesObtenidos(estado?: string) {
   const filter = estado ? { estado_obtencion: estado } : {};
-  console.log('Filtro usado:', filter); // <-- Agregado
-  const result = await this.componentesObtenidosModel
+  return this.componentesObtenidosModel
     .find(filter)
     .populate({
       path: 'registro_donacion',
       populate: { path: 'historiaClinica' }
     })
     .lean();
-  console.log('Resultado de la consulta:', result); // <-- Agregado
-  return result;
+}
+async actualizarNoLote(id: string, no_lote: string) {
+  return this.componentesObtenidosModel.updateOne(
+    { _id: id, "componentes.tipo": "PFC" },
+    { $set: { "componentes.$.no_lote": no_lote } }
+  );
+}
+async updateEstadoObtencion(id: string, estado_obtencion: string) {
+  console.log("Actualizando estado_obtencion:", id, estado_obtencion);
+  return this.componentesObtenidosModel.findByIdAndUpdate(
+    id,
+    { estado_obtencion },
+    { new: true }
+  );
+}
+async getBajas() {
+  console.log('Entrando a getBajas');
+  const resultado = await this.componentesObtenidosModel
+    .find({ estado_obtencion: 'desechada' })
+    .populate('centrifugacion');
+  console.log('Resultado con populate:', resultado);
+  return resultado;
 }
 }
