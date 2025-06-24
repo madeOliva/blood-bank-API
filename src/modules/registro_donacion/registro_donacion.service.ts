@@ -174,6 +174,7 @@ export class RegistroDonacionService {
         fechaR: fechaActual,
         no_registro,
         nombre_unidad: 'Banco de Sangre',
+        numero_consecutivo:numeroConsecutivo,
       });
 
       return newRegistro.save();
@@ -344,7 +345,7 @@ export class RegistroDonacionService {
       .findByIdAndUpdate(
         id,
         { ...updateRegistroDonacionDto, no_registro: nuevoNoRegistro },
-        { new: true },
+        { new: true }
       )
       .exec();
 
@@ -583,10 +584,18 @@ async getDatosCompletos() {
     }));
   }
 
- async getDonacionesDiarias() {
+async getDonacionesDiarias() {
   const registros = await this.registroDonacionModel
     .find()
-    .populate('historiaClinica', 'ci no_hc sexo edad grupo_sanguineo factor')
+    .populate({
+      path: 'historiaClinica',
+      select: 'ci no_hc sexo edad grupo_sanguine factor',
+      populate: [
+        { path: 'sexo', select: 'nombre' },
+        { path: 'grupo_sanguine', select: 'nombre' },
+        { path: 'factor', select: 'signo' }
+      ]
+    })
     .exec();
 
   return registros.map((reg: any) => ({
@@ -595,15 +604,16 @@ async getDatosCompletos() {
     hc: reg.historiaClinica?.no_hc ?? "Sin historia",
     desecho: 'Bolsa',
     motivo_desecho: reg.motivo_desecho,
-    sexo: reg.historiaClinica?.sexo,
-    edad: reg.historiaClinica?.edad,
-    grupo: reg.examenP_grupo,
-    factor: reg.examenP_factor,
+    sexo: reg.historiaClinica?.sexo?.nombre ?? "",
+    edad: reg.historiaClinica?.edad ?? "",
+    grupo: reg.historiaClinica?.grupo_sanguine?.nombre ?? "",
+    factor: reg.historiaClinica?.factor?.signo ?? "",
     volumen: reg.volumen,
     estado: reg.estado,
     entidad: 'Banco de Sangre',
+    fechaD: reg.fechaD,
   }));
-} 
+}
 
   //Metodo para citar donantes por el medico.
   async getDonantesQuePuedenDonar() {
