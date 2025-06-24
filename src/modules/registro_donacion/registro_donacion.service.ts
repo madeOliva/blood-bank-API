@@ -344,7 +344,7 @@ export class RegistroDonacionService {
       .findByIdAndUpdate(
         id,
         { ...updateRegistroDonacionDto, no_registro: nuevoNoRegistro },
-        { new: true },
+        { new: true }
       )
       .exec();
 

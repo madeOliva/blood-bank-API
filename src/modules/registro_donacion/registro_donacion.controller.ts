@@ -44,6 +44,16 @@ export class RegistroDonacionController {
     return this.service.findByRangoFechas(fechaInicio, fechaFin);
   }
 
+   @Get('hoja-cargo-donaciones')
+async hojaCargoDonaciones(
+  @Query('inicio') inicio: string,
+  @Query('fin') fin: string
+) {
+  const fechaInicio = new Date(`${inicio}T00:00:00.000Z`);
+const fechaFin = new Date(`${fin}T23:59:59.999Z`);
+  return this.service.hojaCargoDonaciones(fechaInicio, fechaFin);
+}
+
   @Get('aptos-interrogatorio')
   @ApiOperation({ summary: 'Obtiene todos los registros de donacion que son aptos al interrogatorio' })
   getDonacionesAptasInterrogatorio() {
