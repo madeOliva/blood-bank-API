@@ -41,7 +41,7 @@ export class RegistroDonacionService {
     private componentesModel: Model<Componentes>,
     @InjectModel(Sexo.name)
     private sexoModel: Model<Sexo>,
-  ) {}
+  ) { }
 
   async getOne(id: string) {
     const registro = await this.registroDonacionModel
@@ -174,7 +174,7 @@ export class RegistroDonacionService {
         fechaR: fechaActual,
         no_registro,
         nombre_unidad: 'Banco de Sangre',
-        numero_consecutivo:numeroConsecutivo,
+        numero_consecutivo: numeroConsecutivo,
       });
 
       return newRegistro.save();
@@ -310,7 +310,7 @@ export class RegistroDonacionService {
     if (
       updateRegistroDonacionDto.componente &&
       updateRegistroDonacionDto.componente.toString() !==
-        registro.componente.toString()
+      registro.componente.toString()
     ) {
       // 3. Obtén el nuevo componente
       const nuevoComponente = await this.componentesModel.findById(
@@ -379,7 +379,7 @@ export class RegistroDonacionService {
             resultado_VIH: { $each: updateData.resultado_VIH },
             resultado_hepatitisB: { $each: updateData.resultado_hepatitisB },
             resultado_hepatitisC: { $each: updateData.resultado_hepatitisC },
-            
+
           },
           $set: {
             estado: updateData.estado,
@@ -388,11 +388,11 @@ export class RegistroDonacionService {
         },
         { new: true } // Devuelve el documento actualizado
       );
-  
+
       if (!updatedRegistro) {
         throw new Error(`Registro con ID ${id} no encontrado.`);
       }
-  
+
       return updatedRegistro;
     } catch (error) {
       console.error('Error al actualizar el registro:', error);
@@ -400,7 +400,7 @@ export class RegistroDonacionService {
     }
   }
 
-  
+
 
   //Actualizar datos laboratorio Inmuno
   async updateLaboratorioInmuno(id: string, updateData: any): Promise<any> {
@@ -414,7 +414,7 @@ export class RegistroDonacionService {
             resultado_contratipaje: { $each: updateData.resultado_contratipaje },
             resultado_rh: { $each: updateData.resultado_rh },
             resultado_DU: { $each: updateData.resultado_DU },
-            
+
           },
           $set: {
             estado: updateData.estado,
@@ -423,11 +423,11 @@ export class RegistroDonacionService {
         },
         { new: true } // Devuelve el documento actualizado
       );
-  
+
       if (!updatedRegistro) {
         throw new Error(`Registro con ID ${id} no encontrado.`);
       }
-  
+
       return updatedRegistro;
     } catch (error) {
       console.error('Error al actualizar el registro:', error);
@@ -449,111 +449,116 @@ export class RegistroDonacionService {
 
   // Metodo para cargar los donantes a prechequeo exceptuando los PLASMA
   // Metodo para cargar los donantes a prechequeo exceptuando los PLASMA
-async findAll() {
-  const hoy = new Date();
-  const inicioDia = new Date(
-    hoy.getFullYear(),
-    hoy.getMonth(),
-    hoy.getDate(),
-    0, 0, 0, 0,
-  );
-  const finDia = new Date(
-    hoy.getFullYear(),
-    hoy.getMonth(),
-    hoy.getDate(),
-    23, 59, 59, 999,
-  );
+  async findAll() {
+    const hoy = new Date();
+    const inicioDia = new Date(
+      hoy.getFullYear(),
+      hoy.getMonth(),
+      hoy.getDate(),
+      0, 0, 0, 0,
+    );
+    const finDia = new Date(
+      hoy.getFullYear(),
+      hoy.getMonth(),
+      hoy.getDate(),
+      23, 59, 59, 999,
+    );
 
-  const registros = await this.registroDonacionModel
-    .find({
-      fechaR: { $gte: inicioDia, $lte: finDia },
-      $or: [
-        { apto_prechequeo: { $exists: false } },
-        { apto_prechequeo: null }
-      ]
-    })
-    .populate({
-      path: 'historiaClinica',
-      select:
-        'ci nombre primer_apellido segundo_apellido edad sexo grupo_sanguine factor apto_prechequeo',
-      populate: [
-        { path: 'sexo', select: 'nombre' },
-        { path: 'grupo_sanguine', select: 'nombre' },
-        { path: 'factor', select: 'signo' },
-      ],
-    })
-    .populate('componente', 'nombreComponente nombre_componente')
-    .exec();
+    const registros = await this.registroDonacionModel
+      .find({
+        fechaR: { $gte: inicioDia, $lte: finDia },
+        $or: [
+          { apto_prechequeo: { $exists: false } },
+          { apto_prechequeo: null }
+        ]
+      })
+      .populate({
+        path: 'historiaClinica',
+        select:
+          'ci nombre primer_apellido segundo_apellido edad sexo grupo_sanguine factor apto_prechequeo',
+        populate: [
+          { path: 'sexo', select: 'nombre' },
+          { path: 'grupo_sanguine', select: 'nombre' },
+          { path: 'factor', select: 'signo' },
+        ],
+      })
+      .populate('componente', 'nombreComponente nombre_componente')
+      .exec();
 
-  const filtrados = registros.filter(
-    (reg: any) => reg.componente.nombreComponente?.toLowerCase() !== 'plasma'
-  );
+    const filtrados = registros.filter(
+      (reg: any) => reg.componente.nombreComponente?.toLowerCase() !== 'plasma'
+    );
 
-  return filtrados.map((reg: any) => {
-    return {
+    return filtrados.map((reg: any) => {
+      return {
+        _id: reg._id,
+        ci: reg.historiaClinica?.ci || '',
+        nombre: reg.historiaClinica?.nombre || '',
+        primer_apellido: reg.historiaClinica?.primer_apellido || '',
+        segundo_apellido: reg.historiaClinica?.segundo_apellido || '',
+        edad: reg.historiaClinica?.edad || '',
+        sexo: reg.historiaClinica?.sexo?.nombre || '',
+        grupo_sanguine: reg.historiaClinica?.grupo_sanguine?.nombre || '',
+        factor: reg.historiaClinica?.factor?.signo || '',
+        componente: {
+          nombreComponente: reg.componente?.nombreComponente || '',
+        },
+      };
+    });
+  }
+
+  //Metodo para modulo prechequeo para vista Resultados de Prechequeo
+  async getDatosCompletos() {
+    const hoy = new Date();
+    const inicioDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 0, 0, 0, 0);
+    const finDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 23, 59, 59, 999);
+
+    // Traemos todos los registros del día con historiaClinica y componente poblados
+    const registros = await this.registroDonacionModel
+      .find({
+        fechaR: { $gte: inicioDia, $lte: finDia }
+      })
+      .populate('historiaClinica', 'nombre primer_apellido segundo_apellido _id')
+      .populate('componente', 'nombreComponente') 
+      .exec();
+
+    if (!registros || registros.length === 0) throw new NotFoundException('Registro no encontrado');
+
+    // Filtrar según la lógica con nombreComponente
+    const registrosFiltrados = registros.filter(reg => {
+      const esPlasma = reg.componente?.nombreComponente?.toLowerCase() === 'plasma';
+      const aptoInterrogatorioNulo = reg.apto_interrogatorio === null || reg.apto_interrogatorio === undefined;
+      const aptoPrechequeoLleno = reg.apto_prechequeo !== null && reg.apto_prechequeo !== undefined;
+
+      if (esPlasma) {
+        // Para plasma: apto_interrogatorio nulo 
+        return aptoInterrogatorioNulo ;
+      } else {
+        // Para otros componentes: solo apto_interrogatorio nulo y apto_prechequeo lleno
+        return aptoInterrogatorioNulo && aptoPrechequeoLleno;
+      }
+    });
+
+    return registrosFiltrados.map((reg: any) => ({
       _id: reg._id,
-      ci: reg.historiaClinica?.ci || '',
+      historiaClinicaId: reg.historiaClinica?._id,
       nombre: reg.historiaClinica?.nombre || '',
       primer_apellido: reg.historiaClinica?.primer_apellido || '',
       segundo_apellido: reg.historiaClinica?.segundo_apellido || '',
-      edad: reg.historiaClinica?.edad || '',
-      sexo: reg.historiaClinica?.sexo?.nombre || '',
-      grupo_sanguine: reg.historiaClinica?.grupo_sanguine?.nombre || '',
-      factor: reg.historiaClinica?.factor?.signo || '',
-      componente: {
-        nombreComponente: reg.componente?.nombreComponente || '',
-      },
-    };
-  });
-}
+      examenP_grupo: reg.examenP_grupo,
+      examenP_factor: reg.examenP_factor,
+      examenP_hemoglobina: reg.examenP_hemoglobina,
+      apto_prechequeo:
+        reg.apto_prechequeo === true
+          ? 'Apto'
+          : reg.apto_prechequeo === false
+            ? 'No Apto'
+            : '',
+      componente: reg.componente?.nombreComponente || '',
+    }));
+  }
 
-  //Metodo para modulo prechequeo para vista Resultados de Prechequeo
-async getDatosCompletos() {
-  // Calcula el inicio y fin del día de hoy
-  const hoy = new Date();
-  const inicioDia = new Date(
-    hoy.getFullYear(),
-    hoy.getMonth(),
-    hoy.getDate(),
-    0, 0, 0, 0,
-  );
-  const finDia = new Date(
-    hoy.getFullYear(),
-    hoy.getMonth(),
-    hoy.getDate(),
-    23, 59, 59, 999,
-  );
 
-  const registros = await this.registroDonacionModel
-    .find({
-      fechaR: { $gte: inicioDia, $lte: finDia },
-      $or: [
-        { apto_interrogatorio: { $exists: false } },
-        { apto_interrogatorio: null }
-      ]
-    })
-    .populate('historiaClinica', 'nombre primer_apellido segundo_apellido _id')
-    .exec();
-
-  if (!registros) throw new NotFoundException('Registro no encontrado');
-
-  return registros.map((reg: any) => ({
-    _id: reg._id,
-    historiaClinicaId: reg.historiaClinica?._id,
-    nombre: reg.historiaClinica?.nombre || '',
-    primer_apellido: reg.historiaClinica?.primer_apellido || '',
-    segundo_apellido: reg.historiaClinica?.segundo_apellido || '',
-    examenP_grupo: reg.examenP_grupo,
-    examenP_factor: reg.examenP_factor,
-    examenP_hemoglobina: reg.examenP_hemoglobina,
-    apto_prechequeo:
-      reg.apto_prechequeo === true
-        ? 'Apto'
-        : reg.apto_prechequeo === false
-          ? 'No Apto'
-          : '',
-  }));
-}
 
   async getPrechequeoById(id: string) {
     const reg = await this.registroDonacionModel.findById(id).exec();
@@ -584,36 +589,36 @@ async getDatosCompletos() {
     }));
   }
 
-async getDonacionesDiarias() {
-  const registros = await this.registroDonacionModel
-    .find()
-    .populate({
-      path: 'historiaClinica',
-      select: 'ci no_hc sexo edad grupo_sanguine factor',
-      populate: [
-        { path: 'sexo', select: 'nombre' },
-        { path: 'grupo_sanguine', select: 'nombre' },
-        { path: 'factor', select: 'signo' }
-      ]
-    })
-    .exec();
+  async getDonacionesDiarias() {
+    const registros = await this.registroDonacionModel
+      .find()
+      .populate({
+        path: 'historiaClinica',
+        select: 'ci no_hc sexo edad grupo_sanguine factor',
+        populate: [
+          { path: 'sexo', select: 'nombre' },
+          { path: 'grupo_sanguine', select: 'nombre' },
+          { path: 'factor', select: 'signo' }
+        ]
+      })
+      .exec();
 
-  return registros.map((reg: any) => ({
-    id: reg._id,
-    no: reg.no_registro,
-    hc: reg.historiaClinica?.no_hc ?? "Sin historia",
-    desecho: 'Bolsa',
-    motivo_desecho: reg.motivo_desecho,
-    sexo: reg.historiaClinica?.sexo?.nombre ?? "",
-    edad: reg.historiaClinica?.edad ?? "",
-    grupo: reg.historiaClinica?.grupo_sanguine?.nombre ?? "",
-    factor: reg.historiaClinica?.factor?.signo ?? "",
-    volumen: reg.volumen,
-    estado: reg.estado,
-    entidad: 'Banco de Sangre',
-    fechaD: reg.fechaD,
-  }));
-}
+    return registros.map((reg: any) => ({
+      id: reg._id,
+      no: reg.no_registro,
+      hc: reg.historiaClinica?.no_hc ?? "Sin historia",
+      desecho: 'Bolsa',
+      motivo_desecho: reg.motivo_desecho,
+      sexo: reg.historiaClinica?.sexo?.nombre ?? "",
+      edad: reg.historiaClinica?.edad ?? "",
+      grupo: reg.historiaClinica?.grupo_sanguine?.nombre ?? "",
+      factor: reg.historiaClinica?.factor?.signo ?? "",
+      volumen: reg.volumen,
+      estado: reg.estado,
+      entidad: 'Banco de Sangre',
+      fechaD: reg.fechaD,
+    }));
+  }
 
   //Metodo para citar donantes por el medico.
   async getDonantesQuePuedenDonar() {
@@ -682,13 +687,13 @@ async getDonacionesDiarias() {
       .find()
       .populate('historiaClinica', 'no_hc') // Se mantiene la población de historia clínica
       .exec();
-  
+
     // Filtra los registros que tienen estado "aceptada" (insensible a mayúsculas/minúsculas)
     const filtrados = registros.filter(
-    (reg: any) => reg.estado?.toLowerCase() === "aceptada"
+      (reg: any) => reg.estado?.toLowerCase() === "aceptada"
 
     );
-  
+
     // Mapea los registros filtrados para devolver el formato esperado
     return filtrados.map((reg: any) => ({
       _id: reg._id,
@@ -758,17 +763,17 @@ async getDonacionesDiarias() {
 
   //Metodo para cargar todos los registros de donacion de una misma historia Modulo HC
   async getRegistrosPorHistoriaClinica(historiaClinicaId: string) {
-  const registros = await this.registroDonacionModel
-    .find({ historiaClinica: new Types.ObjectId(historiaClinicaId) })
-    .populate('reaccion', 'nombre_estado')
-    .exec();
+    const registros = await this.registroDonacionModel
+      .find({ historiaClinica: new Types.ObjectId(historiaClinicaId) })
+      .populate('reaccion', 'nombre_estado')
+      .exec();
 
-  return registros.map((reg: any) => ({
-    _id: reg._id,
-    fechaD: reg.fechaD,
-    lugar: "Banco de sangre",
-    reaccion: reg.reaccion?.nombre_estado || '',
-  }));
-}
+    return registros.map((reg: any) => ({
+      _id: reg._id,
+      fechaD: reg.fechaD,
+      lugar: "Banco de sangre",
+      reaccion: reg.reaccion?.nombre_estado || '',
+    }));
+  }
 
 }
