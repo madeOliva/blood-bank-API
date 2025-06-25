@@ -11,9 +11,13 @@ create(@Body() createDto: CreateComponentesObtenidosDto) {
   console.log('DTO recibido:', createDto); // <-- agrega esto temporalmente
   return this.service.create(createDto);
 }
-@Patch(':id/lote')
-async actualizarLote(@Param('id') id: string, @Body('no_lote') no_lote: string) {
-  return this.service.actualizarNoLote(id, no_lote);
+// Ejemplo de controller PATCH
+@Patch('lote/:componente_id')
+async actualizarNoLote(
+  @Param('componente_id') componente_id: string,
+  @Body() body: { no_lote: string }
+) {
+  return this.service.actualizarNoLotePorComponenteId(componente_id, body.no_lote);
 }
 @Get('ids')
 async getRegistrosDonacionUsados() {
