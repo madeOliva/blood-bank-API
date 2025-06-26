@@ -6,6 +6,9 @@ export class CreateTransfusionesDto {
     id_orden: string;
     @IsString()
     @IsNotEmpty()
+    ci: string;
+    @IsString()
+    @IsNotEmpty()
     nombre: string;
     @IsString()
     @IsNotEmpty()
@@ -13,6 +16,12 @@ export class CreateTransfusionesDto {
     @IsString()
     @IsNotEmpty()
     segundoApellido: string;
+    @IsNumber()
+    @IsNotEmpty()
+    peso: number;
+    @IsNumber()
+    @IsNotEmpty()
+    talla: number;
     @IsNumber()
     @IsNotEmpty()
     cama: number;
