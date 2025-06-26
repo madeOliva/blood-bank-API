@@ -10,33 +10,31 @@ export class RegistroDonacion {
   @Prop({ unique: true })
   no_registro: string;
 
-  // @Prop({
-  //   type: Types.ObjectId,
-  //   ref: 'Persona',
-  //   required: true,
-  //   index: true,
-  // })
-  // persona: Persona;
-
-@Prop({ type: Types.ObjectId, ref: 'Historia_Clinica' })
-historiaClinica: Historia_Clinica;
-  
-  
+  @Prop({ type: Types.ObjectId, ref: 'Historia_Clinica' })
+  historiaClinica: Historia_Clinica;
 
   @Prop({ type: Types.ObjectId, ref: Componentes.name })
   componente: Componentes; //Nomenclador
 
   @Prop()
-  nombre_tecnico: string;
-
+  responsableInscripcion: string;
+  @Prop()
+  responsablePrechequeo: string;
+  @Prop()
+  responsableSeleccion: string;
+  @Prop()
+  responsableExtraccion: string;
+  @Prop()
+  responsableCalidad: string;
   
-   @Prop()
+  @Prop()
+  responsableLaboratorio: string;
+
+  @Prop()
   fechaR: Date;
 
   @Prop()
   nombre_unidad: string;
-
-
 
   //DONACION
   @Prop()
@@ -48,12 +46,10 @@ historiaClinica: Historia_Clinica;
   @Prop()
   estado?: string;
 
-
-  @Prop({ type: Types.ObjectId, ref: Reacciones.name})
+  @Prop({ type: Types.ObjectId, ref: Reacciones.name })
   reaccion?: Types.ObjectId; //Nomenclador
-  
-  
-  @Prop({type:Date})
+
+  @Prop({ type: Date })
   fechaD?: Date;
 
   @Prop({ default: false })
@@ -83,7 +79,7 @@ historiaClinica: Historia_Clinica;
   ciclos?: number;
 
   @Prop()
-  ACD?: string;
+  ACD?: number;
 
   @Prop()
   no_lote_kitACD?: string;
@@ -95,48 +91,97 @@ historiaClinica: Historia_Clinica;
 
   @Prop()
   resultado_VIH?: string[];
+ 
+  @Prop()
+  fecha_VIH?: Date[];
 
   @Prop({ type: [String] })
+
  resultado_rh?: string[];
+ 
+ @Prop()
+ fecha_rh?: Date[];
+
+
 
   @Prop()
   resultado_hepatitisB?: string[];
 
   @Prop()
+  fecha_hepatitisB?: Date[];
+
+  @Prop()
   resultado_hepatitisC?: string[];
+
+  @Prop()
+  fecha_hepatitisC?: Date[];
+
 
  @Prop()
   resultado_tipage?: string[];
+ 
+  @Prop()
+  fecha_tipage?: Date[];
+
 
   @Prop()
   resultado_contratipaje?: string[];
 
   @Prop()
+  fecha_contratipaje?: Date[];
+
+
+  @Prop()
   resultado_DU?: string[];
+
+  @Prop()
+  fecha_DU?: Date[];
+
 
   @Prop()
   resultado_serologia?: string[];
 
   @Prop()
+  fecha_serologia?: Date[];
+
+
+  @Prop()
   resultado_eritro?: number[];
+
+  @Prop()
+  fecha_eritro?: Date[];
+
 
   @Prop()
   resultado_hematocrito?: number[];
 
   @Prop()
+  fecha_hematocrito?: Date[];
+
+
+  @Prop()
   resultado_proteinas_totales?: number[];
 
   @Prop()
+  fecha_proteinas_totales?: Date[];
+
+
+  @Prop()
   resultado_TGP?: number[];
+   
+  @Prop()
+  fecha_TGP?: Date[];
 
   @Prop()
   resultado_hemoglobina?: number[];
 
   @Prop()
-  fechaLab?: Date;
+  fecha_hemoglobina?: Date[];
 
 
- //SELECCION Y PRECHEQUEO
+  
+
+  //SELECCION Y PRECHEQUEO
   @Prop()
   examenP_grupo?: string;
 
@@ -181,11 +226,9 @@ historiaClinica: Historia_Clinica;
   @Prop()
   observacion_interrogatorio?: string;
 
-
-@Prop()
-motivo_desecho?: string;
+  @Prop()
+  motivo_desecho?: string;
 }
-
 
 export const RegistroDonacionSchema =
   SchemaFactory.createForClass(RegistroDonacion);

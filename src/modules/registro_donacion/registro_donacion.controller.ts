@@ -21,7 +21,7 @@ import { RegistroDonacion } from './schemas/registro_donacion.schema';
 @ApiTags('Registro de Donación')
 @Controller('registro-donacion')
 export class RegistroDonacionController {
-  constructor(private readonly service: RegistroDonacionService) { }
+  constructor(private readonly service: RegistroDonacionService) {}
 
   @Get()
   @ApiOperation({ summary: 'Obtiene todos los registros de donacion' })
@@ -44,9 +44,21 @@ export class RegistroDonacionController {
     return this.service.findByRangoFechas(fechaInicio, fechaFin);
   }
 
+  @Get('hoja-cargo-donaciones')
+  async hojaCargoDonaciones(
+    @Query('inicio') inicio: string,
+    @Query('fin') fin: string,
+  ) {
+    const fechaInicio = new Date(`${inicio}T00:00:00.000Z`);
+    const fechaFin = new Date(`${fin}T23:59:59.999Z`);
+    return this.service.hojaCargoDonaciones(fechaInicio, fechaFin);
+  }
 
   @Get('aptos-interrogatorio')
-  @ApiOperation({ summary: 'Obtiene todos los registros de donacion que son aptos al interrogatorio' })
+  @ApiOperation({
+    summary:
+      'Obtiene todos los registros de donacion que son aptos al interrogatorio',
+  })
   getDonacionesAptasInterrogatorio() {
     return this.service.getDonacionesAptasInterrogatorio();
   }
@@ -55,6 +67,15 @@ export class RegistroDonacionController {
   async getConsecutivoAndHistoriaClinicaAceptada() {
     return this.service.getConsecutivoAndHistoriaClinicaAceptada();
   }
+
+
+  @Get('consecutivo-historia-aceptada-controlados')
+  async getConsecutivoAndHistoriaClinicaControlados() {
+    return this.service.getConsecutivoAndHistoriaClinicaControlados();
+  }
+
+
+
 
 
   @Get('historia-clinica/:id')
@@ -71,6 +92,36 @@ export class RegistroDonacionController {
   @Get('find')
   async findAll() {
     return this.service.findAll();
+  }
+
+  //Cargar muestras Analizadas
+  @Get('analizadas')
+async getAnalizadas(): Promise<any> {
+  return this.service.getAnalizadas();
+}
+
+ //Cargar muestras Reanalizadas Suma
+ @Get('reanalizadas-suma')
+ async getReanalizadasSuma(): Promise<any> {
+   return this.service.getReanalizadasSuma();
+ }
+
+ //Cargar muestras Reanalizadas Inmuno
+ @Get('reanalizadas-inmuno')
+ async getReanalizadasInmuno(): Promise<any> {
+   return this.service.getReanalizadasInmuno();
+ }
+
+  //Cargar muestras Calidad
+  @Get('analizadas-calidad')
+  async getAnalizadasCalidad(): Promise<any> {
+    return this.service.getAnalizadasCalidad();
+  }
+  
+  //Cargar muestras Calidad
+  @Get('reanalizadas-calidad')
+  async getCalidadRepeticion(): Promise<any> {
+    return this.service.getCalidadRepeticion();
   }
 
   @Get('datos')
@@ -91,10 +142,10 @@ export class RegistroDonacionController {
     return this.service.getDonantesNoAptos();
   }
 
-@Get('donaciones-diarias')
-async findDonacionesDiarias() {
-  return this.service.getDonacionesDiarias();
-}
+  @Get('donaciones-diarias')
+  async findDonacionesDiarias() {
+    return this.service.getDonacionesDiarias();
+  }
   @Get('prechequeo/:id')
   getPrechequeoById(@Param('id') id: string) {
     return this.service.getPrechequeoById(id);
@@ -124,27 +175,37 @@ async findDonacionesDiarias() {
     required: true,
     description: 'ID del registro a actualizar',
   })
- 
+
   // Actualizar datos del lab Suma
   @Patch('update-laboratorio/:id')
-async updateLaboratorio(
+  async updateLaboratorio(
+    @Param('id') id: string,
+    @Body() updateData: any,
+  ): Promise<any> {
+    console.log('Datos recibidos para actualizar:', updateData);
+    return await this.service.updateLaboratorio(id, updateData);
+  }
+
+  // Actualizar datos del lab Inmuno
+  @Patch('update-laboratorio-inmuno/:id')
+  async updateLaboratorioInmuno(
+    @Param('id') id: string,
+    @Body() updateData: any,
+  ): Promise<any> {
+    console.log('Datos recibidos para actualizar:', updateData);
+    return await this.service.updateLaboratorioInmuno(id, updateData);
+  }
+
+
+// Actualizar datos del lab Calidad
+@Patch('update-laboratorio-calidad/:id')
+async updateLaboratorioCalidad(
   @Param('id') id: string,
   @Body() updateData: any,
 ): Promise<any> {
   console.log('Datos recibidos para actualizar:', updateData);
-  return await this.service.updateLaboratorio(id, updateData);
+  return await this.service.updateLaboratorioCalidad(id, updateData);
 }
-
-// Actualizar datos del lab Inmuno
-@Patch('update-laboratorio-inmuno/:id')
-async updateLaboratorioInmuno(
-  @Param('id') id: string,
-  @Body() updateData: any,
-): Promise<any> {
-  console.log('Datos recibidos para actualizar:', updateData);
-  return await this.service.updateLaboratorioInmuno(id, updateData);
-}
-
 
  @Put(':id')
   update(
@@ -185,5 +246,4 @@ async updateLaboratorioInmuno(
   delete(@Param('id') id: string) {
     return this.service.delete(id);
   }
-  
 }

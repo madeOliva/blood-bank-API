@@ -4,7 +4,6 @@ import { Document } from 'mongoose';
 export type UserDocument = User & Document;
 
 export enum UserRole {
-  ADMIN = 'Admin',
   MEDICO = 'Médico de selección',
   MEDICO_HOSPITAL = 'Médico del hospital',
   MEDICO_CONSULTORIO = 'Médico del consultorio',
@@ -23,7 +22,7 @@ export enum UserRole {
 
 @Schema()
 export class User {
-  @Prop({required:true})
+  @Prop()
   name: string;
 
   @Prop({ required: true, unique: true })

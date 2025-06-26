@@ -1,7 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateRegistroDonacionesDto } from './create-registro_donacion.dto';
-
-  import {
+import {
   IsArray,
   IsBoolean,
   IsNotEmpty,
@@ -11,18 +8,21 @@ import { CreateRegistroDonacionesDto } from './create-registro_donacion.dto';
   Length,
   Max,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import { ObjectId, Types } from 'mongoose';
+import { Type } from 'class-transformer';
 
-export class UpdateRegistroDonacionDto {
+// DTO para la historia clínica
+export class HistoriaClinicaDto {
   @IsString()
   @IsNotEmpty()
   no_hc: string;
 
   @IsString()
   @IsNotEmpty()
-  @Length(11, 11) // Assuming CI is a Cuban ID with 11 digits
-  ci_donante: string;
+  @Length(11, 11)
+  ci: string;
 
   @IsString()
   @IsNotEmpty()
@@ -63,6 +63,26 @@ export class UpdateRegistroDonacionDto {
   @IsString()
   @IsNotEmpty()
   factor: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  otra_localizacion: string;
+}
+
+// DTO principal de registro de donaciones
+export class  UpdateRegistroDonacionDto {
+  @IsString()
+  @IsOptional()
+  responsableInscripcion: string;
+
+  @IsString()
+  @IsOptional()
+  responsableExtraccion?: string;
+
+  @ValidateNested()
+  @Type(() => HistoriaClinicaDto)
+  @IsNotEmpty()
+  historiaClinica: HistoriaClinicaDto;
 
   @IsString()
   @IsNotEmpty()
@@ -212,9 +232,9 @@ export class UpdateRegistroDonacionDto {
   @IsOptional()
   ciclos: number;
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  ACD: string;
+  ACD: number;
 
   @IsString()
   @IsOptional()
@@ -229,43 +249,79 @@ export class UpdateRegistroDonacionDto {
   resultado_VIH: string[];
 
   @IsOptional()
+    fecha_VIH: Date[];
+
+  @IsOptional()
   resultado_hepatitisB: string[];
+
+  @IsOptional()
+    fecha_hepatitisB: Date[];
 
   @IsOptional()
   resultado_hepatitisC: string[];
 
+  @IsOptional()
+    fecha_hepatitisC: Date[];
+
  @IsOptional()
    resultado_rh?: string[];
+
+   @IsOptional()
+     fecha_rh: Date[];
 
   @IsOptional()
   resultado_tipage: string[];
 
   @IsOptional()
+    fecha_tipage: Date[];
+
+  @IsOptional()
   resultado_contratipaje: string[];
+
+  @IsOptional()
+    fecha_contratipaje: Date[];
 
   @IsOptional()
   resultado_DU: string[];
 
   @IsOptional()
+    fecha_DU: Date[];
+
+  @IsOptional()
   resultado_serologia: string[];
+
+  @IsOptional()
+    fecha_serologia: Date[];
 
   @IsOptional()
   resultado_eritro: number[];
 
   @IsOptional()
+    fecha_eritro: Date[];
+
+  @IsOptional()
   resultado_hematocrito: number[];
+
+  @IsOptional()
+    fecha_hematocrito: Date[];
 
   @IsOptional()
   resultado_proteinas_totales: number[];
 
   @IsOptional()
+    fecha_proteinas_totales: Date[];
+
+  @IsOptional()
   resultado_TGP: number[];
+
+  @IsOptional()
+    fecha_TGP: Date[];
 
   @IsOptional()
   resultado_hemoglobina: number[];
 
   @IsOptional()
-  fechaLab?: Date;
+    fecha_hemoglobina: Date[];
+
+  
 }
-
-
