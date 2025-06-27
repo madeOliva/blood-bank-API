@@ -12,10 +12,10 @@ export class procesodetransfusion {
     no_orden: string;
 
     @Prop({ required: true })
-    confirmacion_paciente: boolean;
+    confirmacion_paciente: string;
 
     @Prop({ required: true })
-    consentimiento_paciente: boolean;
+    consentimiento_paciente: string;
 
     @Prop({ required: true })
     resultado_lab_grupo: string;

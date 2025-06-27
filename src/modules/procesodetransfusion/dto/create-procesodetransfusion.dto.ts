@@ -8,10 +8,10 @@ export class CreateProcesodetransfusionDto {
     no_orden: string;
     @IsString()
     @IsNotEmpty()
-    confirmacion_paciente: boolean;
+    confirmacion_paciente: string;
     @IsString()
     @IsNotEmpty()
-    consentimiento_paciente: boolean;
+    consentimiento_paciente: string;
     @IsString()
     @IsNotEmpty()
     resultado_lab_grupo: string;
