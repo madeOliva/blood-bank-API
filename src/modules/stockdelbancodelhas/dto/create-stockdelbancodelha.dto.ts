@@ -39,8 +39,4 @@ export class CreateStockdelbancodelhaDto {
 
     @IsNumber()
     volumen_final: number;
-
-    @IsString()
-    @IsNotEmpty()
-    estado: string;
 }

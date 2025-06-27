@@ -14,7 +14,7 @@ export class stockdelbancodelhas {
     @Prop({ required: true })
     tipo_componente: string;
 
-    @Prop({ required: true })
+    @Prop({ })
     tipo_componente_habitual: string;
 
     @Prop({ type: Date, required: true })
@@ -34,9 +34,6 @@ export class stockdelbancodelhas {
 
     @Prop({ required: true })
     volumen_final: number;
-
-    @Prop({ required: true })
-    estado: string;
 }
 
 export const stockdelbancodelhasSchema = SchemaFactory.createForClass(stockdelbancodelhas);

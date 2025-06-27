@@ -565,7 +565,7 @@ export class RegistroDonacionService {
       .find({
         fechaR: { $gte: inicioDia, $lte: finDia }
       })
-      .populate('historiaClinica', 'nombre primer_apellido segundo_apellido _id')
+      .populate('historiaClinica', 'ci nombre primer_apellido segundo_apellido _id')
       .populate('componente', 'nombreComponente') 
       .exec();
 
@@ -589,6 +589,7 @@ export class RegistroDonacionService {
     return registrosFiltrados.map((reg: any) => ({
       _id: reg._id,
       historiaClinicaId: reg.historiaClinica?._id,
+      ci: reg.historiaClinica?.ci || '',
       nombre: reg.historiaClinica?.nombre || '',
       primer_apellido: reg.historiaClinica?.primer_apellido || '',
       segundo_apellido: reg.historiaClinica?.segundo_apellido || '',
