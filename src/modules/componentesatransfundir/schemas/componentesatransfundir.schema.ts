@@ -35,8 +35,6 @@ export class componentesatransfundir {
     @Prop({ required: true })
     volumen_final: number;
 
-    @Prop({ required: true })
-    estado: string;
 }
 
 export const componentesatransfundirSchema = SchemaFactory.createForClass(componentesatransfundir);

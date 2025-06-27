@@ -40,7 +40,4 @@ export class CreateComponentesatransfundirDto {
     @IsNumber()
     volumen_final: number;
 
-    @IsString()
-    @IsNotEmpty()
-    estado: string;
 }
