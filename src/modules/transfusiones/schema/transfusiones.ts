@@ -9,6 +9,9 @@ export class Transfusiones {
     id_orden: string;
 
     @Prop({ required: true })
+    ci: string;
+
+    @Prop({ required: true })
     nombre: string;
 
     @Prop({ required: true })
@@ -16,6 +19,12 @@ export class Transfusiones {
 
     @Prop({ required: true })
     segundoApellido: string;
+
+    @Prop({ required: true })
+    peso: number;
+
+    @Prop({ required: true })
+    talla: number;
 
     @Prop({ required: true })
     cama: number;
@@ -47,7 +56,7 @@ export class Transfusiones {
     @Prop({ required: true })
     factor: string;
 
-    @Prop({ required: true })
+    @Prop({})
     observacion_error: string;
 
     @Prop({ required: true })

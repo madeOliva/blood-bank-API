@@ -41,7 +41,7 @@ export class RegistroDonacionService {
     private componentesModel: Model<Componentes>,
     @InjectModel(Sexo.name)
     private sexoModel: Model<Sexo>,
-  ) {}
+  ) { }
 
   async getOne(id: string) {
     const registro = await this.registroDonacionModel
@@ -310,7 +310,7 @@ export class RegistroDonacionService {
     if (
       updateRegistroDonacionDto.componente &&
       updateRegistroDonacionDto.componente.toString() !==
-        registro.componente.toString()
+      registro.componente.toString()
     ) {
       // 3. Obtén el nuevo componente
       const nuevoComponente = await this.componentesModel.findById(
@@ -421,6 +421,7 @@ export class RegistroDonacionService {
 
             resultado_DU: { $each: updateData.resultado_DU },
             fecha_inmuno: { $each: updateData.fecha_inmuno },
+
           },
           $set: {
             estado: updateData.estado,
@@ -537,7 +538,7 @@ export class RegistroDonacionService {
       .exec();
 
     const filtrados = registros.filter(
-      (reg: any) => reg.componente.nombreComponente?.toLowerCase() !== 'plasma',
+      (reg: any) => reg.componente.nombreComponente?.toLowerCase() !== 'plasma'
     );
 
     return filtrados.map((reg: any) => {
@@ -597,9 +598,25 @@ export class RegistroDonacionService {
 
     if (!registros) throw new NotFoundException('Registro no encontrado');
 
-    return registros.map((reg: any) => ({
+    // Filtrar según la lógica con nombreComponente
+    const registrosFiltrados = registros.filter(reg => {
+      const esPlasma = reg.componente?.nombreComponente?.toLowerCase() === 'plasma';
+      const aptoInterrogatorioNulo = reg.apto_interrogatorio === null || reg.apto_interrogatorio === undefined;
+      const aptoPrechequeoLleno = reg.apto_prechequeo !== null && reg.apto_prechequeo !== undefined;
+
+      if (esPlasma) {
+        // Para plasma: apto_interrogatorio nulo 
+        return aptoInterrogatorioNulo ;
+      } else {
+        // Para otros componentes: solo apto_interrogatorio nulo y apto_prechequeo lleno
+        return aptoInterrogatorioNulo && aptoPrechequeoLleno;
+      }
+    });
+
+    return registrosFiltrados.map((reg: any) => ({
       _id: reg._id,
       historiaClinicaId: reg.historiaClinica?._id,
+      ci: reg.historiaClinica?.ci || '',
       nombre: reg.historiaClinica?.nombre || '',
       primer_apellido: reg.historiaClinica?.primer_apellido || '',
       segundo_apellido: reg.historiaClinica?.segundo_apellido || '',
@@ -614,7 +631,6 @@ export class RegistroDonacionService {
             : '',
     }));
   }
-
   async getPrechequeoById(id: string) {
     const reg = await this.registroDonacionModel.findById(id).exec();
     if (!reg) throw new NotFoundException('Registro no encontrado');
@@ -1102,7 +1118,6 @@ export class RegistroDonacionService {
       .find({ historiaClinica: new Types.ObjectId(historiaClinicaId) })
       .populate('reaccion', 'nombre_estado')
       .exec();
-
     return registros.map((reg: any) => ({
       _id: reg._id,
       fechaD: reg.fechaD,

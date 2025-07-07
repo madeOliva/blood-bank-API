@@ -24,8 +24,12 @@ import { ConsejoPopularModule } from './modules/consejo_popular/consejo_popular.
 import { MunicipioModule } from './modules/municipio/municipio.module';
 import { PlanTrabajoModule } from './modules/plan_trabajo/plan_trabajo.module';
 import { PedidosDevolucionesModule } from './modules/pedidos_devoluciones/pedidos_devoluciones.module';
-import { HctransfusionesModule } from './modules/hctransfusiones/hctransfusiones.module';
-import { StockbancohasModule } from './modules/stockbancohas/stockbancohas.module';
+import { ProcesodetransfusionModule } from './modules/procesodetransfusion/procesodetransfusion.module';
+import { StockdelbancodelhasModule } from './modules/stockdelbancodelhas/stockdelbancodelhas.module';
+import { ComponentesatransfundirModule } from './modules/componentesatransfundir/componentesatransfundir.module';
+import { PruebaspretransfusionalesgrModule } from './modules/pruebaspretransfusionalesgr/pruebaspretransfusionalesgr.module';
+import { PruebaspretransfusionalespcpModule } from './modules/pruebaspretransfusionalespcp/pruebaspretransfusionalespcp.module';
+import { ResultadosdelaboratorioModule } from './modules/resultadosdelaboratorio/resultadosdelaboratorio.module';
 import { ReaccionesModule } from './modules/reacciones/reacciones.module';
 import { EstadosModule } from './modules/estados/estados.module';
 import { ComponentesModule } from './modules/componentes_donacion/componentes.module';
@@ -62,7 +66,12 @@ import { FactoresModule } from './modules/factores/factores.module';
     EstadosModule,
     EstanciaExtranjeroModule,
     HabitosToxicosModule,
-    HctransfusionesModule,
+    ProcesodetransfusionModule,
+    StockdelbancodelhasModule,
+    ComponentesatransfundirModule,
+    PruebaspretransfusionalesgrModule,
+    PruebaspretransfusionalespcpModule,
+    ResultadosdelaboratorioModule,
     HistoriaClinicaModule,
     MunicipioModule,
     PaisModule,
@@ -76,7 +85,6 @@ import { FactoresModule } from './modules/factores/factores.module';
     RegistroDonacionModule,
     SalaModule,
     SexoModule,
-    StockbancohasModule,
     TransfusionesModule,
     GruposSanguineosModule,
     FactoresModule,
@@ -84,4 +92,4 @@ import { FactoresModule } from './modules/factores/factores.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
