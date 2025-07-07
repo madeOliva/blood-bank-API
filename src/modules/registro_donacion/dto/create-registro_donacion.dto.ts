@@ -9,6 +9,7 @@ import {
   Max,
   Min,
   ValidateNested,
+  ArrayMaxSize,
 } from 'class-validator';
 import { ObjectId, Types } from 'mongoose';
 import { Type } from 'class-transformer';
@@ -197,7 +198,7 @@ export class CreateRegistroDonacionesDto {
 
   @IsString()
   @IsOptional()
-  estado: string; 
+  estado: string;
 
   @IsOptional()
   reaccion: Types.ObjectId; //Nomenclador
@@ -246,83 +247,66 @@ export class CreateRegistroDonacionesDto {
 
   //Laboratorio
   @IsOptional()
+  @ArrayMaxSize(4)
   resultado_VIH: string[];
 
   @IsOptional()
-  fecha_VIH: Date[];
-
-  @IsOptional()
+  @ArrayMaxSize(4)
   resultado_hepatitisB: string[];
 
   @IsOptional()
-  fecha_hepatitisB: Date[];
-
-
-  @IsOptional()
+  @ArrayMaxSize(4)
   resultado_hepatitisC: string[];
 
   @IsOptional()
-  fecha_hepatitisC: Date[];
-
-  @IsOptional()
+  @ArrayMaxSize(4)
   resultado_rh?: string[];
 
   @IsOptional()
-  fecha_rh: Date[];
-
-  @IsOptional()
+  @ArrayMaxSize(4)
   resultado_tipage: string[];
 
   @IsOptional()
-  fecha_tipage: Date[];
-
-  @IsOptional()
+  @ArrayMaxSize(4)
   resultado_contratipaje: string[];
 
   @IsOptional()
-  fecha_contratipaje: Date[];
-
-  @IsOptional()
+  @ArrayMaxSize(4)
   resultado_DU: string[];
 
   @IsOptional()
-  fecha_DU: Date[];
-
-  @IsOptional()
+  @ArrayMaxSize(4)
   resultado_serologia: string[];
-  
-  @IsOptional()
-  fecha_serologia: Date[];
 
   @IsOptional()
+  @ArrayMaxSize(4)
   resultado_eritro: number[];
 
   @IsOptional()
-  fecha_eritro: Date[];
-
-  @IsOptional()
+  @ArrayMaxSize(4)
   resultado_hematocrito: number[];
 
   @IsOptional()
-  fecha_hematocrito: Date[];
-
-  @IsOptional()
+  @ArrayMaxSize(4)
   resultado_proteinas_totales: number[];
 
   @IsOptional()
-  fecha_proteinas_totales: Date[];
-
-  @IsOptional()
+  @ArrayMaxSize(4)
   resultado_TGP: number[];
 
   @IsOptional()
-  fecha_TGP: Date[];
-
-  @IsOptional()
+  @ArrayMaxSize(4)
   resultado_hemoglobina: number[];
 
   @IsOptional()
-  fecha_hemoglobina: Date[];
+  @ArrayMaxSize(4)
+  fecha_suma: Date[];
 
-  
+  @IsOptional()
+  @ArrayMaxSize(4)
+  fecha_inmuno: Date[];
+
+  @IsOptional()
+  @ArrayMaxSize(4)
+  fecha_calidad: Date[];
 }
