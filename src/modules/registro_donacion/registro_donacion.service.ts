@@ -663,6 +663,33 @@ async getDonacionesDiarias() {
     estado: reg.estado,
     entidad: 'Banco de Sangre',
     fechaD: reg.fechaD,
+
+    // Agrega aquí los resultados de laboratorio
+    resultado_VIH: reg.resultado_VIH ?? [],
+    fecha_VIH: reg.fecha_VIH ?? [],
+    resultado_hepatitisB: reg.resultado_hepatitisB ?? [],
+    fecha_hepatitisB: reg.fecha_hepatitisB ?? [],
+    resultado_hepatitisC: reg.resultado_hepatitisC ?? [],
+    fecha_hepatitisC: reg.fecha_hepatitisC ?? [],
+    resultado_tipage: reg.resultado_tipage ?? [],
+    fecha_tipage: reg.fecha_tipage ?? [],
+    resultado_contratipaje: reg.resultado_contratipaje ?? [],
+    fecha_contratipaje: reg.fecha_contratipaje ?? [],
+    resultado_DU: reg.resultado_DU ?? [],
+    fecha_DU: reg.fecha_DU ?? [],
+    resultado_rh: reg.resultado_rh ?? [],
+    fecha_rh: reg.fecha_rh ?? [],
+    resultado_serologia: reg.resultado_serologia ?? [],
+    fecha_serologia: reg.fecha_serologia ?? [],
+    resultado_hemoglobina: reg.resultado_hemoglobina ?? [],
+    fecha_hemoglobina: reg.fecha_hemoglobina ?? [],
+    resultado_eritro: reg.resultado_eritro ?? [],
+    fecha_eritro: reg.fecha_eritro ?? [],
+    resultado_hematocrito: reg.resultado_hematocrito ?? [],
+    fecha_hematocrito: reg.fecha_hematocrito ?? [],
+    resultado_proteinas_totales: reg.resultado_proteinas_totales ?? [],
+    fecha_proteinas_totales: reg.fecha_proteinas_totales ?? [],
+    // ...agrega cualquier otro resultado que necesites
   }));
 }
 
