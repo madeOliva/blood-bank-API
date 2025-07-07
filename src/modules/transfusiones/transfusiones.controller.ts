@@ -55,7 +55,12 @@ export class TransfusionesController {
   //@ApiResponse({ status: 201, description: 'Transfusion eliminada exitosamente' })
   //@ApiResponse({ status: 400, description: 'Bad request' })
   @Delete(':id_orden')
-  remove(@Param('id_orden') id: string) {
-    return this.transfusionesService.remove(id);
+  remove(@Param('id_orden') id_orden: string) {
+    return this.transfusionesService.remove(id_orden);
+  }
+
+  @Delete('by-orden/:id_orden')
+  removeByOrden(@Param('id_orden') id_orden: string) {
+    return this.transfusionesService.removeByOrden(id_orden);
   }
 }

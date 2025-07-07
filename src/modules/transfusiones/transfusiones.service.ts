@@ -76,12 +76,18 @@ export class TransfusionesService {
 
 
   //Metodo para ELIMINAR una orden de transfusion 
-  async remove(id: string): Promise<Transfusiones | { message: string }> {
-    const deletetransf = await this.transfusionesModel.findByIdAndDelete(id);
+  async remove(id_orden: string): Promise<Transfusiones | { message: string }> {
+    const deletetransf = await this.transfusionesModel.findByIdAndDelete(id_orden);
 
     if (!deletetransf) {
       return { message: 'la orden de transfusion no existe' };
     }
     return deletetransf;
   }
+
+  async removeByOrden(id_orden: string) {
+  return this.transfusionesModel.deleteMany({ id_orden });
 }
+}
+
+
