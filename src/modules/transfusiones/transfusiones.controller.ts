@@ -34,6 +34,11 @@ export class TransfusionesController {
     return this.transfusionesService.findOne(id);
   }
 
+  @Get('ci/:ci')
+  async findOneByCi(@Param('ci') ci: string) {
+    return this.transfusionesService.findOneByCi(ci);
+  }
+
   @Get('buscar')
   findByNombreCompleto(
     @Query('nombre') nombre: string,
@@ -46,9 +51,15 @@ export class TransfusionesController {
   //@ApiOperation({ summary: 'Actualizar una transfusion' })
   //@ApiResponse({ status: 201, description: 'Transfusion actualizada exitosamente' })
   //@ApiResponse({ status: 400, description: 'Bad request' })
-  @Patch(':id_orden')
-  update(@Param('id_orden') id: string, @Body() updateTransfusionesDto: UpdateTransfusionesDto) {
-    return this.transfusionesService.update(id, updateTransfusionesDto);
+  @Patch('by-orden/:idOrden')  // Cambia la ruta para ser más descriptiva
+  async updateByIdOrden(
+    @Param('idOrden') idOrden: string, // Recibe el id_orden numérico
+    @Body() updateTransfusionDto: UpdateTransfusionesDto
+  ) {
+    return this.transfusionesService.updateByIdOrden(
+      Number(idOrden), // Convertir a número si es necesario
+      updateTransfusionDto
+    );
   }
 
   //@ApiOperation({ summary: 'Eliminar una transfusion' })
@@ -62,5 +73,10 @@ export class TransfusionesController {
   @Delete('by-orden/:id_orden')
   removeByOrden(@Param('id_orden') id_orden: string) {
     return this.transfusionesService.removeByOrden(id_orden);
+  }
+
+  @Delete('by-ci/:ci')
+  async removeByCI(@Param('ci') ci: string) {
+    return this.transfusionesService.removeByCI(ci);
   }
 }

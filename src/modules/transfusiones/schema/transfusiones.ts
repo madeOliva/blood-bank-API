@@ -71,49 +71,49 @@ export class Transfusiones {
     @Prop({ required: true })
     cont_plaqueta: number;
 
-    @Prop({ required: true })
+    @Prop({})
     globulo_rojo: boolean;
 
-    @Prop({ required: true })
+    @Prop({})
     prioridad_gr: number;
 
-    @Prop({ required: true })
+    @Prop({})
     componentes: string;
 
-    @Prop({ required: true })
+    @Prop({})
     urgencia_gr: boolean;
 
-    @Prop({ required: true })
+    @Prop({})
     cant_gr: number;
 
-    @Prop({ required: true })
+    @Prop({})
     reserva_gr: boolean;
 
-    @Prop({ required: true })
+    @Prop({})
     fecha_gr: Date;
 
-    @Prop({ required: true })
+    @Prop({})
     hora_gr: Date;
 
-    @Prop({ required: true })
+    @Prop({})
     comp_plasmtico: boolean;
 
-    @Prop({ required: true })
+    @Prop({})
     prioridad_cp: number;
 
-    @Prop({ required: true })
+    @Prop({})
     urgencia_cp: boolean;
 
-    @Prop({ required: true })
+    @Prop({})
     cant_cp: number;
 
-    @Prop({ required: true })
+    @Prop({})
     frecuencia_cp: number;
 
-    @Prop({ required: true })
+    @Prop({})
     reserva_cp: boolean;
 
-    @Prop({ required: true })
+    @Prop({})
     fecha_cp: Date;
 
     @Prop({ required: true })
@@ -122,7 +122,7 @@ export class Transfusiones {
     @Prop({ required: true })
     hora_transf: Date;
 
-    @Prop({ required: true })
+    @Prop({})
     caracter: boolean;
 
     @Prop({ required: true })

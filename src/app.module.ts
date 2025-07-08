@@ -14,6 +14,7 @@ import { ProvinciaModule } from './modules/provincia/provincia.module';
 import { SalaModule } from './modules/sala/sala.module';
 import { SexoModule } from './modules/sexo/sexo.module';
 import { TransfusionesModule } from './modules/transfusiones/transfusiones.module';
+import { ListadoPacientesModule } from './modules/listado-pacientes/listado-pacientes.module';
 import { CalidadModule } from './modules/calidad/calidad.module';
 import { CausaModule } from './modules/causa/causa.module';
 import { CentrifugacionModule } from './modules/centrifugacion/centrifugacion.module';
@@ -86,6 +87,7 @@ import { FactoresModule } from './modules/factores/factores.module';
     SalaModule,
     SexoModule,
     TransfusionesModule,
+    ListadoPacientesModule,
     GruposSanguineosModule,
     FactoresModule,
   ],

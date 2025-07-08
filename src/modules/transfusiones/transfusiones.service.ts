@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateTransfusionesDto } from './dto/create-transfusiones.dto';
 import { UpdateTransfusionesDto } from './dto/update-transfusiones.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -44,6 +44,15 @@ export class TransfusionesService {
     return transf;
   }
 
+  //Metodo para buscar por el carnet de identidad
+  async findOneByCi(ci: string) {
+    const transf = await this.transfusionesModel.findOne({ ci }).exec();
+    if (!transf) {
+      throw new ConflictException(`No existe una orden de transfusión para el CI ${ci}`);
+    }
+    return transf;
+  }
+
   //Metodo para buscar una orden de transfusion por el nombre y los apellidos
   async findByNombreCompleto(nombre: string, primerApellido: string, segundoApellido: string) {
     const transf = await this.transfusionesModel.findOne({
@@ -59,19 +68,18 @@ export class TransfusionesService {
   }
 
   //Metodo para ACTUALIZAR las ordenes de transfusion
+  // En el servicio
+  async updateByIdOrden(idOrden: number, updateTransfusionDto: UpdateTransfusionesDto) {
+    const updated = await this.transfusionesModel.findOneAndUpdate(
+      { id_orden: idOrden }, // Busca por el campo id_orden
+      updateTransfusionDto,
+      { new: true }
+    ).exec();
 
-  async update(
-    id: string,
-    updateTransfusionesDto: UpdateTransfusionesDto,
-  ): Promise<Transfusiones | { massage: string }> {
-    const updatetransf = await this.transfusionesModel //made
-      .findByIdAndUpdate(id, UpdateTransfusionesDto, { new: true })
-      .exec();
-
-    if (!updatetransf) {
-      return { massage: 'no existe la orden de transfusion ${id}  ' };
+    if (!updated) {
+      throw new NotFoundException(`Orden con número ${idOrden} no encontrada`);
     }
-    return updatetransf;
+    return updated;
   }
 
 
@@ -86,8 +94,20 @@ export class TransfusionesService {
   }
 
   async removeByOrden(id_orden: string) {
-  return this.transfusionesModel.deleteMany({ id_orden });
-}
+    return this.transfusionesModel.deleteMany({ id_orden });
+  }
+
+  // transfusiones.service.ts
+
+  async removeByCI(ci: string): Promise<Transfusiones | { message: string }> {
+    const deletetransf = await this.transfusionesModel.findOneAndDelete({ CI: ci });
+
+    if (!deletetransf) {
+      return { message: 'No se encontró orden de transfusión para este CI' };
+    }
+    return deletetransf;
+  }
+
 }
 
 
