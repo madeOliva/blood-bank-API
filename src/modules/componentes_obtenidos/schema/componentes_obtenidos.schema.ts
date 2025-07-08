@@ -8,11 +8,13 @@ export type ComponentesObtenidosDocument = ComponentesObtenidos & Document;
 // 1. Define el esquema del subdocumento explícitamente con _id: true
 export const ComponenteSchema = new MongooseSchema(
   {
-    tipo: { type: String, required: true, enum: ['CEPL', 'CP', 'PFC', 'CRIO'] },
+    tipo: { type: String, required: true, enum: ['CEPL','CEAD', 'CE' , 'CP','SP','SC','PC','BC', 'PFC', 'CRIO'] },
     volumen: { type: Number, required: true },
     envio_industria: { type: Boolean, default: false },
     no_lote: { type: String },
     fecha_obtencion: { type: String },
+    estado_obtencion:{type: String, required: true, enum: ['obtenido', 'baja', 'pendiente', 'liberado', 'desechada']},
+    causa_baja: { type: String, require:true },
     // otros campos si los necesitas...
   },
   { _id: true } // Esto asegura que cada componente tendrá un _id
@@ -29,14 +31,12 @@ export class ComponentesObtenidos {
   @Prop({ type: Types.ObjectId, ref: 'RegistroDonacion' })
   registro_donacion: RegistroDonacion;
 
-  @Prop({ required: true, enum: ['obtenido', 'baja', 'pendiente', 'liberado', 'desechada'] })
-  estado_obtencion: string;
+ 
 
   @Prop({ type: [ComponenteSchema] }) // Usa el esquema explícito aquí
   componentes: any[];
 
-  @Prop({ enum: ['Ictero', 'Lipemia', 'Hemolisis', 'Rotura'] })
-  causa_baja: string;
+ 
 
   @Prop()
   fecha_obtencion: Date;

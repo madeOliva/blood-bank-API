@@ -20,23 +20,18 @@ async getRegistrosDonacionUsados() {
 
 // ...existing code...
 
-   
-
-async desecharComponente(id: string) {
-    return this.componentesObtenidosModel.findByIdAndUpdate(
-      id,
-      { estado_obtencion: 'desechada' },
-      { new: true }
-    );
-  }
-async liberarComponente(id: string) {
-  console.log("Liberando componente:", id);
-  return this.componentesObtenidosModel.findByIdAndUpdate(
-    id,
-    { estado_obtencion: "liberado" },
-    { new: true }
+async actualizarEstadoComponente(componenteId: string, nuevoEstado: string, causa_baja?: string) {
+  const objectId = new Types.ObjectId(componenteId);
+  const setObj: any = { "componentes.$.estado_obtencion": nuevoEstado };
+  if (causa_baja) setObj["componentes.$.causa_baja"] = causa_baja;
+  console.log(setObj); // <-- agrega esto
+  return this.componentesObtenidosModel.updateOne(
+    { "componentes._id": objectId },
+    { $set: setObj }
   );
 }
+
+
 async findByEstadoObtencion(estado: string) {
   return this.componentesObtenidosModel
     .find({ estado_obtencion: estado })
@@ -45,23 +40,45 @@ async findByEstadoObtencion(estado: string) {
 // Ejemplo en el servicio
 // ...existing code...
 async getComponentesObtenidos(estado?: string) {
-  const filter = estado ? { estado_obtencion: estado } : {};
-  return this.componentesObtenidosModel
-    .find(filter)
-  .populate({
-  path: 'registro_donacion',
-  populate: {
-    path: 'historiaClinica',
-    populate: { path: 'sexo' }
+  try {
+    // Si se pasa un estado, busca dentro de componentes.estado_obtencion
+    const filter = estado
+      ? { "componentes.estado_obtencion": estado }
+      : {};
+    return await this.componentesObtenidosModel
+      .find(filter)
+      .populate({
+        path: 'registro_donacion',
+        populate: {
+          path: 'historiaClinica',
+          populate: [
+            { path: 'sexo' },
+            { path: 'grupo_sanguine' },
+            { path: 'factor' }
+          ]
+        }
+      })
+      .lean();
+  } catch (error) {
+    console.error("Error en getComponentesObtenidos:", error);
+    throw error;
   }
-})
-    .lean();
 }
-
-async actualizarNoLotePorComponenteId(componente_id: string, no_lote: string) {
+async updateEstadoComponente(componenteId: string, estado_obtencion: string) {
   return this.componentesObtenidosModel.updateOne(
-    { "componentes._id": new Types.ObjectId(componente_id) },
-    { $set: { "componentes.$.no_lote": no_lote } }
+    { "componentes._id": componenteId },
+    { $set: { "componentes.$.estado_obtencion": estado_obtencion } }
+  );
+}
+async actualizarNoLotePorComponenteId(componente_id: string, no_lote: string, envio_industria: boolean) {
+  return this.componentesObtenidosModel.updateOne(
+    { "componentes._id": componente_id },
+    {
+      $set: {
+        "componentes.$.no_lote": no_lote,
+        "componentes.$.envio_industria": envio_industria
+      }
+    }
   );
 }
 async updateEstadoObtencion(id: string, estado_obtencion: string) {
@@ -75,7 +92,7 @@ async updateEstadoObtencion(id: string, estado_obtencion: string) {
 async getBajas() {
   console.log('Entrando a getBajas');
   const resultado = await this.componentesObtenidosModel
-    .find({ estado_obtencion: 'desechada' })
+    .find({ "componentes.estado_obtencion": { $in: ["baja", "desechada"] } })
     .populate('centrifugacion');
   console.log('Resultado con populate:', resultado);
   return resultado;
